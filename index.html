@@ -361,7 +361,10 @@
 <!-- Main app -->
 <div class="app hidden" id="mainApp">
   <div class="header">
-    <div class="app-name">kass<span>za</span> 💸</div>
+    <div>
+      <div class="app-name">kass<span>za</span> 💸</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;">v6.3</div>
+    </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
       <div class="user-name-pill" id="uName">—</div>
@@ -1510,8 +1513,17 @@ function openEditSheet(id) {
       <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
     </div>` : '';
 
+  const typeLabels = {out:'↑ Kiment',in:'↓ Bejött',save:'🐷 Félretett',withdraw:'🏧 Elővett',
+    loan:'🤝 Kölcsön',reimburse:'↩️ Visszafizetés',transfer:'💸 Készpénzfelvét',correction:'🔧 Korrekció'};
+  const typeColours = {out:'var(--accent)',in:'var(--green)',save:'var(--purple)',withdraw:'var(--amber)',
+    loan:'var(--blue)',reimburse:'var(--teal)',transfer:'var(--amber)',correction:'var(--ink2)'};
+  const noteLbl = entry.type === 'in' ? 'HONNAN?' : 'MIRE?';
+
   document.getElementById('sheetTitle').textContent = 'Tétel szerkesztése';
   document.getElementById('sheetBody').innerHTML = `
+    <div style="display:inline-flex;align-items:center;gap:8px;background:var(--bg);border-radius:30px;padding:7px 14px;border:2px solid var(--border);margin-bottom:4px;">
+      <span style="font-size:13px;font-weight:600;color:${typeColours[entry.type]||'var(--ink)'}">${typeLabels[entry.type]||entry.type}</span>
+    </div>
     <div class="field-label">ÖSSZEG</div>
     <div class="amount-row">
       <input class="amount-input" id="editAmt" type="number" inputmode="decimal" value="${entry.origAmt}" min="0" step="any">
@@ -1529,7 +1541,7 @@ function openEditSheet(id) {
     ${sourceToggle}
     <div class="field-label">DÁTUM</div>
     <input class="date-input" id="editDate" type="date" value="${dateVal}">
-    <div class="field-label">${entry.type==='in'?'HONNAN?':'MIRE?'}</div>
+    <div class="field-label">${noteLbl}</div>
     <input class="text-input" id="editNote" type="text" value="${entry.note}" maxlength="60" autocomplete="off">
     ${catsHTML}
     <div style="display:flex;gap:8px;margin-top:18px;padding-bottom:4px;">
