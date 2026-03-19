@@ -1,4 +1,4 @@
-<!-- Kassza v6.8.0 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.8.1 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -369,7 +369,7 @@
   <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
   <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
   <div class="ob-code">kassza.github.io?user=nev</div>
-  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.8.0</div>
+  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.8.1</div>
 </div>
 
 <!-- Main app -->
@@ -377,7 +377,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.8.0</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.8.1</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -558,7 +558,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.8.0'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.8.1'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -680,6 +680,16 @@ async function fullSync() {
     const sheetEntries=data.entries||[];
     const sheetIds=new Set(sheetEntries.map(e=>String(e.id)));
     const localUnsynced=st.entries.filter(e=>!e.synced&&!sheetIds.has(String(e.id)));
+    // For entries that exist in both sheet and local, prefer sheet version
+    // BUT if sheet amtHUF is null/0 and local has a real value, keep local amtHUF temporarily
+    const localById={};
+    st.entries.forEach(e=>{ localById[String(e.id)]=e; });
+    sheetEntries.forEach(e=>{
+      const local=localById[String(e.id)];
+      if (local && (e.amtHUF==null||e.amtHUF===0) && local.amtHUF && local.amtHUF>0) {
+        e.amtHUF=local.amtHUF; // keep local conversion until sheet formula evaluates
+      }
+    });
     st.entries=[...sheetEntries,...localUnsynced];
     st.entries.sort((a,b)=>{ const dateDiff=new Date(b.date)-new Date(a.date); return dateDiff!==0?dateDiff:Number(b.id)-Number(a.id); });
     st.entries.forEach(e=>{
