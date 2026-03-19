@@ -1,4 +1,4 @@
-<!-- Kassza v6.4.5 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.4.6 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -171,7 +171,7 @@
   .sheet-overlay.open .bottom-sheet{transform:translateY(0);}
   .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;}
   .sheet-header{padding:16px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
-  .sheet-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;}
+  .sheet-title{font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;}
   .sheet-close{background:none;border:none;font-size:24px;color:var(--ink3);cursor:pointer;line-height:1;padding:0 4px;}
   .sheet-body{padding:18px 20px 0;}
 
@@ -179,7 +179,7 @@
   .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
   .mode-btn{padding:20px 12px;border-radius:16px;border:2px solid var(--border);background:var(--bg);cursor:pointer;text-align:center;transition:all .15s;}
   .mode-btn .m-icon{font-size:28px;margin-bottom:8px;display:block;}
-  .mode-btn .m-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);display:block;}
+  .mode-btn .m-label{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);display:block;}
   .mode-btn .m-hint{font-size:12px;color:var(--ink3);display:block;margin-top:3px;line-height:1.4;}
   .mode-btn.normal:hover{border-color:var(--accent);background:var(--red-bg);}
   .mode-btn.admin:hover{border-color:var(--blue);background:var(--blue-bg);}
@@ -205,7 +205,7 @@
   .admin-list{display:flex;flex-direction:column;gap:8px;}
   .admin-item{display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:14px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
   .admin-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-  .admin-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .admin-label{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
   .admin-hint{font-size:12px;color:var(--ink2);margin-top:2px;}
   .admin-item.purple:hover{border-color:var(--purple);background:var(--purple-bg);}
   .admin-item.amber:hover{border-color:var(--amber);background:var(--amber-bg);}
@@ -252,7 +252,7 @@
   .advance-list{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
   .advance-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:13px;padding:13px 16px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
   .advance-item:hover{border-color:var(--teal);background:var(--teal-bg);}
-  .advance-item-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .advance-item-name{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
   .advance-item-note{font-size:12px;color:var(--ink2);margin-top:2px;}
   .advance-item-amt{font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;color:var(--blue);}
   .advance-empty{text-align:center;padding:20px 0;color:var(--ink3);font-size:14px;}
@@ -273,7 +273,7 @@
   .sub-full-btn{flex-shrink:0;background:var(--teal-bg);border:2px solid rgba(15,110,86,.2);border-radius:12px;padding:0 14px;font-size:13px;font-weight:600;color:var(--teal);cursor:pointer;}
   .sub-actions{display:flex;gap:8px;}
   .sub-cancel{flex:1;padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);}
-  .sub-confirm{flex:1;padding:13px;background:var(--teal);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
+  .sub-confirm{flex:1;padding:13px;background:var(--teal);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#fff;cursor:pointer;}
 
   /* Toast */
   .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2);}
@@ -297,7 +297,7 @@
     .chart-card:last-child{margin-bottom:0;}
     .desktop-form-card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;}
     .desktop-form-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-    .desktop-form-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;}
+    .desktop-form-title{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;}
     .desktop-form-body{padding:16px 20px 20px;}
     .desktop-tab-bar{display:flex;gap:4px;background:var(--card);border-radius:12px;padding:4px;border:1px solid var(--border);}
     .desktop-tab-btn{flex:1;padding:8px 16px;border:none;border-radius:9px;background:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
@@ -373,7 +373,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.5</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.6</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -528,7 +528,7 @@
 <script>
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.4.5'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.4.6'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -1127,7 +1127,7 @@ function openPayConfirm(name,amt) {
   const isCash=st.selSource==='cash';
   document.getElementById('sheetBody').innerHTML=`
     <button class="back-btn" onclick="goAdminMode('loan-pay')">← Vissza</button>
-    <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-bottom:4px;">${name}</div>
+    <div style="font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px;">${name}</div>
     <div style="font-size:13px;color:var(--ink2);margin-bottom:16px;">Kintlévőség: ${fmtFt(amt)}</div>
     <div class="sub-amt-row">
       <input class="sub-amt-input" id="payAmtInput" type="number" inputmode="decimal" placeholder="0" value="${amt}" min="0" step="any">
@@ -1619,7 +1619,7 @@ function renderEditSheet() {
     ${nameHTML}
     <div style="display:flex;gap:8px;margin-top:18px;padding-bottom:4px;">
       <button style="flex:1;padding:15px;background:var(--bg);border:1px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);" onclick="closeSheet()">Mégsem</button>
-      <button style="flex:2;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;" onclick="submitEdit()">Mentés ✓</button>
+      <button style="flex:2;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;" onclick="submitEdit()">Mentés ✓</button>
     </div>`;
   syncDesktopFormBody();
 }
