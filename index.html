@@ -1,4 +1,4 @@
-<!-- Kassza v6.4.7 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.4.9 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -366,6 +366,7 @@
   <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
   <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
   <div class="ob-code">kassza.github.io?user=nev</div>
+  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.4.8</div>
 </div>
 
 <!-- Main app -->
@@ -373,7 +374,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.7</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.9</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -526,9 +527,33 @@
 <div class="toast" id="toast"></div>
 
 <script>
+
+// ── Currency conversion (client-side) ───────────────────────
+const rateCache = {};
+async function toHUF(amount, currency) {
+  if (currency === 'HUF') return amount;
+  const pair = {GBP:'GBPHUF', RON:'RONHUF', EUR:'EURHUF', USD:'USDHUF'}[currency];
+  if (!pair) return amount;
+  // Check cache (10 min)
+  if (rateCache[pair] && (Date.now() - rateCache[pair].ts) < 600000) {
+    return Math.round(amount * rateCache[pair].rate);
+  }
+  try {
+    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${pair}=X?interval=1d&range=1d`);
+    const data = await res.json();
+    const rate = data.chart.result[0].meta.regularMarketPrice;
+    rateCache[pair] = {rate, ts: Date.now()};
+    return Math.round(amount * rate);
+  } catch(e) {
+    // Fallback rates
+    const fallbacks = {GBPHUF:490, RONHUF:100, EURHUF:400, USDHUF:370};
+    return Math.round(amount * (fallbacks[pair] || 1));
+  }
+}
+
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.4.7'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.4.9'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -917,8 +942,9 @@ async function submitNormal() {
   const cat=CATS.find(c=>c.id===st.selCat);
   const dp=dateVal.split('-');
   const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const amtHUF_normal = await toHUF(rawAmt, currency);
   const entry={
-    id:Date.now(),type:st.selType,origAmt:rawAmt,amtHUF:rawAmt,currency,
+    id:Date.now(),type:st.selType,origAmt:rawAmt,amtHUF:amtHUF_normal,currency,
     source:st.selSource,
     note:note||'', // keep empty if not filled in — display uses category name dynamically
     cat:st.selType==='out'?st.selCat:null,
@@ -1095,8 +1121,9 @@ async function submitLoan() {
   if (!st.names.includes(name)) st.names.push(name);
   const dp=dateVal.split('-');
   const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const amtHUF_loan = await toHUF(rawAmt, currency);
   const entry={
-    id:Date.now(),type:'loan',origAmt:rawAmt,amtHUF:rawAmt,currency,
+    id:Date.now(),type:'loan',origAmt:rawAmt,amtHUF:amtHUF_loan,currency,
     source:st.selSource,
     note:note||`Kölcsön — ${name}`,
     cat:null,icon:'🤝',personName:name,
@@ -1689,7 +1716,7 @@ async function submitEdit() {
 
   entry.type       = draft.type;
   entry.origAmt    = rawAmt;
-  entry.amtHUF     = rawAmt;
+  entry.amtHUF     = await toHUF(rawAmt, currency);
   entry.currency   = currency;
   entry.source     = draft.source || 'bank';
   entry.note       = note; // allow empty note — display falls back to category name
