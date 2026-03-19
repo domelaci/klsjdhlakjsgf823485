@@ -1,4 +1,4 @@
-<!-- Kassza v6.4.6 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.4.7 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -373,7 +373,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.6</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.7</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -528,7 +528,7 @@
 <script>
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.4.6'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.4.7'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -652,7 +652,11 @@ async function fullSync() {
     const localUnsynced=st.entries.filter(e=>!e.synced&&!sheetIds.has(String(e.id)));
     st.entries=[...sheetEntries,...localUnsynced];
     st.entries.sort((a,b)=>{ const dateDiff=new Date(b.date)-new Date(a.date); return dateDiff!==0?dateDiff:Number(b.id)-Number(a.id); });
-    st.entries.forEach(e=>{if(e.personName&&!st.names.includes(e.personName))st.names.push(e.personName);});
+    st.entries.forEach(e=>{
+      // Skip if personName looks like a timestamp
+      if(e.personName && !st.names.includes(e.personName) && !/^Thu|^Mon|^Tue|^Wed|^Fri|^Sat|^Sun|^\d{4}/.test(e.personName))
+        st.names.push(e.personName);
+    });
     save();
     if (localUnsynced.length>0) {
       updateSync('syncing',`${localUnsynced.length} tétel feltöltése…`);
@@ -1252,6 +1256,16 @@ function checkVersionMatch(scriptVersion) {
   }
 }
 
+
+function isDateLike(s) {
+  if (!s) return false;
+  // Reject anything that looks like a date, timestamp, or number ID
+  return /^\d{4}[.\-\/]/.test(s) ||  // 2026.03...
+         /^\d{13,}$/.test(s) ||          // unix timestamp
+         /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.test(s) || // JS date string
+         /^\d{2}\/\d{2}\/\d{4}/.test(s);  // dd/mm/yyyy
+}
+
 // ── Tile filter ──────────────────────────────────────────────
 const TILE_META = {
   bank:    {label:'Bank',        icon:'💳', types:['out','in','loan','reimburse'], sourceMatch:'bank'},
@@ -1712,6 +1726,9 @@ async function submitEdit() {
 }
 
 // ── Init ─────────────────────────────────────────────────────
+// Clean any timestamps that crept into names list
+st.names = st.names.filter(n => !/^Thu|^Mon|^Tue|^Wed|^Fri|^Sat|^Sun|^\d{4}/.test(n));
+save();
 if (userName){render();fullSync();if(isDesktop())renderDesktopForm();}
 </script>
 </body>
