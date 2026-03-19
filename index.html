@@ -1,3 +1,4 @@
+<!-- Kassza v6.3 — 2026-03-19 — Edit entry (replaces delete), updateEntry in script -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -314,6 +315,36 @@
     .desktop-tab-bar{display:none;}
     .desktop-inline-form{display:none;}
   }
+
+  /* Tile active/filter state */
+  .bal-tile.active-filter{box-shadow:0 0 0 3px var(--ink);transform:scale(1.03);}
+  .bal-tile.bank.active-filter   {box-shadow:0 0 0 3px var(--blue);}
+  .bal-tile.cash.active-filter   {box-shadow:0 0 0 3px var(--amber);}
+  .bal-tile.savings.active-filter{box-shadow:0 0 0 3px var(--purple);}
+  .bal-tile.loans.active-filter  {box-shadow:0 0 0 3px var(--teal);}
+
+  /* Filter badge above entries */
+  .filter-badge{display:flex;align-items:center;gap:8px;margin:12px 20px 0;background:var(--ink);color:#fff;border-radius:30px;padding:8px 16px;font-size:13px;font-weight:500;width:fit-content;}
+  .filter-badge-clear{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:16px;padding:0;line-height:1;margin-left:4px;}
+  .filter-badge-clear:hover{color:#fff;}
+
+  /* Custom category */
+  .new-cat-wrap{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+  .new-cat-input-row{display:flex;gap:8px;}
+  .new-cat-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s;}
+  .new-cat-input:focus{border-color:var(--accent);}
+  .new-cat-input::placeholder{color:var(--ink3);}
+  .new-cat-save{padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .emoji-picker{display:flex;gap:6px;flex-wrap:wrap;}
+  .emoji-opt{font-size:20px;cursor:pointer;padding:4px;border-radius:8px;border:2px solid transparent;transition:all .15s;}
+  .emoji-opt.selected{border-color:var(--accent);background:var(--red-bg);}
+
+
+  /* Edit button */
+  .entry-edit{background:none;border:none;color:var(--ink3);cursor:pointer;padding:4px 6px;flex-shrink:0;line-height:1;display:flex;flex-direction:column;gap:3px;align-items:center;}
+  .entry-edit span{display:block;width:14px;height:2px;background:currentColor;border-radius:1px;}
+  .entry-edit:hover{color:var(--ink2);}
+
 </style>
 </head>
 <body>
@@ -376,22 +407,22 @@
 
       <!-- 4 balance tiles -->
       <div class="balance-tiles">
-        <div class="bal-tile bank" onclick="switchTab('tetelek')">
+        <div class="bal-tile bank" id="tileBankCard" onclick="filterTile('bank')">
           <div class="bal-tile-icon">💳</div>
           <div class="bal-tile-label">Bank</div>
           <div class="bal-tile-amt" id="tileBankAmt">Ft 0</div>
         </div>
-        <div class="bal-tile cash" onclick="switchTab('tetelek')">
+        <div class="bal-tile cash" id="tileCashCard" onclick="filterTile('cash')">
           <div class="bal-tile-icon">💵</div>
           <div class="bal-tile-label">Készpénz</div>
           <div class="bal-tile-amt" id="tileCashAmt">Ft 0</div>
         </div>
-        <div class="bal-tile savings" onclick="switchTab('tetelek')">
+        <div class="bal-tile savings" id="tileSavingsCard" onclick="filterTile('savings')">
           <div class="bal-tile-icon">🐷</div>
           <div class="bal-tile-label">Megtakarítás</div>
           <div class="bal-tile-amt" id="tileSavingsAmt">Ft 0</div>
         </div>
-        <div class="bal-tile loans" onclick="switchTab('loans')">
+        <div class="bal-tile loans" id="tileLoansCard" onclick="filterTile('loans')">
           <div class="bal-tile-icon">🤝</div>
           <div class="bal-tile-label">Kintlévőség</div>
           <div class="bal-tile-amt" id="tileLoansAmt">Ft 0</div>
@@ -405,12 +436,12 @@
         <button class="desktop-tab-btn" id="deskNavLoans"   onclick="switchTab('loans')">🤝 Kintlévőségek</button>
       </div>
 
+      <div id="filterBadge"></div>
       <!-- Main panel -->
       <div class="main-panel" id="mainPanel">
         <div class="entries-wrap">
           <div class="entries-header">
             <div class="section-label">TÉTELEK</div>
-            <button style="font-size:13px;color:var(--ink3);background:none;border:none;cursor:pointer;" onclick="clearMonth()">Törli mind</button>
           </div>
           <div class="entries-list" id="entryList"></div>
           <div class="empty-state hidden" id="emptyState">
@@ -522,10 +553,15 @@ const st = {
   payTarget:  null,
   activeTab:  'tetelek',
   summary:    null,
+  activeFilter: null, // 'bank'|'cash'|'savings'|'loans'
+  editTarget:   null,
+  customCats: JSON.parse(localStorage.getItem('kz_'+(urlUser||'x')+'_customcats')||'[]'),
+  newCatIcon: '🏷️',
 };
 function save() {
-  localStorage.setItem(STORE+'_entries', JSON.stringify(st.entries));
-  localStorage.setItem(STORE+'_names',   JSON.stringify(st.names));
+  localStorage.setItem(STORE+'_entries',     JSON.stringify(st.entries));
+  localStorage.setItem(STORE+'_names',       JSON.stringify(st.names));
+  localStorage.setItem(STORE+'_customcats',  JSON.stringify(st.customCats));
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -647,7 +683,7 @@ function getCatLabel(e) {
   if (e.type==='transfer')   return 'Készpénzfelvét';
   if (e.type==='correction') return 'Korrekció';
   if (e.type==='in')         return 'Bevétel';
-  return CATS.find(c=>c.id===e.cat)?.label||'Egyéb';
+  return allCats().find(c=>c.id===e.cat)?.label||'Egyéb';
 }
 function getTypusLabel(type) {
   return {out:'Kiment',in:'Bejött',save:'Félretett',withdraw:'Megtakarításból',
@@ -773,7 +809,7 @@ function goMode(mode) {
 
 // ── Normal form ──────────────────────────────────────────────
 function normalFormHTML() {
-  const catsHTML=CATS.map(c=>`<div class="cat-chip ${c.id===st.selCat?'active':''}" onclick="selCat('${c.id}')">${c.icon} ${c.label}</div>`).join('');
+  const catsHTML=buildCatChips();
   const isCash = st.selSource==='cash';
   return `
     <button class="back-btn" onclick="goMode('back')">← Vissza</button>
@@ -847,8 +883,8 @@ function setNormalType(t) {
 function selCat(id) {
   st.selCat=id;
   document.querySelectorAll('.cat-chip').forEach(el=>{
-    const catLabel=CATS.find(c=>c.id===id)?.label||'';
-    el.className='cat-chip'+(el.textContent.trim().includes(catLabel)?' active':'');
+    const catLabel=allCats().find(c=>c.id===id)?.label||'';
+    el.className='cat-chip'+(el.textContent.trim().startsWith(catLabel)?' active':'');
   });
 }
 
@@ -1180,6 +1216,113 @@ async function submitCorrection() {
   await pushUnsynced([entry]);render();setTimeout(loadSummary,1500);
 }
 
+
+// ── Tile filter ──────────────────────────────────────────────
+const TILE_META = {
+  bank:    {label:'Bank',        icon:'💳', types:['out','in'],             sourceMatch:'bank'},
+  cash:    {label:'Készpénz',    icon:'💵', types:['out','in','transfer'],  sourceMatch:'cash'},
+  savings: {label:'Megtakarítás',icon:'🐷', types:['save','withdraw'],      sourceMatch:null},
+  loans:   {label:'Kintlévőség', icon:'🤝', types:['loan','reimburse'],     sourceMatch:null},
+};
+
+function filterTile(key) {
+  if (st.activeFilter === key) {
+    st.activeFilter = null;
+  } else {
+    st.activeFilter = key;
+    if (key !== 'loans') switchTab('tetelek');
+    else switchTab('loans');
+  }
+  render();
+}
+
+function clearFilter() {
+  st.activeFilter = null;
+  render();
+}
+
+function entryMatchesFilter(e, filter) {
+  if (!filter) return true;
+  const meta = TILE_META[filter];
+  if (!meta.types.includes(e.type)) return false;
+  if (meta.sourceMatch && (e.source||'bank') !== meta.sourceMatch) return false;
+  return true;
+}
+
+function updateTileHighlights() {
+  ['bank','cash','savings','loans'].forEach(key => {
+    const el = document.getElementById('tile'+key.charAt(0).toUpperCase()+key.slice(1)+'Card');
+    if (el) el.classList.toggle('active-filter', st.activeFilter === key);
+  });
+  // Filter badge
+  const badge = document.getElementById('filterBadge');
+  if (badge) {
+    if (st.activeFilter) {
+      const meta = TILE_META[st.activeFilter];
+      badge.innerHTML = `<div class="filter-badge">${meta.icon} Szűrve: ${meta.label}<button class="filter-badge-clear" onclick="clearFilter()">×</button></div>`;
+    } else {
+      badge.innerHTML = '';
+    }
+  }
+}
+
+// ── Custom categories ────────────────────────────────────────
+const EMOJI_OPTIONS = ['🛒','🏠','💊','🎮','🎬','🍕','🚗','✈️','🎁','📱','👟','🏋️'];
+
+function allCats() {
+  return [...CATS, ...st.customCats];
+}
+
+function showNewCatForm() {
+  st.newCatIcon = '🏷️';
+  const existing = document.getElementById('newCatWrap');
+  if (existing) { existing.remove(); return; } // toggle off
+  const catRow = document.getElementById('catRow');
+  if (!catRow) return;
+  const wrap = document.createElement('div');
+  wrap.id = 'newCatWrap';
+  wrap.className = 'new-cat-wrap';
+  wrap.innerHTML = `
+    <div class="new-cat-input-row">
+      <input class="new-cat-input" id="newCatName" type="text" placeholder="Kategória neve…" maxlength="20" autocomplete="off">
+      <button class="new-cat-save" onclick="saveNewCat()">Mentés</button>
+    </div>
+    <div class="emoji-picker">
+      ${EMOJI_OPTIONS.map(e=>`<span class="emoji-opt ${e===st.newCatIcon?'selected':''}" onclick="pickEmoji('${e}')">${e}</span>`).join('')}
+    </div>`;
+  catRow.parentNode.insertBefore(wrap, catRow.nextSibling);
+}
+
+function pickEmoji(emoji) {
+  st.newCatIcon = emoji;
+  document.querySelectorAll('.emoji-opt').forEach(el => {
+    el.classList.toggle('selected', el.textContent === emoji);
+  });
+}
+
+function saveNewCat() {
+  const name = (document.getElementById('newCatName')?.value||'').trim();
+  if (!name) { showToast('Add meg a kategória nevét!'); return; }
+  const id = 'custom_' + Date.now();
+  const cat = {id, label:name, icon:st.newCatIcon, custom:true};
+  st.customCats.push(cat);
+  CAT_COLOURS[id] = '#6B6760';
+  save();
+  st.selCat = id;
+  // Re-render the cat row
+  const catRow = document.getElementById('catRow');
+  if (catRow) catRow.innerHTML = buildCatChips();
+  const wrap = document.getElementById('newCatWrap');
+  if (wrap) wrap.remove();
+  showToast(`${st.newCatIcon} ${name} hozzáadva ✓`);
+}
+
+function buildCatChips() {
+  return allCats().map(c =>
+    `<div class="cat-chip ${c.id===st.selCat?'active':''}" onclick="selCat('${c.id}')">${c.icon} ${c.label}</div>`
+  ).join('') + `<div class="cat-chip" onclick="showNewCatForm()" style="border-style:dashed;color:var(--ink3);">＋ Új</div>`;
+}
+
 // ── Local entry ──────────────────────────────────────────────
 function addEntryLocal(entry) {
   st.entries.unshift(entry);
@@ -1233,10 +1376,11 @@ function renderReport() {
   if (spendE.length===0){barsEl.innerHTML='';emptyEl.style.display='block';}
   else {
     emptyEl.style.display='none';
-    const totals={};CATS.forEach(c=>{totals[c.id]=0;});
+    const totals={};
+    allCats().forEach(c=>{totals[c.id]=0;});
     spendE.forEach(e=>{const id=e.cat||'egyeb';totals[id]=(totals[id]||0)+(e.amtHUF||e.origAmt);});
     const total=Object.values(totals).reduce((s,v)=>s+v,0);
-    const sorted=CATS.map(c=>({...c,amt:totals[c.id]||0})).filter(c=>c.amt>0).sort((a,b)=>b.amt-a.amt);
+    const sorted=allCats().map(c=>({...c,amt:totals[c.id]||0})).filter(c=>c.amt>0).sort((a,b)=>b.amt-a.amt);
     barsEl.innerHTML=sorted.map(c=>{
       const pct=total>0?Math.round((c.amt/total)*100):0;
       return `<div class="cat-bar-row">
@@ -1292,7 +1436,9 @@ function render() {
   document.getElementById('uName').textContent=userName;
   document.getElementById('monthLabel').textContent=MONTHS_SHORT[st.curM]+' '+st.curY;
 
-  const entries=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
+  const allEntries=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
+  const entries=allEntries.filter(e=>entryMatchesFilter(e,st.activeFilter));
+  updateTileHighlights();
   const list=document.getElementById('entryList');
   const empty=document.getElementById('emptyState');
   if (entries.length===0){list.innerHTML='';empty.classList.remove('hidden');}
@@ -1302,7 +1448,7 @@ function render() {
     const srcIcon={bank:'💳',cash:'💵'};
     list.innerHTML=entries.map(e=>{
       const currNote=(e.currency&&e.currency!=='HUF')?` · ${e.origAmt} ${e.currency}`:'';
-      const catName=e.cat?CATS.find(c=>c.id===e.cat)?.label:
+      const catName=e.cat?allCats().find(c=>c.id===e.cat)?.label:
         {save:'Félretett',withdraw:'Megtakarításból',in:'Bevétel',loan:'Kölcsön',reimburse:'Visszafizetés',transfer:'Készpénzfelvét',correction:'Korrekció'}[e.type];
       const nameNote=e.personName?` · ${e.personName}`:'';
       const srcNote=(e.type==='out'||e.type==='in')?` · ${srcIcon[e.source||'bank']}`:'';
@@ -1318,19 +1464,16 @@ function render() {
           <div class="entry-amount ${e.type}">${typeSign[e.type]} ${amtStr}</div>
           ${syncMark}
         </div>
-        <button class="entry-del" onclick="deleteEntry(${e.id})">×</button>
+        <button class="entry-edit" onclick="openEditSheet(${e.id})" title="Szerkesztés">
+          <span></span><span></span><span></span>
+        </button>
       </div>`;
     }).join('');
   }
   renderSummaryFromLocal();
 }
 
-function deleteEntry(id){st.entries=st.entries.filter(e=>String(e.id)!==String(id));save();render();}
-function clearMonth(){
-  if(!confirm('Biztosan törlöd az összes helyi tételt ebből a hónapból?'))return;
-  st.entries=st.entries.filter(e=>!(e.month===st.curM&&e.year===st.curY));
-  save();render();
-}
+// delete and clearMonth removed — edit replaces delete
 
 function fmtFt(n)   {return 'Ft '+Math.round(n||0).toLocaleString('hu-HU');}
 function fmtDate(iso){const d=new Date(iso);return `${d.getMonth()+1}/${d.getDate()}`;}
@@ -1341,6 +1484,138 @@ function showToast(msg){
 }
 
 window.addEventListener('resize',()=>{if(isDesktop())renderDesktopForm();});
+
+
+// ── Edit entry ───────────────────────────────────────────────
+function openEditSheet(id) {
+  const entry = st.entries.find(e => String(e.id) === String(id));
+  if (!entry) return;
+  st.editTarget = entry;
+
+  // Build date string from entry
+  const d = new Date(entry.date);
+  const dateVal = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+  const isNormal = entry.type === 'out' || entry.type === 'in';
+  const isCash = (entry.source||'bank') === 'cash';
+  const catsHTML = isNormal && entry.type === 'out'
+    ? `<div class="field-label">KATEGÓRIA</div><div class="cat-row" id="editCatRow">${
+        allCats().map(c=>`<div class="cat-chip ${c.id===(entry.cat||'egyeb')?'active':''}" onclick="setEditCat('${c.id}')">${c.icon} ${c.label}</div>`).join('')
+      }</div>` : '';
+
+  const sourceToggle = isNormal ? `
+    <div class="source-toggle" onclick="toggleEditSource()" id="editSourceToggle">
+      <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
+      <div class="toggle-track ${isCash?'cash-mode':''}" id="editSourceTrack"><div class="toggle-thumb"></div></div>
+      <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
+    </div>` : '';
+
+  document.getElementById('sheetTitle').textContent = 'Tétel szerkesztése';
+  document.getElementById('sheetBody').innerHTML = `
+    <div class="field-label">ÖSSZEG</div>
+    <div class="amount-row">
+      <input class="amount-input" id="editAmt" type="number" inputmode="decimal" value="${entry.origAmt}" min="0" step="any">
+      <div class="curr-wrap">
+        <select class="curr-select" id="editCurr">
+          <option value="HUF" ${entry.currency==='HUF'?'selected':''}>🇭🇺 HUF</option>
+          <option value="GBP" ${entry.currency==='GBP'?'selected':''}>🇬🇧 GBP</option>
+          <option value="RON" ${entry.currency==='RON'?'selected':''}>🇷🇴 RON</option>
+          <option value="EUR" ${entry.currency==='EUR'?'selected':''}>🇪🇺 EUR</option>
+          <option value="USD" ${entry.currency==='USD'?'selected':''}>🇺🇸 USD</option>
+        </select>
+        <span class="curr-arrow">▾</span>
+      </div>
+    </div>
+    ${sourceToggle}
+    <div class="field-label">DÁTUM</div>
+    <input class="date-input" id="editDate" type="date" value="${dateVal}">
+    <div class="field-label">${entry.type==='in'?'HONNAN?':'MIRE?'}</div>
+    <input class="text-input" id="editNote" type="text" value="${entry.note}" maxlength="60" autocomplete="off">
+    ${catsHTML}
+    <div style="display:flex;gap:8px;margin-top:18px;padding-bottom:4px;">
+      <button style="flex:1;padding:15px;background:var(--bg);border:1px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);" onclick="closeSheet()">Mégsem</button>
+      <button style="flex:2;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;" onclick="submitEdit()">Mentés ✓</button>
+    </div>`;
+
+  syncDesktopFormBody();
+  if (isDesktop()) syncDesktopFormBody();
+  else document.getElementById('sheetOverlay').classList.add('open');
+}
+
+function setEditCat(id) {
+  if (st.editTarget) st.editTarget.cat = id;
+  document.querySelectorAll('#editCatRow .cat-chip').forEach(el => {
+    const c = allCats().find(c => el.textContent.trim().startsWith(c.label));
+    if (c) el.classList.toggle('active', c.id === id);
+  });
+}
+
+function toggleEditSource() {
+  if (!st.editTarget) return;
+  st.editTarget.source = st.editTarget.source === 'bank' ? 'cash' : 'bank';
+  const isCash = st.editTarget.source === 'cash';
+  const track = document.getElementById('editSourceTrack');
+  if (track) {
+    track.classList.toggle('cash-mode', isCash);
+    document.querySelectorAll('#editSourceToggle .source-label').forEach(el => {
+      if (el.classList.contains('bank')) el.classList.toggle('active', !isCash);
+      if (el.classList.contains('cash')) el.classList.toggle('active', isCash);
+    });
+  }
+}
+
+async function submitEdit() {
+  const entry = st.editTarget;
+  if (!entry) return;
+  const rawAmt  = parseFloat(document.getElementById('editAmt').value);
+  const currency= document.getElementById('editCurr').value;
+  const note    = document.getElementById('editNote').value.trim();
+  const dateVal = document.getElementById('editDate').value;
+  if (!rawAmt || rawAmt <= 0) { showToast('Add meg az összeget!'); return; }
+
+  const dp = dateVal.split('-');
+  const eDate = new Date(parseInt(dp[0]), parseInt(dp[1])-1, parseInt(dp[2]));
+
+  entry.origAmt  = rawAmt;
+  entry.amtHUF   = rawAmt;
+  entry.currency = currency;
+  entry.note     = note || entry.note;
+  entry.date     = eDate.toISOString();
+  entry.dateStr  = eDate.toLocaleDateString('hu-HU');
+  entry.month    = eDate.getMonth();
+  entry.year     = eDate.getFullYear();
+  entry.synced   = false; // mark for re-sync
+
+  st.entries.sort((a,b) => new Date(b.date) - new Date(a.date));
+  st.curM = entry.month; st.curY = entry.year;
+  save(); closeSheet(); render();
+  showToast('Tétel frissítve ✓');
+
+  // Push update to sheet
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        action:     'updateEntry',
+        user:       userName,
+        id:         String(entry.id),
+        date:       entry.dateStr,
+        note:       entry.note,
+        category:   getCatLabel(entry),
+        type:       getTypusLabel(entry.type),
+        amount:     entry.origAmt,
+        currency:   entry.currency,
+        source:     entry.source || 'bank',
+        personName: entry.personName || '',
+        pot:        entry.pot || '',
+        delta:      entry.delta || 0,
+      }),
+    });
+    entry.synced = true;
+    save(); render();
+  } catch(e) { showToast('Sync hiba — szinkronizálj később'); }
+}
 
 // ── Init ─────────────────────────────────────────────────────
 if (userName){render();fullSync();if(isDesktop())renderDesktopForm();}
