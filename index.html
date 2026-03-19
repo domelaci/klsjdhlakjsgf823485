@@ -216,6 +216,24 @@
   /* Toast */
   .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;}
   .toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* Quick reimburse modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(26,24,20,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .modal-overlay.hidden{display:none!important;}
+  .modal-card{background:var(--card);border-radius:20px;padding:24px;width:100%;max-width:340px;}
+  .modal-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-bottom:4px;}
+  .modal-sub{font-size:13px;color:var(--ink2);margin-bottom:20px;}
+  .modal-amt-row{display:flex;gap:8px;margin-bottom:16px;}
+  .modal-amt-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:12px 14px;font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--ink);outline:none;transition:border-color .2s;}
+  .modal-amt-input:focus{border-color:var(--teal);}
+  .modal-full-btn{flex-shrink:0;background:var(--teal-bg);border:2px solid rgba(15,110,86,.2);border-radius:12px;padding:0 14px;font-size:12px;font-weight:600;color:var(--teal);cursor:pointer;white-space:nowrap;}
+  .modal-actions{display:flex;gap:8px;}
+  .modal-cancel{flex:1;padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);}
+  .modal-confirm{flex:1;padding:13px;background:var(--teal);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
+  .debt-row{cursor:pointer;transition:background .15s;border-radius:10px;padding:10px 8px;margin:0 -8px;}
+  .debt-row:hover{background:var(--bg);}
+  .debt-tap-hint{font-size:11px;color:var(--ink3);margin-top:2px;}
+
 </style>
 </head>
 <body>
@@ -303,6 +321,23 @@
     </div>
   </div>
 
+</div>
+
+
+<!-- Quick reimburse modal -->
+<div class="modal-overlay hidden" id="reimburseModal">
+  <div class="modal-card">
+    <div class="modal-title" id="modalTitle">Visszafizetés</div>
+    <div class="modal-sub" id="modalSub">Mennyit fizetett vissza?</div>
+    <div class="modal-amt-row">
+      <input class="modal-amt-input" id="modalAmt" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
+      <button class="modal-full-btn" onclick="setFullAmount()">Teljes összeg</button>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeReimburseModal()">Mégsem</button>
+      <button class="modal-confirm" onclick="confirmReimburse()">Rögzítés ✓</button>
+    </div>
+  </div>
 </div>
 
 <!-- FAB -->
@@ -812,10 +847,10 @@ function renderReport() {
     debtEl.innerHTML='<div class="debt-empty">Nincs kintlévőség 🎉</div>';
   } else {
     debtEl.innerHTML=debts.map(d=>`
-      <div class="debt-row">
+      <div class="debt-row" onclick="openReimburseModal('${d.name}', ${d.amt})">
         <div>
           <div class="debt-name">${d.name}</div>
-          <div class="debt-detail">Visszavárva</div>
+          <div class="debt-tap-hint">Koppints a rögzítéshez →</div>
         </div>
         <div class="debt-amt">${fmtFt(d.amt)}</div>
       </div>`).join('');
@@ -873,6 +908,62 @@ function fmtFt(n)      { return 'Ft '+Math.round(n||0).toLocaleString('hu-HU'); 
 function fmtAmt(n,c)   { return c==='HUF'?fmtFt(n):n.toLocaleString('hu-HU')+' '+c; }
 function fmtDate(iso)  { const d=new Date(iso); return `${d.getMonth()+1}/${d.getDate()}`; }
 function showToast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500); }
+
+
+// ── Quick reimburse modal ────────────────────────────────────
+let _modalName = '';
+let _modalMax  = 0;
+
+function openReimburseModal(name, amt) {
+  _modalName = name;
+  _modalMax  = amt;
+  document.getElementById('modalTitle').textContent = `Visszafizetés — ${name}`;
+  document.getElementById('modalSub').textContent   = `Kintlévőség: ${fmtFt(amt)}`;
+  document.getElementById('modalAmt').value         = amt;
+  document.getElementById('reimburseModal').classList.remove('hidden');
+}
+function closeReimburseModal() {
+  document.getElementById('reimburseModal').classList.add('hidden');
+  document.getElementById('modalAmt').value = '';
+}
+function setFullAmount() {
+  document.getElementById('modalAmt').value = _modalMax;
+}
+async function confirmReimburse() {
+  const amt = parseFloat(document.getElementById('modalAmt').value);
+  if (!amt || amt <= 0) { showToast('Add meg az összeget!'); return; }
+  if (amt > _modalMax)  { showToast(`Maximum ${fmtFt(_modalMax)} rögzíthető`); return; }
+
+  const now = new Date();
+  const entry = {
+    id:         Date.now(),
+    type:       'reimburse',
+    origAmt:    amt,
+    amtHUF:     amt,
+    currency:   'HUF',
+    note:       `Visszafizetés — ${_modalName}`,
+    cat:        null,
+    icon:       '↩️',
+    personName: _modalName,
+    date:       now.toISOString(),
+    dateStr:    now.toLocaleDateString('hu-HU'),
+    month:      now.getMonth(),
+    year:       now.getFullYear(),
+    synced:     false,
+  };
+
+  st.entries.unshift(entry);
+  st.entries.sort((a,b) => new Date(b.date) - new Date(a.date));
+  save();
+  closeReimburseModal();
+  render();
+  renderReport();
+  showToast(`Visszafizetés rögzítve ↩️`);
+  await pushUnsynced([entry]);
+  render();
+  renderReport();
+  setTimeout(loadSummary, 1500);
+}
 
 // ── Init ─────────────────────────────────────────────────────
 if (userName) { render(); fullSync(); }
