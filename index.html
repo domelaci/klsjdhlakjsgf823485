@@ -1,4 +1,4 @@
-<!-- Kassza v6.7.1 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.7.2 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -369,7 +369,7 @@
   <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
   <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
   <div class="ob-code">kassza.github.io?user=nev</div>
-  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.7.1</div>
+  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.7.2</div>
 </div>
 
 <!-- Main app -->
@@ -377,7 +377,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.7.1</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.7.2</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -558,7 +558,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.7.1'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.7.2'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -697,7 +697,7 @@ async function fullSync() {
     updateSync('ok',`Szinkronizálva ✓ (${st.entries.length} tétel)`);
     checkVersionMatch(data.scriptVersion);
     // If any foreign entries still have unconverted amtHUF, re-sync after delay
-    const needsRefresh = st.entries.some(e => e.currency && e.currency !== 'HUF' && e.amtHUF === e.origAmt);
+    const needsRefresh = st.entries.some(e => e.currency && e.currency !== 'HUF' && (e.amtHUF === e.origAmt || e.amtHUF === 0));
     if (needsRefresh) setTimeout(fullSync, 3000);
   } catch(e) {
     updateSync('err','Sync hiba — ellenőrizd a kapcsolatot');
@@ -1546,7 +1546,7 @@ function render() {
         {save:'Félretett',withdraw:'Megtakarításból',in:'Bevétel',loan:'Kölcsön',reimburse:'Visszafizetés',transfer:'Készpénzfelvét',correction:'Korrekció'}[e.type];
       const nameNote=e.personName?` · ${e.personName}`:'';
       const srcNote=(e.type==='out'||e.type==='in')?` · ${srcIcon[e.source||'bank']}`:'';
-      const needsHUF = e.currency && e.currency !== 'HUF' && e.amtHUF === e.origAmt;
+      const needsHUF = e.currency && e.currency !== 'HUF' && (e.amtHUF === e.origAmt || e.amtHUF === 0);
       const syncMark = needsHUF
         ? '<span class="entry-sync pending-huf">⟳ HUF</span>'
         : e.synced ? '<span class="entry-sync synced">✓</span>' : '<span class="entry-sync">○</span>';
