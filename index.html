@@ -246,6 +246,134 @@
   /* Toast — top of screen, never blocks form */
   .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2);}
   .toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* ── Desktop layout (768px+) ─────────────────────────────── */
+  @media (min-width: 768px) {
+    html,body { background: var(--bg); }
+
+    .app {
+      max-width: 1200px;
+      padding-bottom: 0;
+      flex-direction: column;
+    }
+
+    /* Header spans full width */
+    .header { padding: 28px 32px 0; }
+    .sync-bar { margin: 8px 32px 0; }
+
+    /* Month nav */
+    .month-row { margin: 16px 32px 0; }
+
+    /* Desktop body — two columns */
+    .desktop-body {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      padding: 20px 32px 40px;
+      align-items: start;
+    }
+
+    /* Left column — form always visible, no sheet overlay */
+    .desktop-left {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: sticky;
+      top: 20px;
+    }
+
+    /* Right column — summary + entries/report */
+    .desktop-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    /* Summary card */
+    .summary { margin: 0; }
+
+    /* Debt banner */
+    .debt-banner { margin: 0; }
+
+    /* Entries / report panels — no margin, handled by grid */
+    .main-panel { display: block !important; }
+    .main-panel.hidden-panel { display: none !important; }
+    .entries-wrap { margin: 0; }
+    .report-panel { padding: 0; }
+    .chart-card { margin: 0 0 12px 0; }
+    .chart-card:last-child { margin-bottom: 0; }
+
+    /* Desktop form card */
+    .desktop-form-card {
+      background: var(--card);
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .desktop-form-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .desktop-form-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .desktop-form-body { padding: 16px 20px 20px; }
+
+    /* Desktop tab bar — replaces bottom nav */
+    .desktop-tab-bar {
+      display: flex;
+      gap: 4px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 4px;
+      border: 1px solid var(--border);
+    }
+    .desktop-tab-btn {
+      flex: 1;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 9px;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink2);
+      cursor: pointer;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .desktop-tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Hide mobile-only elements */
+    .fab { display: none !important; }
+    .bottom-nav { display: none !important; }
+    .sheet-overlay { display: none !important; }
+
+    /* Sheet body content rendered inline on desktop */
+    .desktop-inline-form { display: block; }
+  }
+
+  @media (max-width: 767px) {
+    .desktop-body { display: contents; }
+    .desktop-left { display: contents; }
+    .desktop-right { display: contents; }
+    .desktop-form-card { display: none; }
+    .desktop-tab-bar { display: none; }
+    .desktop-inline-form { display: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -289,54 +417,80 @@
     <button class="sync-btn" onclick="fullSync()">↻ Szinkron</button>
   </div>
 
-  <div class="summary">
-    <div class="sum-inner" id="sumContent">
-      <div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Betöltés…</div>
-    </div>
-    <div class="bar-wrap" id="barWrap" style="display:none">
-      <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
-      <div class="bar-labels"><span id="barLeft">0% elköltve</span><span id="barRight">Ft 0 maradt</span></div>
-    </div>
-  </div>
+  <!-- Desktop two-column body -->
+  <div class="desktop-body">
 
-  <div class="debt-banner hidden" id="debtBanner" onclick="switchTab('riport')" style="margin-top:0">
-    <span class="debt-banner-label">💳 Kintlévőségek</span>
-    <span class="debt-banner-amt" id="debtBannerAmt"></span>
-  </div>
-
-  <!-- Main panel -->
-  <div class="main-panel" id="mainPanel">
-    <div class="entries-wrap">
-      <div class="entries-header">
-        <div class="section-label">TÉTELEK</div>
-        <button style="font-size:13px;color:var(--ink3);background:none;border:none;cursor:pointer;" onclick="clearMonth()">Törli mind</button>
-      </div>
-      <div class="entries-list" id="entryList"></div>
-      <div class="empty-state hidden" id="emptyState">
-        <div class="empty-icon">📋</div>
-        <div>Még nincs tétel ebben a hónapban</div>
+    <!-- LEFT: form always visible on desktop -->
+    <div class="desktop-left">
+      <div class="desktop-form-card">
+        <div class="desktop-form-header">
+          <div class="desktop-form-title" id="desktopFormTitle">Új tétel</div>
+        </div>
+        <div class="desktop-form-body desktop-inline-form" id="desktopFormBody">
+          <!-- injected by renderDesktopForm() -->
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Report panel -->
-  <div class="report-panel" id="reportPanel">
-    <div style="height:4px"></div>
-    <div class="chart-card">
-      <div class="chart-title">Kategóriák <span class="chart-sub" id="chartMonthLabel"></span></div>
-      <div class="cat-bars" id="catBars"></div>
-      <div style="text-align:center;padding:24px 0;color:var(--ink3);font-size:14px;display:none" id="catEmpty">Még nincs kiadás ebben a hónapban</div>
-    </div>
-    <div class="chart-card" style="margin-top:12px;">
-      <div class="chart-title">Összefoglaló</div>
-      <div id="reportSummaryRows"></div>
-    </div>
-    <div class="chart-card" style="margin-top:12px;margin-bottom:4px;">
-      <div class="chart-title">💳 Kintlévőségek</div>
-      <div id="debtList"></div>
-    </div>
-  </div>
-</div>
+    <!-- RIGHT: summary + tab bar + panels -->
+    <div class="desktop-right">
+
+      <div class="summary">
+        <div class="sum-inner" id="sumContent">
+          <div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Betöltés…</div>
+        </div>
+        <div class="bar-wrap" id="barWrap" style="display:none">
+          <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+          <div class="bar-labels"><span id="barLeft">0% elköltve</span><span id="barRight">Ft 0 maradt</span></div>
+        </div>
+      </div>
+
+      <div class="debt-banner hidden" id="debtBanner" onclick="switchTab('riport')" style="margin-top:0">
+        <span class="debt-banner-label">💳 Kintlévőségek</span>
+        <span class="debt-banner-amt" id="debtBannerAmt"></span>
+      </div>
+
+      <!-- Desktop tab bar -->
+      <div class="desktop-tab-bar">
+        <button class="desktop-tab-btn active" id="deskNavTetelek" onclick="switchTab('tetelek')">📋 Tételek</button>
+        <button class="desktop-tab-btn" id="deskNavRiport" onclick="switchTab('riport')">📊 Riport</button>
+      </div>
+
+      <!-- Main panel -->
+      <div class="main-panel" id="mainPanel">
+        <div class="entries-wrap">
+          <div class="entries-header">
+            <div class="section-label">TÉTELEK</div>
+            <button style="font-size:13px;color:var(--ink3);background:none;border:none;cursor:pointer;" onclick="clearMonth()">Törli mind</button>
+          </div>
+          <div class="entries-list" id="entryList"></div>
+          <div class="empty-state hidden" id="emptyState">
+            <div class="empty-icon">📋</div>
+            <div>Még nincs tétel ebben a hónapban</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Report panel -->
+      <div class="report-panel" id="reportPanel">
+        <div class="chart-card">
+          <div class="chart-title">Kategóriák <span class="chart-sub" id="chartMonthLabel"></span></div>
+          <div class="cat-bars" id="catBars"></div>
+          <div style="text-align:center;padding:24px 0;color:var(--ink3);font-size:14px;display:none" id="catEmpty">Még nincs kiadás ebben a hónapban</div>
+        </div>
+        <div class="chart-card" style="margin-top:12px;">
+          <div class="chart-title">Összefoglaló</div>
+          <div id="reportSummaryRows"></div>
+        </div>
+        <div class="chart-card" style="margin-top:12px;margin-bottom:4px;">
+          <div class="chart-title">💳 Kintlévőségek</div>
+          <div id="debtList"></div>
+        </div>
+      </div>
+
+    </div><!-- end desktop-right -->
+  </div><!-- end desktop-body -->
+</div><!-- end app -->
 
 <!-- FAB -->
 <button class="fab hidden" id="fab" onclick="openSheet()">
@@ -1077,8 +1231,72 @@ function showToast(msg){
   t._timer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
+
+// ── Desktop detection ────────────────────────────────────────
+const isDesktop = () => window.innerWidth >= 768;
+
+function renderDesktopForm() {
+  if (!isDesktop()) return;
+  const body = document.getElementById('desktopFormBody');
+  const title = document.getElementById('desktopFormTitle');
+  if (!body) return;
+  title.textContent = 'Új tétel';
+  body.innerHTML = modePickHTML().replace('padding-bottom:16px', 'padding-bottom:4px');
+}
+
+// Update switchTab to also update desktop tab bar
+const _origSwitchTab = switchTab;
+function switchTab(tab) {
+  _origSwitchTab(tab);
+  // Sync desktop tab buttons
+  const deskT = document.getElementById('deskNavTetelek');
+  const deskR = document.getElementById('deskNavRiport');
+  if (deskT && deskR) {
+    deskT.className = 'desktop-tab-btn' + (tab==='tetelek' ? ' active' : '');
+    deskR.className = 'desktop-tab-btn' + (tab==='riport'  ? ' active' : '');
+  }
+}
+
+// On desktop, openSheet renders into the left panel instead of the overlay
+const _origOpenSheet = openSheet;
+function openSheet() {
+  if (isDesktop()) {
+    renderDesktopForm();
+  } else {
+    _origOpenSheet();
+  }
+}
+
+// On desktop, closeSheet resets the left panel back to mode pick
+const _origCloseSheet = closeSheet;
+function closeSheet() {
+  _origCloseSheet();
+  if (isDesktop()) renderDesktopForm();
+}
+
+// On desktop, renderSheetBody also renders into desktop form
+const _origRenderSheetBody = renderSheetBody;
+function renderSheetBody() {
+  _origRenderSheetBody();
+  if (isDesktop()) {
+    const desktopBody = document.getElementById('desktopFormBody');
+    const mobileBody  = document.getElementById('sheetBody');
+    const desktopTitle = document.getElementById('desktopFormTitle');
+    const mobileTitle  = document.getElementById('sheetTitle');
+    if (desktopBody && mobileBody) {
+      desktopBody.innerHTML = mobileBody.innerHTML;
+      if (desktopTitle && mobileTitle) desktopTitle.textContent = mobileTitle.textContent;
+    }
+  }
+}
+
+// Re-render desktop form after window resize
+window.addEventListener('resize', () => {
+  if (isDesktop()) renderDesktopForm();
+});
+
 // ── Init ─────────────────────────────────────────────────────
-if (userName){render();fullSync();}
+if (userName){render();fullSync();if(isDesktop())renderDesktopForm();}
 </script>
 </body>
 </html>
