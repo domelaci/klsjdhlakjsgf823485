@@ -1,4 +1,4 @@
-<!-- Kassza v6.4.2 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.4.3 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -367,7 +367,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.2</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.3</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -522,7 +522,7 @@
 <script>
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.4.2'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.4.3'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -597,7 +597,7 @@ function getBalances() {
     } else if (e.type==='transfer') {
       // ATM: bank → cash
       bank-=amt; cash+=amt;
-    } else if (e.type==='loan') {
+    } else if (e.type==='loan'||e.type==='advance') {
       if (src==='bank') bank-=amt; else cash-=amt;
       loans+=amt;
     } else if (e.type==='reimburse') {
@@ -619,7 +619,7 @@ function getOutstandingLoans() {
   const debts={};
   [...st.entries].reverse().forEach(e => {
     if (!e.personName) return;
-    if (e.type==='loan')      debts[e.personName]=(debts[e.personName]||0)+(e.amtHUF||e.origAmt);
+    if (e.type==='loan'||e.type==='advance') debts[e.personName]=(debts[e.personName]||0)+(e.amtHUF||e.origAmt);
     if (e.type==='reimburse') debts[e.personName]=(debts[e.personName]||0)-(e.amtHUF||e.origAmt);
   });
   return Object.entries(debts).filter(([,v])=>v>0).map(([name,amt])=>({name,amt})).sort((a,b)=>b.amt-a.amt);
@@ -1249,7 +1249,7 @@ function checkVersionMatch(scriptVersion) {
 // ── Tile filter ──────────────────────────────────────────────
 const TILE_META = {
   bank:    {label:'Bank',        icon:'💳', types:['out','in','loan','reimburse'], sourceMatch:'bank'},
-  cash:    {label:'Készpénz',    icon:'💵', types:['out','in','transfer','loan','reimburse'], sourceMatch:'cash'},
+  cash:    {label:'Készpénz',    icon:'💵', types:['out','in','loan','reimburse'], sourceMatch:'cash'},
   savings: {label:'Megtakarítás',icon:'🐷', types:['save','withdraw'],             sourceMatch:null},
   loans:   {label:'Kintlévőség', icon:'🤝', types:['loan','reimburse'],            sourceMatch:null},
 };
@@ -1273,6 +1273,8 @@ function clearFilter() {
 function entryMatchesFilter(e, filter) {
   if (!filter) return true;
   const meta = TILE_META[filter];
+  // ATM transfer always shows in cash filter (money moved into cash)
+  if (e.type === 'transfer' && filter === 'cash') return true;
   if (!meta.types.includes(e.type)) return false;
   if (meta.sourceMatch && (e.source||'bank') !== meta.sourceMatch) return false;
   return true;
