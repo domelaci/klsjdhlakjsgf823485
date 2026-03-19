@@ -777,8 +777,9 @@ async function loadSummary() {
 // ── Summary ──────────────────────────────────────────────────
 function renderSummaryFromLocal() {
   const m=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const bejott=m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const kiment=m.filter(e=>e.type==='out').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const bejott=m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+              +m.filter(e=>e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const kiment=m.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   renderSummary({bejott,kiment,maradt:bejott-kiment,pct:bejott>0?Math.round(kiment/bejott*100):0});
 }
 
@@ -1497,8 +1498,9 @@ function renderReport() {
     }).join('');
   }
   const allM=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const totalIn=allM.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const totalOut=allM.filter(e=>e.type==='out').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const totalIn=allM.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+               +allM.filter(e=>e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const totalOut=allM.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const totalSav=allM.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const balance=totalIn-totalOut-totalSav;
   const rows=[
