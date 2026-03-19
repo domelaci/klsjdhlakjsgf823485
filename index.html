@@ -1,4 +1,4 @@
-<!-- Kassza v6.3 — 2026-03-19 — Edit entry (replaces delete), updateEntry in script -->
+<!-- Kassza v6.4.0 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -345,6 +345,10 @@
   .entry-edit span{display:block;width:14px;height:2px;background:currentColor;border-radius:1px;}
   .entry-edit:hover{color:var(--ink2);}
 
+
+  /* Version mismatch warning */
+  .version-warning{margin:8px 20px 0;background:#FDF3DC;border:1px solid rgba(176,122,16,.3);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--amber);display:flex;align-items:center;gap:8px;}
+
 </style>
 </head>
 <body>
@@ -363,7 +367,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;">v6.3</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.0</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -376,6 +380,7 @@
     <span id="syncLabel">Betöltés…</span>
   </div>
 
+  <div id="versionWarning"></div>
   <div class="month-row">
     <div class="month-switch">
       <button class="month-btn" onclick="changeMonth(-1)">‹</button>
@@ -517,6 +522,7 @@
 <script>
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
+const APP_VERSION = '6.4.0'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -649,6 +655,7 @@ async function fullSync() {
     await loadSummary();
     render();
     updateSync('ok',`Szinkronizálva ✓ (${st.entries.length} tétel)`);
+    checkVersionMatch(data.scriptVersion);
   } catch(e) {
     updateSync('err','Sync hiba — ellenőrizd a kapcsolatot');
     render();
@@ -1220,6 +1227,25 @@ async function submitCorrection() {
 }
 
 
+
+// ── Version check ────────────────────────────────────────────
+function checkVersionMatch(scriptVersion) {
+  const warning = document.getElementById('versionWarning');
+  const display = document.getElementById('versionDisplay');
+  if (!scriptVersion) { if(warning) warning.innerHTML=''; return; }
+
+  const appMajorMinor = APP_VERSION.split('.').slice(0,2).join('.');
+  const match = scriptVersion === appMajorMinor;
+
+  if (display) display.textContent = `v${APP_VERSION} · script v${scriptVersion}`;
+
+  if (!match && warning) {
+    warning.innerHTML = `<div class="version-warning">⚠️ Script verzió eltérés — app: v${APP_VERSION}, script: v${scriptVersion}. Frissítsd a scriptet!</div>`;
+  } else if (warning) {
+    warning.innerHTML = '';
+  }
+}
+
 // ── Tile filter ──────────────────────────────────────────────
 const TILE_META = {
   bank:    {label:'Bank',        icon:'💳', types:['out','in'],             sourceMatch:'bank'},
@@ -1493,37 +1519,60 @@ window.addEventListener('resize',()=>{if(isDesktop())renderDesktopForm();});
 function openEditSheet(id) {
   const entry = st.entries.find(e => String(e.id) === String(id));
   if (!entry) return;
-  st.editTarget = entry;
+  st.editTarget = JSON.parse(JSON.stringify(entry)); // work on a copy
+  renderEditSheet();
+  if (!isDesktop()) document.getElementById('sheetOverlay').classList.add('open');
+}
 
-  // Build date string from entry
+function renderEditSheet() {
+  const entry = st.editTarget;
   const d = new Date(entry.date);
   const dateVal = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-
-  const isNormal = entry.type === 'out' || entry.type === 'in';
   const isCash = (entry.source||'bank') === 'cash';
-  const catsHTML = isNormal && entry.type === 'out'
-    ? `<div class="field-label">KATEGÓRIA</div><div class="cat-row" id="editCatRow">${
-        allCats().map(c=>`<div class="cat-chip ${c.id===(entry.cat||'egyeb')?'active':''}" onclick="setEditCat('${c.id}')">${c.icon} ${c.label}</div>`).join('')
-      }</div>` : '';
+  const isNormal = entry.type === 'out' || entry.type === 'in';
+  const isOut = entry.type === 'out';
 
-  const sourceToggle = isNormal ? `
+  // Type toggle — only for normal in/out
+  const typeToggle = isNormal ? `
+    <div class="field-label">TÍPUS</div>
+    <div class="type-row-normal" style="margin-bottom:14px;">
+      <button class="type-btn-normal ${isOut?'active-out':''}" id="editBtnOut" onclick="setEditType('out')">↑ Kiment</button>
+      <button class="type-btn-normal ${!isOut?'active-in':''}" id="editBtnIn"  onclick="setEditType('in')">↓ Bejött</button>
+    </div>` : `
+    <div class="field-label">TÍPUS</div>
+    <div style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:14px;padding:12px 14px;background:var(--bg);border-radius:12px;border:1px solid var(--border);">${
+      {save:'🐷 Félretett',withdraw:'🏧 Elővett',loan:'🤝 Kölcsön',reimburse:'↩️ Visszafizetés',transfer:'💸 Készpénzfelvét',correction:'🔧 Korrekció'}[entry.type]||entry.type
+    }</div>`;
+
+  // Source toggle — for in/out and loan
+  const showSource = entry.type==='out'||entry.type==='in'||entry.type==='loan';
+  const sourceToggle = showSource ? `
     <div class="source-toggle" onclick="toggleEditSource()" id="editSourceToggle">
       <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
       <div class="toggle-track ${isCash?'cash-mode':''}" id="editSourceTrack"><div class="toggle-thumb"></div></div>
       <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
     </div>` : '';
 
-  const typeLabels = {out:'↑ Kiment',in:'↓ Bejött',save:'🐷 Félretett',withdraw:'🏧 Elővett',
-    loan:'🤝 Kölcsön',reimburse:'↩️ Visszafizetés',transfer:'💸 Készpénzfelvét',correction:'🔧 Korrekció'};
-  const typeColours = {out:'var(--accent)',in:'var(--green)',save:'var(--purple)',withdraw:'var(--amber)',
-    loan:'var(--blue)',reimburse:'var(--teal)',transfer:'var(--amber)',correction:'var(--ink2)'};
-  const noteLbl = entry.type === 'in' ? 'HONNAN?' : 'MIRE?';
+  // Category chips — for out type
+  const showCats = entry.type === 'out';
+  const catsHTML = showCats ? `
+    <div class="field-label">KATEGÓRIA</div>
+    <div class="cat-row" id="editCatRow">${
+      allCats().map(c=>`<div class="cat-chip ${c.id===(entry.cat||'egyeb')?'active':''}" onclick="setEditCat('${c.id}')">${c.icon} ${c.label}</div>`).join('')
+    }</div>` : '';
+
+  // Note label
+  const noteLbl = entry.type==='in' ? 'HONNAN?' : 'MIRE?';
+
+  // Person name — for loan/reimburse
+  const showName = entry.type==='loan'||entry.type==='reimburse';
+  const nameHTML = showName ? `
+    <div class="field-label">SZEMÉLY</div>
+    <input class="text-input" id="editName" type="text" value="${entry.personName||''}" maxlength="30" autocomplete="off">` : '';
 
   document.getElementById('sheetTitle').textContent = 'Tétel szerkesztése';
   document.getElementById('sheetBody').innerHTML = `
-    <div style="display:inline-flex;align-items:center;gap:8px;background:var(--bg);border-radius:30px;padding:7px 14px;border:2px solid var(--border);margin-bottom:4px;">
-      <span style="font-size:13px;font-weight:600;color:${typeColours[entry.type]||'var(--ink)'}">${typeLabels[entry.type]||entry.type}</span>
-    </div>
+    ${typeToggle}
     <div class="field-label">ÖSSZEG</div>
     <div class="amount-row">
       <input class="amount-input" id="editAmt" type="number" inputmode="decimal" value="${entry.origAmt}" min="0" step="any">
@@ -1544,27 +1593,35 @@ function openEditSheet(id) {
     <div class="field-label">${noteLbl}</div>
     <input class="text-input" id="editNote" type="text" value="${entry.note}" maxlength="60" autocomplete="off">
     ${catsHTML}
+    ${nameHTML}
     <div style="display:flex;gap:8px;margin-top:18px;padding-bottom:4px;">
       <button style="flex:1;padding:15px;background:var(--bg);border:1px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);" onclick="closeSheet()">Mégsem</button>
       <button style="flex:2;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;" onclick="submitEdit()">Mentés ✓</button>
     </div>`;
-
   syncDesktopFormBody();
-  if (isDesktop()) syncDesktopFormBody();
-  else document.getElementById('sheetOverlay').classList.add('open');
+}
+
+function setEditType(t) {
+  if (!st.editTarget) return;
+  st.editTarget.type = t;
+  st.editTarget.icon = t === 'out' ? (CATS.find(c=>c.id===st.editTarget.cat)?.icon||'🛍️') : '💰';
+  renderEditSheet();
+  if (!isDesktop()) document.getElementById('sheetOverlay').classList.add('open');
 }
 
 function setEditCat(id) {
-  if (st.editTarget) st.editTarget.cat = id;
+  if (!st.editTarget) return;
+  st.editTarget.cat = id;
+  st.editTarget.icon = allCats().find(c=>c.id===id)?.icon || '🛍️';
   document.querySelectorAll('#editCatRow .cat-chip').forEach(el => {
-    const c = allCats().find(c => el.textContent.trim().startsWith(c.label));
+    const c = allCats().find(c => el.textContent.trim().startsWith(c.icon)||el.textContent.trim().startsWith(c.label));
     if (c) el.classList.toggle('active', c.id === id);
   });
 }
 
 function toggleEditSource() {
   if (!st.editTarget) return;
-  st.editTarget.source = st.editTarget.source === 'bank' ? 'cash' : 'bank';
+  st.editTarget.source = (st.editTarget.source||'bank') === 'bank' ? 'cash' : 'bank';
   const isCash = st.editTarget.source === 'cash';
   const track = document.getElementById('editSourceTrack');
   if (track) {
@@ -1577,51 +1634,53 @@ function toggleEditSource() {
 }
 
 async function submitEdit() {
-  const entry = st.editTarget;
-  if (!entry) return;
-  const rawAmt  = parseFloat(document.getElementById('editAmt').value);
-  const currency= document.getElementById('editCurr').value;
-  const note    = document.getElementById('editNote').value.trim();
-  const dateVal = document.getElementById('editDate').value;
+  const draft = st.editTarget;
+  if (!draft) return;
+  const rawAmt   = parseFloat(document.getElementById('editAmt').value);
+  const currency = document.getElementById('editCurr').value;
+  const note     = document.getElementById('editNote').value.trim();
+  const dateVal  = document.getElementById('editDate').value;
+  const nameEl   = document.getElementById('editName');
   if (!rawAmt || rawAmt <= 0) { showToast('Add meg az összeget!'); return; }
 
   const dp = dateVal.split('-');
   const eDate = new Date(parseInt(dp[0]), parseInt(dp[1])-1, parseInt(dp[2]));
 
-  entry.origAmt  = rawAmt;
-  entry.amtHUF   = rawAmt;
-  entry.currency = currency;
-  entry.note     = note || entry.note;
-  entry.date     = eDate.toISOString();
-  entry.dateStr  = eDate.toLocaleDateString('hu-HU');
-  entry.month    = eDate.getMonth();
-  entry.year     = eDate.getFullYear();
-  entry.synced   = false; // mark for re-sync
+  // Apply draft back to real entry
+  const entry = st.entries.find(e => String(e.id) === String(draft.id));
+  if (!entry) return;
+
+  entry.type       = draft.type;
+  entry.origAmt    = rawAmt;
+  entry.amtHUF     = rawAmt;
+  entry.currency   = currency;
+  entry.source     = draft.source || 'bank';
+  entry.note       = note || draft.note;
+  entry.cat        = draft.cat;
+  entry.icon       = draft.icon;
+  entry.personName = nameEl ? nameEl.value.trim() : (entry.personName||'');
+  entry.date       = eDate.toISOString();
+  entry.dateStr    = eDate.toLocaleDateString('hu-HU');
+  entry.month      = eDate.getMonth();
+  entry.year       = eDate.getFullYear();
+  entry.synced     = false;
 
   st.entries.sort((a,b) => new Date(b.date) - new Date(a.date));
   st.curM = entry.month; st.curY = entry.year;
   save(); closeSheet(); render();
   showToast('Tétel frissítve ✓');
 
-  // Push update to sheet
   try {
     await fetch(SCRIPT_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: {'Content-Type':'application/json'},
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        action:     'updateEntry',
-        user:       userName,
-        id:         String(entry.id),
-        date:       entry.dateStr,
-        note:       entry.note,
-        category:   getCatLabel(entry),
-        type:       getTypusLabel(entry.type),
-        amount:     entry.origAmt,
-        currency:   entry.currency,
-        source:     entry.source || 'bank',
-        personName: entry.personName || '',
-        pot:        entry.pot || '',
-        delta:      entry.delta || 0,
+        action:'updateEntry', user:userName, id:String(entry.id),
+        date:entry.dateStr, note:entry.note,
+        category:getCatLabel(entry), type:getTypusLabel(entry.type),
+        amount:entry.origAmt, currency:entry.currency,
+        source:entry.source||'bank', personName:entry.personName||'',
+        pot:entry.pot||'', delta:entry.delta||0,
       }),
     });
     entry.synced = true;
