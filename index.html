@@ -1,4 +1,4 @@
-<!-- Kassza v6.8.4 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.8.5 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -364,7 +364,7 @@
   <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
   <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
   <div class="ob-code">kassza.github.io?user=nev</div>
-  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.8.4</div>
+  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.8.5</div>
 </div>
 
 <!-- Main app -->
@@ -372,7 +372,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.8.4</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.8.5</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -553,7 +553,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.8.4'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.8.5'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -943,8 +943,10 @@ function setNormalType(t) {
 function selCat(id) {
   st.selCat=id;
   document.querySelectorAll('.cat-chip').forEach(el=>{
-    const catLabel=allCats().find(c=>c.id===id)?.label||'';
-    el.className='cat-chip'+(el.textContent.trim().startsWith(catLabel)?' active':'');
+    // Match by onclick attribute containing the cat id
+    const onclick = el.getAttribute('onclick')||'';
+    const isActive = onclick.includes("'"+id+"'") || onclick.includes('"'+id+'"');
+    el.className='cat-chip'+(isActive?' active':'');
   });
 }
 
