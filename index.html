@@ -1,4 +1,4 @@
-<!-- Kassza v6.4.3 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.4.4 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -349,6 +349,12 @@
   /* Version mismatch warning */
   .version-warning{margin:8px 20px 0;background:#FDF3DC;border:1px solid rgba(176,122,16,.3);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--amber);display:flex;align-items:center;gap:8px;}
 
+
+  /* Loan status badge */
+  .loan-status{font-size:10px;font-weight:700;letter-spacing:.08em;padding:2px 7px;border-radius:20px;white-space:nowrap;}
+  .loan-status.paid{background:var(--green-bg);color:var(--green);}
+  .loan-status.partial{background:var(--amber-bg);color:var(--amber);}
+
 </style>
 </head>
 <body>
@@ -367,7 +373,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.3</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.4</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -522,7 +528,7 @@
 <script>
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.4.3'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.4.4'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -1470,6 +1476,14 @@ function render() {
   const allEntries=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
   const entries=allEntries.filter(e=>entryMatchesFilter(e,st.activeFilter));
   updateTileHighlights();
+
+  // Compute outstanding balance per person (all-time) for badge display
+  const loanBalances={};
+  st.entries.forEach(e=>{
+    if (!e.personName) return;
+    if (e.type==='loan'||e.type==='advance') loanBalances[e.personName]=(loanBalances[e.personName]||0)+(e.amtHUF||e.origAmt);
+    if (e.type==='reimburse') loanBalances[e.personName]=(loanBalances[e.personName]||0)-(e.amtHUF||e.origAmt);
+  });
   const list=document.getElementById('entryList');
   const empty=document.getElementById('emptyState');
   if (entries.length===0){list.innerHTML='';empty.classList.remove('hidden');}
@@ -1485,6 +1499,12 @@ function render() {
       const srcNote=(e.type==='out'||e.type==='in')?` · ${srcIcon[e.source||'bank']}`:'';
       const syncMark=e.synced?'<span class="entry-sync synced">✓</span>':'<span class="entry-sync">○</span>';
       const amtStr=fmtFt(e.origAmt);
+      let loanBadge='';
+      if ((e.type==='loan'||e.type==='advance') && e.personName) {
+        const remaining = loanBalances[e.personName]||0;
+        if (remaining<=0) loanBadge='<span class="loan-status paid">VISSZAFIZETVE</span>';
+        else if (remaining < (e.amtHUF||e.origAmt)) loanBadge=`<span class="loan-status partial">RÉSZBEN · ${fmtFt(remaining)}</span>`;
+      }
       return `<div class="entry-card">
         <div class="entry-icon ${e.type}">${e.icon}</div>
         <div class="entry-body">
@@ -1493,6 +1513,7 @@ function render() {
         </div>
         <div class="entry-right">
           <div class="entry-amount ${e.type}">${typeSign[e.type]} ${amtStr}</div>
+          ${loanBadge}
           ${syncMark}
         </div>
         <button class="entry-edit" onclick="openEditSheet(${e.id})" title="Szerkesztés">
