@@ -17,7 +17,6 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);}
-  .app{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:80px;}
   .hidden{display:none!important;}
 
   /* Unknown user */
@@ -29,13 +28,13 @@
   .ob-hint{font-size:13px;color:var(--ink3);line-height:1.6;max-width:280px;}
   .ob-code{font-family:monospace;font-size:12px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-top:16px;color:var(--ink2);word-break:break-all;}
 
+  /* ── Mobile layout ─────────────────────────────────────── */
+  .app{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:80px;}
+
   /* Header */
   .header{padding:48px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;}
   .app-name{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;flex-shrink:0;}
   .app-name span{color:var(--accent);}
-  .header-right{display:flex;gap:8px;align-items:center;}
-  .savings-pill{display:flex;align-items:center;gap:5px;background:var(--purple-bg);border-radius:30px;padding:7px 13px;border:1px solid rgba(107,78,170,.2);}
-  .savings-pill-amt{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--purple);}
   .user-pill{display:flex;align-items:center;gap:7px;background:var(--card);border-radius:30px;padding:7px 13px;border:1px solid var(--border);}
   .user-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;font-family:'Syne',sans-serif;flex-shrink:0;}
   .user-name-pill{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
@@ -55,7 +54,7 @@
   .month-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;min-width:84px;text-align:center;}
   .sync-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 16px;font-size:14px;color:var(--ink2);cursor:pointer;}
 
-  /* Summary card — improved contrast */
+  /* Summary card */
   .summary{margin:12px 20px 0;background:var(--ink);border-radius:var(--r);padding:22px;color:#fff;position:relative;overflow:hidden;}
   .summary::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:rgba(200,85,61,.15);}
   .sum-inner{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;}
@@ -70,10 +69,21 @@
   .bar-fill{height:100%;background:var(--accent2);border-radius:2px;transition:width .5s ease;}
   .bar-labels{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:rgba(255,255,255,.45);}
 
-  /* Debt banner */
-  .debt-banner{margin:10px 20px 0;background:var(--blue-bg);border-radius:14px;padding:12px 16px;border:1px solid rgba(24,95,165,.2);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
-  .debt-banner-label{font-size:14px;color:var(--blue);font-weight:500;}
-  .debt-banner-amt{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--blue);}
+  /* 4 balance tiles */
+  .balance-tiles{margin:12px 20px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .bal-tile{background:var(--card);border-radius:14px;padding:14px 16px;border:1px solid var(--border);cursor:pointer;transition:all .15s;}
+  .bal-tile:hover{border-color:var(--ink2);}
+  .bal-tile-icon{font-size:18px;margin-bottom:6px;}
+  .bal-tile-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin-bottom:4px;}
+  .bal-tile-amt{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.5px;}
+  .bal-tile.bank    .bal-tile-amt{color:var(--blue);}
+  .bal-tile.cash    .bal-tile-amt{color:var(--amber);}
+  .bal-tile.savings .bal-tile-amt{color:var(--purple);}
+  .bal-tile.loans   .bal-tile-amt{color:var(--teal);}
+  .bal-tile.bank    {border-left:3px solid var(--blue);}
+  .bal-tile.cash    {border-left:3px solid var(--amber);}
+  .bal-tile.savings {border-left:3px solid var(--purple);}
+  .bal-tile.loans   {border-left:3px solid var(--teal);}
 
   /* Entries */
   .entries-wrap{margin:16px 20px 0;}
@@ -83,23 +93,27 @@
   .entry-card{background:var(--card);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:11px;border:1px solid var(--border);animation:slideIn .2s ease;}
   @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
   .entry-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-  .entry-icon.out     {background:var(--red-bg);}
-  .entry-icon.in      {background:var(--green-bg);}
-  .entry-icon.save    {background:var(--purple-bg);}
-  .entry-icon.withdraw{background:var(--amber-bg);}
-  .entry-icon.advance {background:var(--blue-bg);}
+  .entry-icon.out      {background:var(--red-bg);}
+  .entry-icon.in       {background:var(--green-bg);}
+  .entry-icon.save     {background:var(--purple-bg);}
+  .entry-icon.withdraw {background:var(--amber-bg);}
+  .entry-icon.loan     {background:var(--blue-bg);}
   .entry-icon.reimburse{background:var(--teal-bg);}
+  .entry-icon.transfer {background:#F5F2EC;}
+  .entry-icon.correction{background:#F5F2EC;}
   .entry-body{flex:1;min-width:0;}
   .entry-name{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .entry-meta{font-size:12px;color:var(--ink2);margin-top:2px;}
   .entry-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
   .entry-amount{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;white-space:nowrap;}
-  .entry-amount.out     {color:var(--accent);}
-  .entry-amount.in      {color:var(--green);}
-  .entry-amount.save    {color:var(--purple);}
-  .entry-amount.withdraw{color:var(--amber);}
-  .entry-amount.advance {color:var(--blue);}
+  .entry-amount.out      {color:var(--accent);}
+  .entry-amount.in       {color:var(--green);}
+  .entry-amount.save     {color:var(--purple);}
+  .entry-amount.withdraw {color:var(--amber);}
+  .entry-amount.loan     {color:var(--blue);}
   .entry-amount.reimburse{color:var(--teal);}
+  .entry-amount.transfer {color:var(--ink2);}
+  .entry-amount.correction{color:var(--ink2);}
   .entry-sync{font-size:10px;color:var(--ink3);}
   .entry-sync.synced{color:var(--green);}
   .entry-del{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:19px;padding:3px;flex-shrink:0;line-height:1;}
@@ -107,8 +121,7 @@
   .empty-icon{font-size:40px;margin-bottom:10px;}
 
   /* FAB */
-  .fab{position:fixed;bottom:90px;right:50%;transform:translateX(195px);width:58px;height:58px;border-radius:29px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(200,85,61,.45);z-index:70;transition:transform .15s,box-shadow .15s;}
-  .fab:active{transform:translateX(195px) scale(.92);}
+  .fab{position:fixed;bottom:90px;right:50%;transform:translateX(195px);width:58px;height:58px;border-radius:29px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(200,85,61,.45);z-index:70;}
   .fab svg{width:26px;height:26px;stroke:#fff;stroke-width:2.5;stroke-linecap:round;}
 
   /* Bottom nav */
@@ -123,6 +136,8 @@
   .main-panel.hidden-panel{display:none;}
   .report-panel{display:none;padding:0 0 20px;}
   .report-panel.active{display:block;}
+  .loans-panel{display:none;padding:0 0 20px;}
+  .loans-panel.active{display:block;}
 
   /* Report */
   .chart-card{margin:14px 20px 0;background:var(--card);border-radius:var(--r);padding:20px;border:1px solid var(--border);}
@@ -145,7 +160,7 @@
   .debt-row:last-child{border-bottom:none;}
   .debt-name{font-size:14px;font-weight:500;color:var(--ink);}
   .debt-hint{font-size:12px;color:var(--ink3);margin-top:2px;}
-  .debt-amt{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--blue);}
+  .debt-amt{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--teal);}
   .debt-empty{text-align:center;padding:20px 0;color:var(--ink3);font-size:14px;}
 
   /* Sheet overlay */
@@ -159,38 +174,48 @@
   .sheet-close{background:none;border:none;font-size:24px;color:var(--ink3);cursor:pointer;line-height:1;padding:0 4px;}
   .sheet-body{padding:18px 20px 0;}
 
-  /* Mode picker — first step */
+  /* Mode picker */
   .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
   .mode-btn{padding:20px 12px;border-radius:16px;border:2px solid var(--border);background:var(--bg);cursor:pointer;text-align:center;transition:all .15s;}
-  .mode-btn:active{transform:scale(.97);}
   .mode-btn .m-icon{font-size:28px;margin-bottom:8px;display:block;}
   .mode-btn .m-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);display:block;}
   .mode-btn .m-hint{font-size:12px;color:var(--ink3);display:block;margin-top:3px;line-height:1.4;}
-  .mode-btn.normal:hover,.mode-btn.normal:active{border-color:var(--accent);background:var(--red-bg);}
-  .mode-btn.admin:hover,.mode-btn.admin:active{border-color:var(--blue);background:var(--blue-bg);}
+  .mode-btn.normal:hover{border-color:var(--accent);background:var(--red-bg);}
+  .mode-btn.admin:hover{border-color:var(--blue);background:var(--blue-bg);}
 
-  /* Normal form — type row */
+  /* Normal form */
   .type-row-normal{display:flex;gap:8px;margin-bottom:14px;}
   .type-btn-normal{flex:1;padding:13px 8px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;}
   .type-btn-normal.active-out{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
-  .type-btn-normal.active-in {border-color:var(--green);background:var(--green-bg);color:var(--green);}
+  .type-btn-normal.active-in{border-color:var(--green);background:var(--green-bg);color:var(--green);}
 
-  /* Admin options list */
+  /* Cash/Bank toggle */
+  .source-toggle{display:flex;align-items:center;gap:12px;margin-top:14px;background:var(--bg);border-radius:14px;padding:13px 16px;border:2px solid var(--border);}
+  .source-label{font-size:14px;font-weight:500;flex:1;transition:color .2s;}
+  .source-label.active{font-weight:700;}
+  .source-label.bank.active{color:var(--blue);}
+  .source-label.cash.active{color:var(--amber);}
+  .toggle-track{position:relative;width:44px;height:24px;border-radius:12px;background:var(--blue);cursor:pointer;transition:background .25s;flex-shrink:0;}
+  .toggle-track.cash-mode{background:var(--amber);}
+  .toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+  .toggle-track.cash-mode .toggle-thumb{transform:translateX(20px);}
+
+  /* Admin list */
   .admin-list{display:flex;flex-direction:column;gap:8px;}
   .admin-item{display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:14px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
-  .admin-item:active{transform:scale(.98);}
-  .admin-item.purple:hover,.admin-item.purple:active{border-color:var(--purple);background:var(--purple-bg);}
-  .admin-item.amber:hover,.admin-item.amber:active{border-color:var(--amber);background:var(--amber-bg);}
-  .admin-item.blue:hover,.admin-item.blue:active{border-color:var(--blue);background:var(--blue-bg);}
-  .admin-item.teal:hover,.admin-item.teal:active{border-color:var(--teal);background:var(--teal-bg);}
   .admin-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+  .admin-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .admin-hint{font-size:12px;color:var(--ink2);margin-top:2px;}
+  .admin-item.purple:hover{border-color:var(--purple);background:var(--purple-bg);}
+  .admin-item.amber:hover{border-color:var(--amber);background:var(--amber-bg);}
+  .admin-item.blue:hover{border-color:var(--blue);background:var(--blue-bg);}
+  .admin-item.teal:hover{border-color:var(--teal);background:var(--teal-bg);}
+  .admin-item.gray:hover{border-color:var(--ink2);background:var(--bg);}
   .admin-icon.purple{background:var(--purple-bg);}
   .admin-icon.amber{background:var(--amber-bg);}
   .admin-icon.blue{background:var(--blue-bg);}
   .admin-icon.teal{background:var(--teal-bg);}
-  .admin-body{}
-  .admin-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
-  .admin-hint{font-size:12px;color:var(--ink2);margin-top:2px;}
+  .admin-icon.gray{background:#E8E4DC;}
 
   /* Form fields */
   .field-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink2);margin-bottom:7px;margin-top:14px;}
@@ -206,7 +231,6 @@
   .text-input:focus{border-color:var(--accent);}
   .text-input::placeholder{color:var(--ink3);}
   .date-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
-  .date-input:focus{border-color:var(--accent);}
   .cat-row{display:flex;gap:7px;flex-wrap:wrap;}
   .cat-chip{background:var(--card);border:2px solid var(--border);border-radius:30px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
   .cat-chip.active{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
@@ -214,166 +238,82 @@
   .savings-info-amt{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--purple);}
   .add-btn{width:100%;padding:17px;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .1s;letter-spacing:.02em;margin-top:18px;color:#fff;}
   .add-btn:active{transform:scale(.98);opacity:.9;}
-  .add-btn.out     {background:var(--accent);}
-  .add-btn.in      {background:var(--green);}
-  .add-btn.save    {background:var(--purple);}
+  .add-btn.out{background:var(--accent);}
+  .add-btn.in{background:var(--green);}
+  .add-btn.save{background:var(--purple);}
   .add-btn.withdraw{background:var(--amber);}
-  .add-btn.advance {background:var(--blue);}
+  .add-btn.loan{background:var(--blue);}
+  .add-btn.transfer{background:var(--ink2);}
+  .add-btn.correction{background:var(--ink2);}
+  .back-btn{background:none;border:none;font-size:14px;color:var(--ink2);cursor:pointer;padding:0 0 14px;display:flex;align-items:center;gap:6px;}
 
-  /* Outstanding advances in admin */
+  /* Outstanding loans */
   .advance-list{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
   .advance-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:13px;padding:13px 16px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
   .advance-item:hover{border-color:var(--teal);background:var(--teal-bg);}
-  .advance-item-left{}
   .advance-item-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
   .advance-item-note{font-size:12px;color:var(--ink2);margin-top:2px;}
   .advance-item-amt{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--blue);}
   .advance-empty{text-align:center;padding:20px 0;color:var(--ink3);font-size:14px;}
 
-  /* Reimburse confirm sub-sheet */
-  .sub-sheet{background:var(--card);border-radius:20px;padding:20px;margin:0 8px;}
-  .sub-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px;}
-  .sub-sub{font-size:13px;color:var(--ink2);margin-bottom:16px;}
+  /* Correction form */
+  .correction-pots{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;}
+  .pot-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bg);border-radius:13px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
+  .pot-btn.active-blue  {border-color:var(--blue);  background:var(--blue-bg);}
+  .pot-btn.active-amber {border-color:var(--amber); background:var(--amber-bg);}
+  .pot-btn.active-purple{border-color:var(--purple);background:var(--purple-bg);}
+  .pot-icon{font-size:20px;width:32px;text-align:center;}
+  .pot-label{font-size:14px;font-weight:500;color:var(--ink);}
+  .pot-bal{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-left:auto;}
+
+  /* Sub-sheet (reimburse confirm) */
   .sub-amt-row{display:flex;gap:8px;margin-bottom:14px;}
   .sub-amt-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:13px 14px;font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--ink);outline:none;transition:border-color .2s;}
-  .sub-amt-input:focus{border-color:var(--teal);}
-  .sub-full-btn{flex-shrink:0;background:var(--teal-bg);border:2px solid rgba(15,110,86,.2);border-radius:12px;padding:0 14px;font-size:13px;font-weight:600;color:var(--teal);cursor:pointer;white-space:nowrap;}
+  .sub-full-btn{flex-shrink:0;background:var(--teal-bg);border:2px solid rgba(15,110,86,.2);border-radius:12px;padding:0 14px;font-size:13px;font-weight:600;color:var(--teal);cursor:pointer;}
   .sub-actions{display:flex;gap:8px;}
   .sub-cancel{flex:1;padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);}
   .sub-confirm{flex:1;padding:13px;background:var(--teal);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
-  .back-btn{background:none;border:none;font-size:14px;color:var(--ink2);cursor:pointer;padding:0 0 14px;display:flex;align-items:center;gap:6px;}
 
-  /* Toast — top of screen, never blocks form */
+  /* Toast */
   .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2);}
   .toast.show{transform:translateX(-50%) translateY(0);}
 
-  /* ── Desktop layout (768px+) ─────────────────────────────── */
-  @media (min-width: 768px) {
-    html,body { background: var(--bg); }
-
-    .app {
-      max-width: 1200px;
-      padding-bottom: 0;
-      flex-direction: column;
-    }
-
-    /* Header spans full width */
-    .header { padding: 28px 32px 0; }
-    .sync-bar { margin: 8px 32px 0; }
-
-    /* Month nav */
-    .month-row { margin: 16px 32px 0; }
-
-    /* Desktop body — two columns */
-    .desktop-body {
-      display: grid;
-      grid-template-columns: 380px 1fr;
-      gap: 24px;
-      padding: 20px 32px 40px;
-      align-items: start;
-    }
-
-    /* Left column — form always visible, no sheet overlay */
-    .desktop-left {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: sticky;
-      top: 20px;
-    }
-
-    /* Right column — summary + entries/report */
-    .desktop-right {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      min-width: 0;
-    }
-
-    /* Summary card */
-    .summary { margin: 0; }
-
-    /* Debt banner */
-    .debt-banner { margin: 0; }
-
-    /* Entries / report panels — no margin, handled by grid */
-    .main-panel { display: block !important; }
-    .main-panel.hidden-panel { display: none !important; }
-    .entries-wrap { margin: 0; }
-    .report-panel { padding: 0; }
-    .chart-card { margin: 0 0 12px 0; }
-    .chart-card:last-child { margin-bottom: 0; }
-
-    /* Desktop form card */
-    .desktop-form-card {
-      background: var(--card);
-      border-radius: var(--r);
-      border: 1px solid var(--border);
-      overflow: hidden;
-    }
-    .desktop-form-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .desktop-form-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 800;
-    }
-    .desktop-form-body { padding: 16px 20px 20px; }
-
-    /* Desktop tab bar — replaces bottom nav */
-    .desktop-tab-bar {
-      display: flex;
-      gap: 4px;
-      background: var(--card);
-      border-radius: 12px;
-      padding: 4px;
-      border: 1px solid var(--border);
-    }
-    .desktop-tab-btn {
-      flex: 1;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 9px;
-      background: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--ink2);
-      cursor: pointer;
-      transition: all .15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .desktop-tab-btn.active {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    /* Hide mobile-only elements */
-    .fab { display: none !important; }
-    .bottom-nav { display: none !important; }
-    .sheet-overlay { display: none !important; }
-
-    /* Sheet body content rendered inline on desktop */
-    .desktop-inline-form { display: block; }
+  /* ── Desktop (768px+) ───────────────────────────────────── */
+  @media (min-width:768px) {
+    .app{max-width:1200px;padding-bottom:0;}
+    .header{padding:28px 32px 0;}
+    .sync-bar{margin:8px 32px 0;}
+    .month-row{margin:16px 32px 0;}
+    .desktop-body{display:grid;grid-template-columns:380px 1fr;gap:24px;padding:20px 32px 40px;align-items:start;}
+    .desktop-left{display:flex;flex-direction:column;gap:16px;position:sticky;top:20px;}
+    .desktop-right{display:flex;flex-direction:column;gap:16px;min-width:0;}
+    .summary{margin:0;}
+    .balance-tiles{margin:0;}
+    .entries-wrap{margin:0;}
+    .report-panel{padding:0;}
+    .loans-panel{padding:0;}
+    .chart-card{margin:0 0 12px 0;}
+    .chart-card:last-child{margin-bottom:0;}
+    .desktop-form-card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;}
+    .desktop-form-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+    .desktop-form-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;}
+    .desktop-form-body{padding:16px 20px 20px;}
+    .desktop-tab-bar{display:flex;gap:4px;background:var(--card);border-radius:12px;padding:4px;border:1px solid var(--border);}
+    .desktop-tab-btn{flex:1;padding:8px 16px;border:none;border-radius:9px;background:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+    .desktop-tab-btn.active{background:var(--accent);color:#fff;}
+    .fab{display:none!important;}
+    .bottom-nav{display:none!important;}
+    .sheet-overlay{display:none!important;}
+    .desktop-inline-form{display:block;}
   }
-
-  @media (max-width: 767px) {
-    .desktop-body { display: contents; }
-    .desktop-left { display: contents; }
-    .desktop-right { display: contents; }
-    .desktop-form-card { display: none; }
-    .desktop-tab-bar { display: none; }
-    .desktop-inline-form { display: none; }
+  @media (max-width:767px) {
+    .desktop-body{display:contents;}
+    .desktop-left{display:contents;}
+    .desktop-right{display:contents;}
+    .desktop-form-card{display:none;}
+    .desktop-tab-bar{display:none;}
+    .desktop-inline-form{display:none;}
   }
-
 </style>
 </head>
 <body>
@@ -391,15 +331,9 @@
 <div class="app hidden" id="mainApp">
   <div class="header">
     <div class="app-name">kass<span>za</span> 💸</div>
-    <div class="header-right">
-      <div class="savings-pill">
-        <span style="font-size:14px">🐷</span>
-        <span class="savings-pill-amt" id="savingsPillAmt">Ft 0</span>
-      </div>
-      <div class="user-pill">
-        <div class="user-avatar" id="uAvatar">?</div>
-        <div class="user-name-pill" id="uName">—</div>
-      </div>
+    <div class="user-pill">
+      <div class="user-avatar" id="uAvatar">?</div>
+      <div class="user-name-pill" id="uName">—</div>
     </div>
   </div>
 
@@ -417,24 +351,19 @@
     <button class="sync-btn" onclick="fullSync()">↻ Szinkron</button>
   </div>
 
-  <!-- Desktop two-column body -->
   <div class="desktop-body">
-
-    <!-- LEFT: form always visible on desktop -->
     <div class="desktop-left">
       <div class="desktop-form-card">
         <div class="desktop-form-header">
           <div class="desktop-form-title" id="desktopFormTitle">Új tétel</div>
         </div>
-        <div class="desktop-form-body desktop-inline-form" id="desktopFormBody">
-          <!-- injected by renderDesktopForm() -->
-        </div>
+        <div class="desktop-form-body desktop-inline-form" id="desktopFormBody"></div>
       </div>
     </div>
 
-    <!-- RIGHT: summary + tab bar + panels -->
     <div class="desktop-right">
 
+      <!-- Summary card -->
       <div class="summary">
         <div class="sum-inner" id="sumContent">
           <div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Betöltés…</div>
@@ -445,15 +374,35 @@
         </div>
       </div>
 
-      <div class="debt-banner hidden" id="debtBanner" onclick="switchTab('riport')" style="margin-top:0">
-        <span class="debt-banner-label">💳 Kintlévőségek</span>
-        <span class="debt-banner-amt" id="debtBannerAmt"></span>
+      <!-- 4 balance tiles -->
+      <div class="balance-tiles">
+        <div class="bal-tile bank" onclick="switchTab('tetelek')">
+          <div class="bal-tile-icon">💳</div>
+          <div class="bal-tile-label">Bank</div>
+          <div class="bal-tile-amt" id="tileBankAmt">Ft 0</div>
+        </div>
+        <div class="bal-tile cash" onclick="switchTab('tetelek')">
+          <div class="bal-tile-icon">💵</div>
+          <div class="bal-tile-label">Készpénz</div>
+          <div class="bal-tile-amt" id="tileCashAmt">Ft 0</div>
+        </div>
+        <div class="bal-tile savings" onclick="switchTab('tetelek')">
+          <div class="bal-tile-icon">🐷</div>
+          <div class="bal-tile-label">Megtakarítás</div>
+          <div class="bal-tile-amt" id="tileSavingsAmt">Ft 0</div>
+        </div>
+        <div class="bal-tile loans" onclick="switchTab('loans')">
+          <div class="bal-tile-icon">🤝</div>
+          <div class="bal-tile-label">Kintlévőség</div>
+          <div class="bal-tile-amt" id="tileLoansAmt">Ft 0</div>
+        </div>
       </div>
 
       <!-- Desktop tab bar -->
       <div class="desktop-tab-bar">
         <button class="desktop-tab-btn active" id="deskNavTetelek" onclick="switchTab('tetelek')">📋 Tételek</button>
-        <button class="desktop-tab-btn" id="deskNavRiport" onclick="switchTab('riport')">📊 Riport</button>
+        <button class="desktop-tab-btn" id="deskNavRiport"  onclick="switchTab('riport')">📊 Riport</button>
+        <button class="desktop-tab-btn" id="deskNavLoans"   onclick="switchTab('loans')">🤝 Kintlévőségek</button>
       </div>
 
       <!-- Main panel -->
@@ -482,9 +431,13 @@
           <div class="chart-title">Összefoglaló</div>
           <div id="reportSummaryRows"></div>
         </div>
-        <div class="chart-card" style="margin-top:12px;margin-bottom:4px;">
-          <div class="chart-title">💳 Kintlévőségek</div>
-          <div id="debtList"></div>
+      </div>
+
+      <!-- Loans panel -->
+      <div class="loans-panel" id="loansPanel">
+        <div class="chart-card">
+          <div class="chart-title">🤝 Kintlévőségek</div>
+          <div id="loansList"></div>
         </div>
       </div>
 
@@ -507,9 +460,13 @@
     <span style="font-size:20px">📊</span><span>Riport</span>
     <div class="nav-indicator"></div>
   </button>
+  <button class="nav-btn" id="navLoans" onclick="switchTab('loans')">
+    <span style="font-size:20px">🤝</span><span>Kölcsön</span>
+    <div class="nav-indicator"></div>
+  </button>
 </div>
 
-<!-- Bottom sheet -->
+<!-- Sheet overlay -->
 <div class="sheet-overlay" id="sheetOverlay" onclick="maybeCloseSheet(event)">
   <div class="bottom-sheet" id="bottomSheet">
     <div class="sheet-handle"></div>
@@ -517,9 +474,7 @@
       <div class="sheet-title" id="sheetTitle">Új tétel</div>
       <button class="sheet-close" onclick="closeSheet()">×</button>
     </div>
-    <div class="sheet-body" id="sheetBody">
-      <!-- content injected by JS -->
-    </div>
+    <div class="sheet-body" id="sheetBody"></div>
   </div>
 </div>
 
@@ -531,9 +486,8 @@ const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQR
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
-const urlUser  = (new URLSearchParams(window.location.search).get('user') || '').toLowerCase().trim();
-const userName = KNOWN_USERS[urlUser] || '';
-
+const urlUser  = (new URLSearchParams(window.location.search).get('user')||'').toLowerCase().trim();
+const userName = KNOWN_USERS[urlUser]||'';
 if (!userName) {
   document.getElementById('unknownScreen').classList.remove('hidden');
 } else {
@@ -555,18 +509,19 @@ const CATS = [
 const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
 
 // ── State ────────────────────────────────────────────────────
-const STORE = 'kz_' + (urlUser || 'x');
+const STORE = 'kz_'+(urlUser||'x');
 const st = {
-  entries:   JSON.parse(localStorage.getItem(STORE+'_entries') || '[]'),
-  names:     JSON.parse(localStorage.getItem(STORE+'_names')   || '[]'),
-  curY:      new Date().getFullYear(),
-  curM:      new Date().getMonth(),
-  selCat:    'egyeb',
-  selType:   'out',
-  summary:   null,
-  activeTab: 'tetelek',
-  sheetMode: null, // 'mode-pick' | 'normal' | 'admin' | 'save' | 'withdraw' | 'advance-new' | 'advance-pay'
-  payTarget: null, // {name, amt} when paying back
+  entries:    JSON.parse(localStorage.getItem(STORE+'_entries')||'[]'),
+  names:      JSON.parse(localStorage.getItem(STORE+'_names')  ||'[]'),
+  curY:       new Date().getFullYear(),
+  curM:       new Date().getMonth(),
+  selCat:     'egyeb',
+  selType:    'out',
+  selSource:  'bank', // 'bank' | 'cash'
+  sheetMode:  null,
+  payTarget:  null,
+  activeTab:  'tetelek',
+  summary:    null,
 };
 function save() {
   localStorage.setItem(STORE+'_entries', JSON.stringify(st.entries));
@@ -574,49 +529,79 @@ function save() {
 }
 
 // ── Helpers ──────────────────────────────────────────────────
+const isDesktop = () => window.innerWidth >= 768;
 function todayStr() {
-  const d = new Date();
+  const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function getSavingsBalance() {
-  return st.entries.reduce((b,e) => {
-    if (e.type==='save')     return b + (e.amtHUF||e.origAmt);
-    if (e.type==='withdraw') return b - (e.amtHUF||e.origAmt);
-    return b;
-  }, 0);
+
+// Running balances (all-time)
+function getBalances() {
+  let bank=0, cash=0, savings=0, loans=0;
+  st.entries.forEach(e => {
+    const amt = e.amtHUF||e.origAmt||0;
+    const src = e.source||'bank';
+    if (e.type==='in') {
+      if (src==='bank') bank+=amt; else cash+=amt;
+    } else if (e.type==='out') {
+      if (src==='bank') bank-=amt; else cash-=amt;
+    } else if (e.type==='save') {
+      bank-=amt; savings+=amt;
+    } else if (e.type==='withdraw') {
+      savings-=amt; bank+=amt;
+    } else if (e.type==='transfer') {
+      // ATM: bank → cash
+      bank-=amt; cash+=amt;
+    } else if (e.type==='loan') {
+      if (src==='bank') bank-=amt; else cash-=amt;
+      loans+=amt;
+    } else if (e.type==='reimburse') {
+      if (src==='bank') bank+=amt; else cash+=amt;
+      loans-=amt;
+    } else if (e.type==='correction') {
+      // correction: set pot to specific value — store delta
+      const pot=e.pot||'bank';
+      const delta=e.delta||0;
+      if (pot==='bank') bank+=delta;
+      else if (pot==='cash') cash+=delta;
+      else if (pot==='savings') savings+=delta;
+    }
+  });
+  return {bank, cash, savings, loans:Math.max(0,loans)};
 }
-function getOutstandingDebts() {
-  const debts = {};
+
+function getOutstandingLoans() {
+  const debts={};
   [...st.entries].reverse().forEach(e => {
     if (!e.personName) return;
-    if (e.type==='advance')   debts[e.personName] = (debts[e.personName]||0) + (e.amtHUF||e.origAmt);
-    if (e.type==='reimburse') debts[e.personName] = (debts[e.personName]||0) - (e.amtHUF||e.origAmt);
+    if (e.type==='loan')      debts[e.personName]=(debts[e.personName]||0)+(e.amtHUF||e.origAmt);
+    if (e.type==='reimburse') debts[e.personName]=(debts[e.personName]||0)-(e.amtHUF||e.origAmt);
   });
   return Object.entries(debts).filter(([,v])=>v>0).map(([name,amt])=>({name,amt})).sort((a,b)=>b.amt-a.amt);
 }
 
 // ── Sync ─────────────────────────────────────────────────────
-function updateSync(s, msg) {
-  const dot = document.getElementById('syncDot');
-  const lbl = document.getElementById('syncLabel');
-  if (s==='syncing') { dot.className='sync-dot syncing'; lbl.textContent=msg||'Szinkronizálás…'; }
-  else if (s==='err'){ dot.className='sync-dot err';     lbl.textContent=msg||'Sync hiba'; }
-  else               { dot.className='sync-dot ok';      lbl.textContent=msg||'Szinkronizálva ✓'; }
+function updateSync(s,msg) {
+  const dot=document.getElementById('syncDot');
+  const lbl=document.getElementById('syncLabel');
+  if (s==='syncing'){dot.className='sync-dot syncing';lbl.textContent=msg||'Szinkronizálás…';}
+  else if(s==='err'){dot.className='sync-dot err';    lbl.textContent=msg||'Sync hiba';}
+  else              {dot.className='sync-dot ok';     lbl.textContent=msg||'Szinkronizálva ✓';}
 }
 
 async function fullSync() {
   if (!userName) return;
   updateSync('syncing','Adatok betöltése…');
   try {
-    const q   = new URLSearchParams({action:'getEntries', user:userName});
-    const res = await fetch(SCRIPT_URL+'?'+q);
-    const data = await res.json();
-    const sheetEntries  = data.entries || [];
-    const sheetIds      = new Set(sheetEntries.map(e=>String(e.id)));
-    const localUnsynced = st.entries.filter(e=>!e.synced && !sheetIds.has(String(e.id)));
-    st.entries = [...sheetEntries, ...localUnsynced];
+    const q=new URLSearchParams({action:'getEntries',user:userName});
+    const res=await fetch(SCRIPT_URL+'?'+q);
+    const data=await res.json();
+    const sheetEntries=data.entries||[];
+    const sheetIds=new Set(sheetEntries.map(e=>String(e.id)));
+    const localUnsynced=st.entries.filter(e=>!e.synced&&!sheetIds.has(String(e.id)));
+    st.entries=[...sheetEntries,...localUnsynced];
     st.entries.sort((a,b)=>new Date(b.date)-new Date(a.date));
-    st.entries.forEach(e => { if (e.personName && !st.names.includes(e.personName)) st.names.push(e.personName); });
+    st.entries.forEach(e=>{if(e.personName&&!st.names.includes(e.personName))st.names.push(e.personName);});
     save();
     if (localUnsynced.length>0) {
       updateSync('syncing',`${localUnsynced.length} tétel feltöltése…`);
@@ -634,159 +619,167 @@ async function fullSync() {
 async function pushUnsynced(entries) {
   for (const e of entries) {
     try {
-      await fetch(SCRIPT_URL, {
-        method:'POST', mode:'no-cors',
+      await fetch(SCRIPT_URL,{
+        method:'POST',mode:'no-cors',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          action:'addEntry', user:userName, id:String(e.id),
-          date: e.dateStr || new Date(e.date).toLocaleDateString('hu-HU'),
-          note: e.note,
-          category: getCatLabel(e),
-          type: getTypusLabel(e.type),
-          amount: e.origAmt, currency: e.currency,
-          personName: e.personName||'',
+        body:JSON.stringify({
+          action:'addEntry',user:userName,id:String(e.id),
+          date:e.dateStr||new Date(e.date).toLocaleDateString('hu-HU'),
+          note:e.note, category:getCatLabel(e),
+          type:getTypusLabel(e.type),
+          amount:e.origAmt, currency:e.currency||'HUF',
+          source:e.source||'bank',
+          personName:e.personName||'',
+          pot:e.pot||'',delta:e.delta||0,
         }),
       });
-      e.synced = true;
-    } catch(err) {}
+      e.synced=true;
+    } catch(err){}
   }
   save();
 }
 
 function getCatLabel(e) {
-  if (e.type==='save')      return 'Félretett';
-  if (e.type==='withdraw')  return 'Megtakarításból';
-  if (e.type==='advance')   return 'Előleg';
-  if (e.type==='reimburse') return 'Visszafizetés';
-  if (e.type==='in')        return 'Bevétel';
-  return CATS.find(c=>c.id===e.cat)?.label || 'Egyéb';
+  if (e.type==='save')       return 'Félretett';
+  if (e.type==='withdraw')   return 'Megtakarításból';
+  if (e.type==='loan')       return 'Kölcsön';
+  if (e.type==='reimburse')  return 'Visszafizetés';
+  if (e.type==='transfer')   return 'Készpénzfelvét';
+  if (e.type==='correction') return 'Korrekció';
+  if (e.type==='in')         return 'Bevétel';
+  return CATS.find(c=>c.id===e.cat)?.label||'Egyéb';
 }
 function getTypusLabel(type) {
-  return {out:'Kiment',in:'Bejött',save:'Félretett',withdraw:'Megtakarításból',advance:'Előleg',reimburse:'Visszafizetés'}[type]||'Kiment';
+  return {out:'Kiment',in:'Bejött',save:'Félretett',withdraw:'Megtakarításból',
+    loan:'Kölcsön',reimburse:'Visszafizetés',transfer:'Készpénzfelvét',correction:'Korrekció'}[type]||'Kiment';
 }
 
 async function loadSummary() {
   try {
-    const q   = new URLSearchParams({action:'getSummary', user:userName, year:st.curY, month:st.curM+1});
-    const res = await fetch(SCRIPT_URL+'?'+q);
-    const d   = await res.json();
-    st.summary = d;
+    const q=new URLSearchParams({action:'getSummary',user:userName,year:st.curY,month:st.curM+1});
+    const res=await fetch(SCRIPT_URL+'?'+q);
+    const d=await res.json();
+    st.summary=d;
     renderSummary(d);
-  } catch(e) { renderSummaryFromLocal(); }
+  } catch(e){renderSummaryFromLocal();}
 }
 
 // ── Summary ──────────────────────────────────────────────────
 function renderSummaryFromLocal() {
-  const m      = st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const bejott = m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const kiment = m.filter(e=>e.type==='out'||e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const sav    = getSavingsBalance();
-  renderSummary({bejott,kiment,maradt:bejott-kiment,savings:sav,pct:bejott>0?Math.round(kiment/bejott*100):0});
+  const m=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
+  const bejott=m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const kiment=m.filter(e=>e.type==='out').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  renderSummary({bejott,kiment,maradt:bejott-kiment,pct:bejott>0?Math.round(kiment/bejott*100):0});
 }
 
 function renderSummary(d) {
-  document.getElementById('savingsPillAmt').textContent = fmtFt(getSavingsBalance());
-  if (!d) {
-    document.getElementById('sumContent').innerHTML = `<div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Koppints a ↻ Szinkron gombra</div>`;
+  // Update tiles
+  const bal=getBalances();
+  document.getElementById('tileBankAmt').textContent    = fmtFt(bal.bank);
+  document.getElementById('tileCashAmt').textContent    = fmtFt(bal.cash);
+  document.getElementById('tileSavingsAmt').textContent = fmtFt(bal.savings);
+  document.getElementById('tileLoansAmt').textContent   = fmtFt(bal.loans);
+
+  if (!d){
+    document.getElementById('sumContent').innerHTML=`<div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Koppints a ↻ Szinkron gombra</div>`;
     document.getElementById('barWrap').style.display='none';
     return;
   }
-  const pct = Math.min(100, d.pct||0);
-  const savLine = d.savings>0
-    ? `<div style="margin-top:10px"><div class="s-label">Megtakarítás</div><div class="s-sav">${fmtFt(d.savings)}</div></div>`
-    : '';
-  document.getElementById('sumContent').innerHTML = `
+  const pct=Math.min(100,d.pct||0);
+  document.getElementById('sumContent').innerHTML=`
     <div class="sum-left">
       <div class="s-label">Maradt</div>
       <div class="s-big">${fmtFt(d.maradt)}</div>
-      ${savLine}
     </div>
     <div class="sum-right">
-      <div>
-        <div class="s-label">Bejött</div>
-        <div class="s-med">${fmtFt(d.bejott)}</div>
-      </div>
-      <div>
-        <div class="s-label">Kiment</div>
-        <div class="s-med">${fmtFt(d.kiment)}</div>
-      </div>
+      <div><div class="s-label">Bejött</div><div class="s-med">${fmtFt(d.bejott)}</div></div>
+      <div><div class="s-label">Kiment</div><div class="s-med">${fmtFt(d.kiment)}</div></div>
     </div>`;
   document.getElementById('barWrap').style.display='block';
-  document.getElementById('barFill').style.width = pct+'%';
-  document.getElementById('barLeft').textContent  = pct+'% elköltve';
-  document.getElementById('barRight').textContent = fmtFt(Math.max(0,d.maradt))+' maradt';
-
-  // Debt banner
-  const debts = getOutstandingDebts();
-  const total  = debts.reduce((s,d)=>s+d.amt,0);
-  const banner = document.getElementById('debtBanner');
-  if (total>0) { banner.classList.remove('hidden'); document.getElementById('debtBannerAmt').textContent=fmtFt(total)+' →'; }
-  else banner.classList.add('hidden');
+  document.getElementById('barFill').style.width=pct+'%';
+  document.getElementById('barLeft').textContent=pct+'% elköltve';
+  document.getElementById('barRight').textContent=fmtFt(Math.max(0,d.maradt))+' maradt';
 }
 
-// ── Sheet — mode picker ──────────────────────────────────────
+// ── Sheet ────────────────────────────────────────────────────
 function openSheet() {
-  st.sheetMode = 'mode-pick';
-  document.getElementById('sheetTitle').textContent = 'Új tétel';
+  st.sheetMode='mode-pick';
   renderSheetBody();
-  if (isDesktop()) {
-    syncDesktopFormBody();
-  } else {
-    document.getElementById('sheetOverlay').classList.add('open');
-  }
+  if (isDesktop()) syncDesktopFormBody();
+  else document.getElementById('sheetOverlay').classList.add('open');
 }
 function closeSheet() {
   document.getElementById('sheetOverlay').classList.remove('open');
-  st.sheetMode = null;
-  st.payTarget = null;
+  st.sheetMode=null; st.payTarget=null;
   if (isDesktop()) renderDesktopForm();
 }
-function maybeCloseSheet(e) { if (e.target.id==='sheetOverlay') closeSheet(); }
+function maybeCloseSheet(e){if(e.target.id==='sheetOverlay')closeSheet();}
 
 function renderSheetBody() {
-  const body = document.getElementById('sheetBody');
-  if (st.sheetMode==='mode-pick')    { document.getElementById('sheetTitle').textContent='Új tétel';        body.innerHTML = modePickHTML(); }
-  else if (st.sheetMode==='normal')  { document.getElementById('sheetTitle').textContent='Kiadás / bevétel'; body.innerHTML = normalFormHTML(); initNormalForm(); }
-  else if (st.sheetMode==='admin')   { document.getElementById('sheetTitle').textContent='Adminisztráció';  body.innerHTML = adminListHTML(); }
-  else if (st.sheetMode==='save')    { document.getElementById('sheetTitle').textContent='Félreteszek 🐷';  body.innerHTML = savingsFormHTML('save'); initSavingsForm('save'); }
-  else if (st.sheetMode==='withdraw'){ document.getElementById('sheetTitle').textContent='Előveszek 🏧';    body.innerHTML = savingsFormHTML('withdraw'); initSavingsForm('withdraw'); }
-  else if (st.sheetMode==='advance-new') { document.getElementById('sheetTitle').textContent='Előleg 💳';   body.innerHTML = advanceFormHTML(); }
-  else if (st.sheetMode==='advance-pay') { document.getElementById('sheetTitle').textContent='Visszafizetés ↩️'; body.innerHTML = advancePayHTML(); }
+  const body=document.getElementById('sheetBody');
+  const title=document.getElementById('sheetTitle');
+  if (!body) return;
+  if (st.sheetMode==='mode-pick')     {title.textContent='Új tétel';            body.innerHTML=modePickHTML();}
+  else if(st.sheetMode==='normal')    {title.textContent='Kiadás / Bevétel';    body.innerHTML=normalFormHTML();initNormalForm();}
+  else if(st.sheetMode==='admin')     {title.textContent='Adminisztráció';      body.innerHTML=adminListHTML();}
+  else if(st.sheetMode==='save')      {title.textContent='Félreteszek 🐷';      body.innerHTML=savingsFormHTML('save');}
+  else if(st.sheetMode==='withdraw')  {title.textContent='Előveszek 🏧';        body.innerHTML=savingsFormHTML('withdraw');}
+  else if(st.sheetMode==='transfer')  {title.textContent='Készpénzfelvét 💸';   body.innerHTML=transferFormHTML();}
+  else if(st.sheetMode==='loan-new')  {title.textContent='Kölcsön 🤝';          body.innerHTML=loanFormHTML();}
+  else if(st.sheetMode==='loan-pay')  {title.textContent='Visszafizetés ↩️';    body.innerHTML=loanPayHTML();}
+  else if(st.sheetMode==='correction'){title.textContent='Korrekció 🔧';        body.innerHTML=correctionFormHTML();}
   syncDesktopFormBody();
 }
 
-// ── Mode pick HTML ───────────────────────────────────────────
+function renderDesktopForm() {
+  const body=document.getElementById('desktopFormBody');
+  const title=document.getElementById('desktopFormTitle');
+  if (!body) return;
+  title.textContent='Új tétel';
+  st.sheetMode='mode-pick';
+  body.innerHTML=modePickHTML();
+}
+function syncDesktopFormBody() {
+  if (!isDesktop()) return;
+  const db=document.getElementById('desktopFormBody');
+  const mb=document.getElementById('sheetBody');
+  const dt=document.getElementById('desktopFormTitle');
+  const mt=document.getElementById('sheetTitle');
+  if (db&&mb){db.innerHTML=mb.innerHTML;if(dt&&mt)dt.textContent=mt.textContent;}
+}
+
+// ── Mode pick ────────────────────────────────────────────────
 function modePickHTML() {
-  return `
-    <div class="mode-grid" style="padding-bottom:16px;">
-      <button class="mode-btn normal" onclick="goMode('normal')">
-        <span class="m-icon">💰</span>
-        <span class="m-label">Normál</span>
-        <span class="m-hint">Kiadás vagy bevétel rögzítése</span>
-      </button>
-      <button class="mode-btn admin" onclick="goMode('admin')">
-        <span class="m-icon">⚙️</span>
-        <span class="m-label">Adminisztráció</span>
-        <span class="m-hint">Megtakarítás, előlegek</span>
-      </button>
-    </div>`;
+  return `<div class="mode-grid" style="padding-bottom:8px;">
+    <button class="mode-btn normal" onclick="goMode('normal')">
+      <span class="m-icon">💰</span>
+      <span class="m-label">Normál</span>
+      <span class="m-hint">Kiadás vagy bevétel</span>
+    </button>
+    <button class="mode-btn admin" onclick="goMode('admin')">
+      <span class="m-icon">⚙️</span>
+      <span class="m-label">Adminisztráció</span>
+      <span class="m-hint">Megtakarítás, kölcsön…</span>
+    </button>
+  </div>`;
 }
-
 function goMode(mode) {
-  if (mode==='normal') st.sheetMode='normal';
-  else st.sheetMode='admin';
+  if (mode==='back'){st.sheetMode='mode-pick';}
+  else if(mode==='back-to-admin'){st.sheetMode='admin';}
+  else if(mode==='normal'){st.sheetMode='normal';}
+  else {st.sheetMode='admin';}
   renderSheetBody();
-  if (isDesktop()) syncDesktopFormBody();
 }
 
-// ── Normal form HTML ─────────────────────────────────────────
+// ── Normal form ──────────────────────────────────────────────
 function normalFormHTML() {
-  const catsHTML = CATS.map(c=>`<div class="cat-chip ${c.id===st.selCat?'active':''}" onclick="selCat('${c.id}')">${c.icon} ${c.label}</div>`).join('');
+  const catsHTML=CATS.map(c=>`<div class="cat-chip ${c.id===st.selCat?'active':''}" onclick="selCat('${c.id}')">${c.icon} ${c.label}</div>`).join('');
+  const isCash = st.selSource==='cash';
   return `
     <button class="back-btn" onclick="goMode('back')">← Vissza</button>
     <div class="type-row-normal">
       <button class="type-btn-normal active-out" id="btnOut" onclick="setNormalType('out')">↑ Kiment</button>
-      <button class="type-btn-normal" id="btnIn"  onclick="setNormalType('in')">↓ Bejött</button>
+      <button class="type-btn-normal" id="btnIn" onclick="setNormalType('in')">↓ Bejött</button>
     </div>
     <div class="field-label">ÖSSZEG</div>
     <div class="amount-row">
@@ -802,6 +795,14 @@ function normalFormHTML() {
         <span class="curr-arrow">▾</span>
       </div>
     </div>
+    <!-- Cash/Bank toggle -->
+    <div class="source-toggle" onclick="toggleSource()">
+      <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
+      <div class="toggle-track ${isCash?'cash-mode':''}" id="sourceTrack">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
+    </div>
     <div class="field-label">DÁTUM</div>
     <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
     <div id="noteLabelEl" class="field-label">MIRE?</div>
@@ -814,49 +815,60 @@ function normalFormHTML() {
     <div style="height:4px"></div>`;
 }
 
-function initNormalForm() {
-  setNormalType(st.selType==='in'?'in':'out');
+function initNormalForm() {setNormalType(st.selType==='in'?'in':'out');}
+
+function toggleSource() {
+  st.selSource = st.selSource==='bank'?'cash':'bank';
+  const track=document.getElementById('sourceTrack');
+  if (track) {
+    track.classList.toggle('cash-mode', st.selSource==='cash');
+    const isCash=st.selSource==='cash';
+    document.querySelectorAll('.source-label.bank').forEach(el=>el.classList.toggle('active',!isCash));
+    document.querySelectorAll('.source-label.cash').forEach(el=>el.classList.toggle('active',isCash));
+  }
 }
 
 function setNormalType(t) {
-  st.selType = t;
-  const btnOut = document.getElementById('btnOut');
-  const btnIn  = document.getElementById('btnIn');
-  const addBtn = document.getElementById('addBtn');
-  const noteEl = document.getElementById('noteLabelEl');
-  const catWrap= document.getElementById('catWrap');
+  st.selType=t;
+  const btnOut=document.getElementById('btnOut');
+  const btnIn=document.getElementById('btnIn');
+  const addBtn=document.getElementById('addBtn');
+  const noteEl=document.getElementById('noteLabelEl');
+  const catWrap=document.getElementById('catWrap');
   if (!btnOut) return;
-  btnOut.className = 'type-btn-normal' + (t==='out'?' active-out':'');
-  btnIn.className  = 'type-btn-normal' + (t==='in' ?' active-in' :'');
-  addBtn.className = 'add-btn ' + t;
-  noteEl.textContent = t==='out' ? 'MIRE?' : 'HONNAN?';
-  document.getElementById('noteInput').placeholder = t==='out' ? 'pl. ebéd, buszjegy…' : 'pl. Apatól, munkából…';
-  catWrap.style.display = t==='out' ? 'block' : 'none';
+  btnOut.className='type-btn-normal'+(t==='out'?' active-out':'');
+  btnIn.className ='type-btn-normal'+(t==='in' ?' active-in' :'');
+  addBtn.className='add-btn '+t;
+  noteEl.textContent=t==='out'?'MIRE?':'HONNAN?';
+  document.getElementById('noteInput').placeholder=t==='out'?'pl. ebéd, buszjegy…':'pl. Apatól, munkából…';
+  catWrap.style.display=t==='out'?'block':'none';
 }
 
 function selCat(id) {
-  st.selCat = id;
-  document.querySelectorAll('.cat-chip').forEach(el => {
-    el.className = 'cat-chip' + (el.textContent.trim().includes(CATS.find(c=>c.id===id)?.label) ? ' active' : '');
+  st.selCat=id;
+  document.querySelectorAll('.cat-chip').forEach(el=>{
+    const catLabel=CATS.find(c=>c.id===id)?.label||'';
+    el.className='cat-chip'+(el.textContent.trim().includes(catLabel)?' active':'');
   });
 }
 
 async function submitNormal() {
-  const rawAmt  = parseFloat(document.getElementById('amtInput').value);
-  const currency= document.getElementById('currSelect').value;
-  const note    = document.getElementById('noteInput').value.trim();
-  const dateVal = document.getElementById('dateInput').value || todayStr();
-  if (!rawAmt||rawAmt<=0) { showToast('Add meg az összeget!'); return; }
-  const cat   = CATS.find(c=>c.id===st.selCat);
-  const dp    = dateVal.split('-');
-  const eDate = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
-  const entry = {
-    id:Date.now(), type:st.selType, origAmt:rawAmt, amtHUF:rawAmt, currency,
-    note: note||(st.selType==='out'?cat.label:'Bevétel'),
-    cat: st.selType==='out'?st.selCat:null,
-    icon: st.selType==='out'?cat.icon:'💰',
-    date:eDate.toISOString(), dateStr:eDate.toLocaleDateString('hu-HU'),
-    month:eDate.getMonth(), year:eDate.getFullYear(), synced:false,
+  const rawAmt=parseFloat(document.getElementById('amtInput').value);
+  const currency=document.getElementById('currSelect').value;
+  const note=document.getElementById('noteInput').value.trim();
+  const dateVal=document.getElementById('dateInput').value||todayStr();
+  if (!rawAmt||rawAmt<=0){showToast('Add meg az összeget!');return;}
+  const cat=CATS.find(c=>c.id===st.selCat);
+  const dp=dateVal.split('-');
+  const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const entry={
+    id:Date.now(),type:st.selType,origAmt:rawAmt,amtHUF:rawAmt,currency,
+    source:st.selSource,
+    note:note||(st.selType==='out'?cat.label:'Bevétel'),
+    cat:st.selType==='out'?st.selCat:null,
+    icon:st.selType==='out'?cat.icon:'💰',
+    date:eDate.toISOString(),dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(),year:eDate.getFullYear(),synced:false,
   };
   addEntryLocal(entry);
   closeSheet();
@@ -865,106 +877,128 @@ async function submitNormal() {
   render(); setTimeout(loadSummary,1500);
 }
 
-// ── Admin list HTML ──────────────────────────────────────────
+// ── Admin list ───────────────────────────────────────────────
 function adminListHTML() {
-  const debts    = getOutstandingDebts();
-  const hasPay   = debts.length > 0;
-  const savBal   = getSavingsBalance();
+  const bal=getBalances();
+  const hasLoans=getOutstandingLoans().length>0;
   return `
     <button class="back-btn" onclick="goMode('back')">← Vissza</button>
-    <div class="admin-list" style="padding-bottom:16px;">
+    <div class="admin-list" style="padding-bottom:12px;">
       <div class="admin-item purple" onclick="goAdminMode('save')">
         <div class="admin-icon purple">🐷</div>
-        <div class="admin-body">
-          <div class="admin-label">Félreteszek</div>
-          <div class="admin-hint">Pénzt teszek a megtakarításba · Jelenlegi: ${fmtFt(savBal)}</div>
-        </div>
+        <div><div class="admin-label">Félreteszek</div><div class="admin-hint">Bank → Megtakarítás · ${fmtFt(bal.bank)}</div></div>
       </div>
       <div class="admin-item amber" onclick="goAdminMode('withdraw')">
         <div class="admin-icon amber">🏧</div>
-        <div class="admin-body">
-          <div class="admin-label">Előveszek</div>
-          <div class="admin-hint">Kiveszek a megtakarításból · Elérhető: ${fmtFt(savBal)}</div>
-        </div>
+        <div><div class="admin-label">Előveszek</div><div class="admin-hint">Megtakarítás → Bank · ${fmtFt(bal.savings)}</div></div>
       </div>
-      <div class="admin-item blue" onclick="goAdminMode('advance-new')">
-        <div class="admin-icon blue">💳</div>
-        <div class="admin-body">
-          <div class="admin-label">Előleg rögzítése</div>
-          <div class="admin-hint">Valaki helyett fizettem, visszakérem</div>
-        </div>
+      <div class="admin-item amber" onclick="goAdminMode('transfer')">
+        <div class="admin-icon amber">💸</div>
+        <div><div class="admin-label">Készpénzfelvét</div><div class="admin-hint">Bank → Készpénz · ${fmtFt(bal.bank)}</div></div>
       </div>
-      ${hasPay ? `
-      <div class="admin-item teal" onclick="goAdminMode('advance-pay')">
+      <div class="admin-item blue" onclick="goAdminMode('loan-new')">
+        <div class="admin-icon blue">🤝</div>
+        <div><div class="admin-label">Kölcsön adtam</div><div class="admin-hint">Valakinek adtam kölcsönt</div></div>
+      </div>
+      ${hasLoans?`<div class="admin-item teal" onclick="goAdminMode('loan-pay')">
         <div class="admin-icon teal">↩️</div>
-        <div class="admin-body">
-          <div class="admin-label">Visszafizetés rögzítése</div>
-          <div class="admin-hint">${debts.length} kintlévőség · ${fmtFt(debts.reduce((s,d)=>s+d.amt,0))} összesen</div>
-        </div>
-      </div>` : ''}
+        <div><div class="admin-label">Visszafizetés</div><div class="admin-hint">${getOutstandingLoans().length} kintlévőség · ${fmtFt(getOutstandingLoans().reduce((s,d)=>s+d.amt,0))}</div></div>
+      </div>`:''}
+      <div class="admin-item gray" onclick="goAdminMode('correction')">
+        <div class="admin-icon gray">🔧</div>
+        <div><div class="admin-label">Korrekció</div><div class="admin-hint">Egyenleg igazítása a valósághoz</div></div>
+      </div>
     </div>`;
 }
-
 function goAdminMode(mode) {
-  if (mode==='back') { st.sheetMode='mode-pick'; renderSheetBody(); return; }
-  st.sheetMode = mode;
-  renderSheetBody();
+  if (mode==='back-to-admin'){st.sheetMode='admin';renderSheetBody();return;}
+  st.sheetMode=mode; renderSheetBody();
 }
 
-// ── Savings form HTML ────────────────────────────────────────
+// ── Savings form ─────────────────────────────────────────────
 function savingsFormHTML(type) {
-  const savBal = getSavingsBalance();
-  const isSave = type==='save';
+  const bal=getBalances();
+  const isSave=type==='save';
+  const info=isSave?`Bank: ${fmtFt(bal.bank)}`:`Megtakarítás: ${fmtFt(bal.savings)}`;
   return `
     <button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
-    <div class="savings-info">
-      <span style="font-size:13px;color:var(--purple)">🐷 Megtakarítás egyenleg</span>
-      <span class="savings-info-amt">${fmtFt(savBal)}</span>
-    </div>
+    <div class="savings-info"><span style="font-size:13px;color:var(--purple)">🐷 ${info}</span></div>
     <div class="field-label">ÖSSZEG</div>
-    <div class="amount-row">
-      <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
-    </div>
+    <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any" style="width:100%">
     <div class="field-label">DÁTUM</div>
     <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
     <div class="field-label">MEGJEGYZÉS</div>
     <input class="text-input" id="noteInput" type="text" placeholder="opcionális…" maxlength="60" autocomplete="off">
-    <button class="add-btn ${type}" id="addBtn" onclick="submitSavings('${type}')">${isSave?'Félreteszem 🐷':'Előveszem 🏧'}</button>
+    <button class="add-btn ${type}" onclick="submitSavings('${type}')">${isSave?'Félreteszem 🐷':'Előveszem 🏧'}</button>
     <div style="height:4px"></div>`;
 }
 
-function initSavingsForm(type) {}
-
 async function submitSavings(type) {
-  const rawAmt = parseFloat(document.getElementById('amtInput').value);
-  const note   = document.getElementById('noteInput').value.trim();
-  const dateVal= document.getElementById('dateInput').value || todayStr();
-  if (!rawAmt||rawAmt<=0) { showToast('Add meg az összeget!'); return; }
-  if (type==='withdraw' && rawAmt>getSavingsBalance()) { showToast('Nincs elég megtakarítás! 🐷'); return; }
-  const dp    = dateVal.split('-');
-  const eDate = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
-  const entry = {
-    id:Date.now(), type, origAmt:rawAmt, amtHUF:rawAmt, currency:'HUF',
-    note: note||(type==='save'?'Félretett 🐷':'Elővett 🏧'),
-    cat:null, icon: type==='save'?'🐷':'🏧',
-    date:eDate.toISOString(), dateStr:eDate.toLocaleDateString('hu-HU'),
-    month:eDate.getMonth(), year:eDate.getFullYear(), synced:false,
+  const rawAmt=parseFloat(document.getElementById('amtInput').value);
+  const note=document.getElementById('noteInput').value.trim();
+  const dateVal=document.getElementById('dateInput').value||todayStr();
+  if (!rawAmt||rawAmt<=0){showToast('Add meg az összeget!');return;}
+  const bal=getBalances();
+  if (type==='withdraw'&&rawAmt>bal.savings){showToast('Nincs elég megtakarítás! 🐷');return;}
+  if (type==='save'&&rawAmt>bal.bank){showToast('Nincs elég a bankban!');return;}
+  const dp=dateVal.split('-');
+  const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const entry={
+    id:Date.now(),type,origAmt:rawAmt,amtHUF:rawAmt,currency:'HUF',source:'bank',
+    note:note||(type==='save'?'Félretett 🐷':'Elővett 🏧'),
+    cat:null,icon:type==='save'?'🐷':'🏧',
+    date:eDate.toISOString(),dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(),year:eDate.getFullYear(),synced:false,
   };
-  addEntryLocal(entry);
-  closeSheet();
+  addEntryLocal(entry);closeSheet();
   showToast(type==='save'?'Félretéve 🐷':'Elővéve 🏧');
-  await pushUnsynced([entry]);
-  render(); setTimeout(loadSummary,1500);
+  await pushUnsynced([entry]);render();setTimeout(loadSummary,1500);
 }
 
-// ── Advance new form ─────────────────────────────────────────
-function advanceFormHTML() {
-  const namesHTML = st.names.length>0
-    ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${st.names.map(n=>`<div class="cat-chip" onclick="pickAdvanceName('${n}')">${n}</div>`).join('')}</div>`
-    : '';
+// ── Transfer (ATM) ───────────────────────────────────────────
+function transferFormHTML() {
+  const bal=getBalances();
   return `
     <button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
-    <div class="field-label">KINEK FIZETTÉL?</div>
+    <div class="savings-info" style="background:var(--amber-bg);border-color:rgba(176,122,16,.2);">
+      <span style="font-size:13px;color:var(--amber)">💳 Bank egyenleg: ${fmtFt(bal.bank)}</span>
+    </div>
+    <div class="field-label">ÖSSZEG</div>
+    <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any" style="width:100%">
+    <div class="field-label">DÁTUM</div>
+    <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
+    <button class="add-btn transfer" onclick="submitTransfer()">Felveszem 💸</button>
+    <div style="height:4px"></div>`;
+}
+
+async function submitTransfer() {
+  const rawAmt=parseFloat(document.getElementById('amtInput').value);
+  const dateVal=document.getElementById('dateInput').value||todayStr();
+  if (!rawAmt||rawAmt<=0){showToast('Add meg az összeget!');return;}
+  const bal=getBalances();
+  if (rawAmt>bal.bank){showToast('Nincs elég a bankban!');return;}
+  const dp=dateVal.split('-');
+  const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const entry={
+    id:Date.now(),type:'transfer',origAmt:rawAmt,amtHUF:rawAmt,currency:'HUF',source:'bank',
+    note:'Készpénzfelvét 💸',cat:null,icon:'💸',
+    date:eDate.toISOString(),dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(),year:eDate.getFullYear(),synced:false,
+  };
+  addEntryLocal(entry);closeSheet();
+  showToast('Készpénzfelvét rögzítve 💸');
+  await pushUnsynced([entry]);render();setTimeout(loadSummary,1500);
+}
+
+// ── Loan form ────────────────────────────────────────────────
+function loanFormHTML() {
+  const namesHTML=st.names.length>0
+    ?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${st.names.map(n=>`<div class="cat-chip" onclick="document.getElementById('nameInput').value='${n}'">${n}</div>`).join('')}</div>`:'';
+  const bal=getBalances();
+  const isCash=st.selSource==='cash';
+  return `
+    <button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
+    <div class="field-label">KINEK ADTÁL KÖLCSÖNT?</div>
     <input class="text-input" id="nameInput" type="text" placeholder="pl. Anya, Péter…" maxlength="30" autocomplete="off">
     ${namesHTML}
     <div class="field-label">ÖSSZEG</div>
@@ -981,129 +1015,177 @@ function advanceFormHTML() {
         <span class="curr-arrow">▾</span>
       </div>
     </div>
+    <div class="source-toggle" onclick="toggleSource()">
+      <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
+      <div class="toggle-track ${isCash?'cash-mode':''}" id="sourceTrack"><div class="toggle-thumb"></div></div>
+      <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
+    </div>
     <div class="field-label">MIRE MENT?</div>
     <input class="text-input" id="noteInput" type="text" placeholder="pl. vacsora, jegy…" maxlength="60" autocomplete="off">
     <div class="field-label">DÁTUM</div>
     <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
-    <button class="add-btn advance" onclick="submitAdvance()">Előleg rögzítése 💳</button>
+    <button class="add-btn loan" onclick="submitLoan()">Kölcsön rögzítése 🤝</button>
     <div style="height:4px"></div>`;
 }
 
-function pickAdvanceName(n) {
-  const inp = document.getElementById('nameInput');
-  if (inp) inp.value = n;
-}
-
-async function submitAdvance() {
-  const name    = document.getElementById('nameInput').value.trim();
-  const rawAmt  = parseFloat(document.getElementById('amtInput').value);
-  const currency= document.getElementById('currSelect').value;
-  const note    = document.getElementById('noteInput').value.trim();
-  const dateVal = document.getElementById('dateInput').value || todayStr();
-  if (!name)           { showToast('Add meg a nevet!'); return; }
-  if (!rawAmt||rawAmt<=0){ showToast('Add meg az összeget!'); return; }
+async function submitLoan() {
+  const name=document.getElementById('nameInput').value.trim();
+  const rawAmt=parseFloat(document.getElementById('amtInput').value);
+  const currency=document.getElementById('currSelect').value;
+  const note=document.getElementById('noteInput').value.trim();
+  const dateVal=document.getElementById('dateInput').value||todayStr();
+  if (!name){showToast('Add meg a nevet!');return;}
+  if (!rawAmt||rawAmt<=0){showToast('Add meg az összeget!');return;}
   if (!st.names.includes(name)) st.names.push(name);
-  const dp    = dateVal.split('-');
-  const eDate = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
-  const entry = {
-    id:Date.now(), type:'advance', origAmt:rawAmt, amtHUF:rawAmt, currency,
-    note: note||`Előleg — ${name}`,
-    cat:null, icon:'💳', personName:name,
-    date:eDate.toISOString(), dateStr:eDate.toLocaleDateString('hu-HU'),
-    month:eDate.getMonth(), year:eDate.getFullYear(), synced:false,
+  const dp=dateVal.split('-');
+  const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const entry={
+    id:Date.now(),type:'loan',origAmt:rawAmt,amtHUF:rawAmt,currency,
+    source:st.selSource,
+    note:note||`Kölcsön — ${name}`,
+    cat:null,icon:'🤝',personName:name,
+    date:eDate.toISOString(),dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(),year:eDate.getFullYear(),synced:false,
   };
-  addEntryLocal(entry);
-  closeSheet();
-  showToast('Előleg rögzítve 💳');
-  await pushUnsynced([entry]);
-  render(); setTimeout(loadSummary,1500);
+  addEntryLocal(entry);closeSheet();
+  showToast('Kölcsön rögzítve 🤝');
+  await pushUnsynced([entry]);render();setTimeout(loadSummary,1500);
 }
 
-// ── Advance pay — pick from outstanding list ──────────────────
-function advancePayHTML() {
-  const debts = getOutstandingDebts();
-  if (debts.length===0) {
-    return `<button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
-    <div class="advance-empty">Nincs kintlévőség 🎉</div>`;
-  }
+// ── Loan pay ─────────────────────────────────────────────────
+function loanPayHTML() {
+  const loans=getOutstandingLoans();
+  if (loans.length===0) return `<button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button><div class="advance-empty">Nincs kintlévőség 🎉</div>`;
   return `
     <button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
     <div style="font-size:14px;color:var(--ink2);margin-bottom:12px;">Válaszd ki, ki fizetett vissza:</div>
     <div class="advance-list">
-      ${debts.map(d=>`
+      ${loans.map(d=>`
         <div class="advance-item" onclick="openPayConfirm('${d.name}',${d.amt})">
-          <div class="advance-item-left">
-            <div class="advance-item-name">${d.name}</div>
-            <div class="advance-item-note">Koppints a visszafizetés rögzítéséhez</div>
-          </div>
+          <div><div class="advance-item-name">${d.name}</div><div class="advance-item-note">Koppints a visszafizetés rögzítéséhez</div></div>
           <div class="advance-item-amt">${fmtFt(d.amt)}</div>
         </div>`).join('')}
     </div>
     <div style="height:8px"></div>`;
 }
 
-function openPayConfirm(name, amt) {
-  st.payTarget = {name, amt};
-  document.getElementById('sheetTitle').textContent = 'Visszafizetés rögzítése';
-  document.getElementById('sheetBody').innerHTML = `
-    <button class="back-btn" onclick="goAdminMode('advance-pay')">← Vissza</button>
-    <div class="sub-sheet" style="margin:0;padding:16px 0 0;background:none;">
-      <div class="sub-title">${name}</div>
-      <div class="sub-sub">Kintlévőség: ${fmtFt(amt)}</div>
-      <div class="sub-amt-row">
-        <input class="sub-amt-input" id="payAmtInput" type="number" inputmode="decimal" placeholder="0" value="${amt}" min="0" step="any">
-        <button class="sub-full-btn" onclick="document.getElementById('payAmtInput').value=${amt}">Teljes</button>
-      </div>
-      <div class="field-label">DÁTUM</div>
-      <input class="date-input" id="payDateInput" type="date" value="${todayStr()}" style="margin-bottom:14px;">
-      <div class="sub-actions">
-        <button class="sub-cancel" onclick="goAdminMode('advance-pay')">Mégsem</button>
-        <button class="sub-confirm" onclick="submitReimburse()">Rögzítés ✓</button>
-      </div>
+function openPayConfirm(name,amt) {
+  st.payTarget={name,amt};
+  document.getElementById('sheetTitle').textContent='Visszafizetés rögzítése';
+  const isCash=st.selSource==='cash';
+  document.getElementById('sheetBody').innerHTML=`
+    <button class="back-btn" onclick="goAdminMode('loan-pay')">← Vissza</button>
+    <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-bottom:4px;">${name}</div>
+    <div style="font-size:13px;color:var(--ink2);margin-bottom:16px;">Kintlévőség: ${fmtFt(amt)}</div>
+    <div class="sub-amt-row">
+      <input class="sub-amt-input" id="payAmtInput" type="number" inputmode="decimal" placeholder="0" value="${amt}" min="0" step="any">
+      <button class="sub-full-btn" onclick="document.getElementById('payAmtInput').value=${amt}">Teljes</button>
+    </div>
+    <div class="source-toggle" onclick="toggleSource()" style="margin-bottom:14px;">
+      <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
+      <div class="toggle-track ${isCash?'cash-mode':''}" id="sourceTrack"><div class="toggle-thumb"></div></div>
+      <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
+    </div>
+    <div class="field-label">DÁTUM</div>
+    <input class="date-input" id="payDateInput" type="date" value="${todayStr()}" style="margin-bottom:14px;">
+    <div class="sub-actions">
+      <button class="sub-cancel" onclick="goAdminMode('loan-pay')">Mégsem</button>
+      <button class="sub-confirm" onclick="submitReimburse()">Rögzítés ✓</button>
     </div>
     <div style="height:8px"></div>`;
+  syncDesktopFormBody();
 }
 
 async function submitReimburse() {
-  const amt     = parseFloat(document.getElementById('payAmtInput').value);
-  const dateVal = document.getElementById('payDateInput').value || todayStr();
-  const {name, amt:maxAmt} = st.payTarget;
-  if (!amt||amt<=0)  { showToast('Add meg az összeget!'); return; }
-  if (amt>maxAmt)    { showToast(`Maximum ${fmtFt(maxAmt)} rögzíthető`); return; }
-  const dp    = dateVal.split('-');
-  const eDate = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
-  const entry = {
-    id:Date.now(), type:'reimburse', origAmt:amt, amtHUF:amt, currency:'HUF',
-    note:`Visszafizetés — ${name}`,
-    cat:null, icon:'↩️', personName:name,
-    date:eDate.toISOString(), dateStr:eDate.toLocaleDateString('hu-HU'),
-    month:eDate.getMonth(), year:eDate.getFullYear(), synced:false,
+  const amt=parseFloat(document.getElementById('payAmtInput').value);
+  const dateVal=document.getElementById('payDateInput').value||todayStr();
+  const {name,amt:maxAmt}=st.payTarget;
+  if (!amt||amt<=0){showToast('Add meg az összeget!');return;}
+  if (amt>maxAmt){showToast(`Maximum ${fmtFt(maxAmt)} rögzíthető`);return;}
+  const dp=dateVal.split('-');
+  const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const entry={
+    id:Date.now(),type:'reimburse',origAmt:amt,amtHUF:amt,currency:'HUF',
+    source:st.selSource,
+    note:`Visszafizetés — ${name}`,cat:null,icon:'↩️',personName:name,
+    date:eDate.toISOString(),dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(),year:eDate.getFullYear(),synced:false,
   };
-  addEntryLocal(entry);
-  closeSheet();
+  addEntryLocal(entry);closeSheet();
   showToast('Visszafizetés rögzítve ↩️');
-  await pushUnsynced([entry]);
-  render(); renderReport(); setTimeout(loadSummary,1500);
+  await pushUnsynced([entry]);render();renderLoansPanel();setTimeout(loadSummary,1500);
 }
 
-// back navigation within admin
-document.addEventListener('click', e => {
-  if (e.target.classList.contains('back-btn')) {
-    const txt = e.target.textContent;
-    if (st.sheetMode==='normal'||st.sheetMode==='admin') { st.sheetMode='mode-pick'; renderSheetBody(); }
-    else if (['save','withdraw','advance-new','advance-pay'].includes(st.sheetMode)) { st.sheetMode='admin'; renderSheetBody(); }
-    else if (st.sheetMode==='advance-pay' && txt.includes('Vissza')) { st.sheetMode='admin'; renderSheetBody(); }
-  }
-}, true);
+// ── Correction form ───────────────────────────────────────────
+function correctionFormHTML() {
+  const bal=getBalances();
+  const sel=st.correctionPot||'bank';
+  return `
+    <button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
+    <div style="font-size:13px;color:var(--ink2);margin-bottom:12px;">Válaszd ki, melyik egyenleget igazítod:</div>
+    <div class="correction-pots">
+      <div class="pot-btn ${sel==='bank'?'active-blue':''}" onclick="selCorrectionPot('bank')">
+        <span class="pot-icon">💳</span>
+        <span class="pot-label">Bank</span>
+        <span class="pot-bal" style="color:var(--blue)">${fmtFt(bal.bank)}</span>
+      </div>
+      <div class="pot-btn ${sel==='cash'?'active-amber':''}" onclick="selCorrectionPot('cash')">
+        <span class="pot-icon">💵</span>
+        <span class="pot-label">Készpénz</span>
+        <span class="pot-bal" style="color:var(--amber)">${fmtFt(bal.cash)}</span>
+      </div>
+      <div class="pot-btn ${sel==='savings'?'active-purple':''}" onclick="selCorrectionPot('savings')">
+        <span class="pot-icon">🐷</span>
+        <span class="pot-label">Megtakarítás</span>
+        <span class="pot-bal" style="color:var(--purple)">${fmtFt(bal.savings)}</span>
+      </div>
+    </div>
+    <div class="field-label">VALÓS EGYENLEG (Ft)</div>
+    <input class="amount-input" id="corrAmtInput" type="number" inputmode="decimal" placeholder="pl. 45000" style="width:100%;margin-bottom:4px;">
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:0;">Add meg a tényleges összeget — a különbség automatikusan kiszámítódik.</div>
+    <div class="field-label">MEGJEGYZÉS</div>
+    <input class="text-input" id="corrNoteInput" type="text" placeholder="pl. nyitóegyenleg…" maxlength="60" autocomplete="off">
+    <div class="field-label">DÁTUM</div>
+    <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
+    <button class="add-btn correction" onclick="submitCorrection()">Korrekció rögzítése 🔧</button>
+    <div style="height:4px"></div>`;
+}
 
-// ── Local entry add ──────────────────────────────────────────
+function selCorrectionPot(pot) {
+  st.correctionPot=pot;
+  renderSheetBody();
+}
+
+async function submitCorrection() {
+  const realAmt=parseFloat(document.getElementById('corrAmtInput').value);
+  const note=document.getElementById('corrNoteInput').value.trim();
+  const dateVal=document.getElementById('dateInput').value||todayStr();
+  const pot=st.correctionPot||'bank';
+  if (isNaN(realAmt)){showToast('Add meg a valós egyenleget!');return;}
+  const bal=getBalances();
+  const current={bank:bal.bank,cash:bal.cash,savings:bal.savings}[pot];
+  const delta=realAmt-current;
+  const dp=dateVal.split('-');
+  const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const potLabel={bank:'Bank',cash:'Készpénz',savings:'Megtakarítás'}[pot];
+  const entry={
+    id:Date.now(),type:'correction',origAmt:Math.abs(delta),amtHUF:Math.abs(delta),currency:'HUF',
+    source:'bank',pot,delta,
+    note:note||`Korrekció — ${potLabel}`,cat:null,icon:'🔧',
+    date:eDate.toISOString(),dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(),year:eDate.getFullYear(),synced:false,
+  };
+  addEntryLocal(entry);closeSheet();
+  showToast(`Korrekció rögzítve: ${delta>=0?'+':''}${fmtFt(delta)}`);
+  await pushUnsynced([entry]);render();setTimeout(loadSummary,1500);
+}
+
+// ── Local entry ──────────────────────────────────────────────
 function addEntryLocal(entry) {
   st.entries.unshift(entry);
   st.entries.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  st.curM = entry.month;
-  st.curY = entry.year;
-  save();
-  render();
+  st.curM=entry.month; st.curY=entry.year;
+  save(); render();
 }
 
 // ── Navigation ───────────────────────────────────────────────
@@ -1114,24 +1196,41 @@ function changeMonth(d) {
   render(); loadSummary();
   if (st.activeTab==='riport') renderReport();
 }
+
 function switchTab(tab) {
   st.activeTab=tab;
-  const isReport=tab==='riport';
-  document.getElementById('mainPanel').classList.toggle('hidden-panel',isReport);
-  document.getElementById('reportPanel').classList.toggle('active',isReport);
-  document.getElementById('navTetelek').classList.toggle('active',!isReport);
-  document.getElementById('navRiport').classList.toggle('active',isReport);
-  syncDesktopTabs(tab);
-  if (isReport) renderReport();
+  const panels=['mainPanel','reportPanel','loansPanel'];
+  panels.forEach(p=>document.getElementById(p).classList.remove('active','hidden-panel'));
+  document.getElementById('mainPanel').classList.toggle('hidden-panel', tab!=='tetelek');
+  document.getElementById('reportPanel').classList.toggle('active', tab==='riport');
+  document.getElementById('loansPanel').classList.toggle('active', tab==='loans');
+  // Mobile nav
+  ['navTetelek','navRiport','navLoans'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.remove('active');
+  });
+  const navMap={tetelek:'navTetelek',riport:'navRiport',loans:'navLoans'};
+  const el=document.getElementById(navMap[tab]);
+  if(el) el.classList.add('active');
+  // Desktop tabs
+  ['deskNavTetelek','deskNavRiport','deskNavLoans'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.remove('active');
+  });
+  const deskMap={tetelek:'deskNavTetelek',riport:'deskNavRiport',loans:'deskNavLoans'};
+  const del=document.getElementById(deskMap[tab]);
+  if(del) del.classList.add('active');
+  if (tab==='riport') renderReport();
+  if (tab==='loans')  renderLoansPanel();
 }
 
 // ── Report ───────────────────────────────────────────────────
 function renderReport() {
-  document.getElementById('chartMonthLabel').textContent = MONTHS_SHORT[st.curM]+' '+st.curY;
-  const spendE = st.entries.filter(e=>e.month===st.curM&&e.year===st.curY&&(e.type==='out'||e.type==='withdraw'));
-  const barsEl = document.getElementById('catBars');
-  const emptyEl= document.getElementById('catEmpty');
-  if (spendE.length===0) { barsEl.innerHTML=''; emptyEl.style.display='block'; }
+  document.getElementById('chartMonthLabel').textContent=MONTHS_SHORT[st.curM]+' '+st.curY;
+  const spendE=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY&&e.type==='out');
+  const barsEl=document.getElementById('catBars');
+  const emptyEl=document.getElementById('catEmpty');
+  if (spendE.length===0){barsEl.innerHTML='';emptyEl.style.display='block';}
   else {
     emptyEl.style.display='none';
     const totals={};CATS.forEach(c=>{totals[c.id]=0;});
@@ -1150,11 +1249,11 @@ function renderReport() {
       </div>`;
     }).join('');
   }
-  const allM    =st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const totalIn =allM.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const totalOut=allM.filter(e=>e.type==='out'||e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const allM=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
+  const totalIn=allM.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const totalOut=allM.filter(e=>e.type==='out').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const totalSav=allM.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const balance =totalIn-totalOut-totalSav;
+  const balance=totalIn-totalOut-totalSav;
   const rows=[
     {label:'↓ Bejött',amt:totalIn,colour:'var(--green)'},
     {label:'↑ Kiment',amt:totalOut,colour:'var(--accent)'},
@@ -1166,50 +1265,54 @@ function renderReport() {
       <span style="font-size:14px;${r.bold?'font-weight:700;color:var(--ink)':''}">${r.label}</span>
       <span style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:${r.colour}">${fmtFt(Math.abs(r.amt))}</span>
     </div>`).join('');
-  const debts=getOutstandingDebts();
-  document.getElementById('debtList').innerHTML=debts.length===0
-    ? '<div class="debt-empty">Nincs kintlévőség 🎉</div>'
-    : debts.map(d=>`
-      <div class="debt-row" onclick="openDebtFromReport('${d.name}',${d.amt})">
+}
+
+function renderLoansPanel() {
+  const loans=getOutstandingLoans();
+  document.getElementById('loansList').innerHTML=loans.length===0
+    ?'<div class="debt-empty">Nincs kintlévőség 🎉</div>'
+    :loans.map(d=>`
+      <div class="debt-row" onclick="openLoanPayFromPanel('${d.name}',${d.amt})">
         <div><div class="debt-name">${d.name}</div><div class="debt-hint">Koppints a visszafizetés rögzítéséhez</div></div>
         <div class="debt-amt">${fmtFt(d.amt)}</div>
       </div>`).join('');
 }
 
-function openDebtFromReport(name, amt) {
-  st.payTarget = {name, amt};
-  st.sheetMode = 'advance-pay';
-  document.getElementById('sheetTitle').textContent = 'Visszafizetés rögzítése';
-  openPayConfirm(name, amt);
+function openLoanPayFromPanel(name,amt) {
+  st.payTarget={name,amt};
+  st.sheetMode='loan-pay';
+  openPayConfirm(name,amt);
   document.getElementById('sheetOverlay').classList.add('open');
 }
 
 // ── Main render ──────────────────────────────────────────────
 function render() {
   if (!userName) return;
-  document.getElementById('uAvatar').textContent    = userName[0].toUpperCase();
-  document.getElementById('uName').textContent      = userName;
-  document.getElementById('monthLabel').textContent = MONTHS_SHORT[st.curM]+' '+st.curY;
-  document.getElementById('savingsPillAmt').textContent = fmtFt(getSavingsBalance());
+  document.getElementById('uAvatar').textContent=userName[0].toUpperCase();
+  document.getElementById('uName').textContent=userName;
+  document.getElementById('monthLabel').textContent=MONTHS_SHORT[st.curM]+' '+st.curY;
 
   const entries=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const list   =document.getElementById('entryList');
-  const empty  =document.getElementById('emptyState');
+  const list=document.getElementById('entryList');
+  const empty=document.getElementById('emptyState');
   if (entries.length===0){list.innerHTML='';empty.classList.remove('hidden');}
   else {
     empty.classList.add('hidden');
-    const typeSign={out:'−',in:'+',save:'🐷',withdraw:'🏧',advance:'💳',reimburse:'↩️'};
+    const typeSign={out:'−',in:'+',save:'🐷',withdraw:'🏧',loan:'🤝',reimburse:'↩️',transfer:'💸',correction:'🔧'};
+    const srcIcon={bank:'💳',cash:'💵'};
     list.innerHTML=entries.map(e=>{
       const currNote=(e.currency&&e.currency!=='HUF')?` · ${e.origAmt} ${e.currency}`:'';
-      const catName=e.cat?CATS.find(c=>c.id===e.cat)?.label:{save:'Félretett',withdraw:'Megtakarításból',in:'Bevétel',advance:'Előleg',reimburse:'Visszafizetés'}[e.type];
+      const catName=e.cat?CATS.find(c=>c.id===e.cat)?.label:
+        {save:'Félretett',withdraw:'Megtakarításból',in:'Bevétel',loan:'Kölcsön',reimburse:'Visszafizetés',transfer:'Készpénzfelvét',correction:'Korrekció'}[e.type];
       const nameNote=e.personName?` · ${e.personName}`:'';
+      const srcNote=(e.type==='out'||e.type==='in')?` · ${srcIcon[e.source||'bank']}`:'';
       const syncMark=e.synced?'<span class="entry-sync synced">✓</span>':'<span class="entry-sync">○</span>';
-      const amtStr=(e.type==='save'||e.type==='withdraw'||e.type==='advance'||e.type==='reimburse')?fmtFt(e.origAmt):fmtAmt(e.origAmt,e.currency);
+      const amtStr=fmtFt(e.origAmt);
       return `<div class="entry-card">
         <div class="entry-icon ${e.type}">${e.icon}</div>
         <div class="entry-body">
           <div class="entry-name">${e.note}</div>
-          <div class="entry-meta">${fmtDate(e.date)} · ${catName||''}${currNote}${nameNote}</div>
+          <div class="entry-meta">${fmtDate(e.date)} · ${catName||''}${currNote}${nameNote}${srcNote}</div>
         </div>
         <div class="entry-right">
           <div class="entry-amount ${e.type}">${typeSign[e.type]} ${amtStr}</div>
@@ -1229,55 +1332,15 @@ function clearMonth(){
   save();render();
 }
 
-function fmtFt(n)    {return 'Ft '+Math.round(n||0).toLocaleString('hu-HU');}
-function fmtAmt(n,c) {return c==='HUF'?fmtFt(n):n.toLocaleString('hu-HU')+' '+c;}
+function fmtFt(n)   {return 'Ft '+Math.round(n||0).toLocaleString('hu-HU');}
 function fmtDate(iso){const d=new Date(iso);return `${d.getMonth()+1}/${d.getDate()}`;}
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer=setTimeout(()=>t.classList.remove('show'),2200);
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-
-// ── Desktop detection ────────────────────────────────────────
-const isDesktop = () => window.innerWidth >= 768;
-
-function renderDesktopForm() {
-  const body  = document.getElementById('desktopFormBody');
-  const title = document.getElementById('desktopFormTitle');
-  if (!body) return;
-  title.textContent = 'Új tétel';
-  // Render mode pick directly into desktop left panel
-  st.sheetMode = 'mode-pick';
-  body.innerHTML = modePickHTML().replace('padding-bottom:16px', 'padding-bottom:4px');
-}
-
-function syncDesktopTabs(tab) {
-  const deskT = document.getElementById('deskNavTetelek');
-  const deskR = document.getElementById('deskNavRiport');
-  if (deskT && deskR) {
-    deskT.className = 'desktop-tab-btn' + (tab==='tetelek' ? ' active' : '');
-    deskR.className = 'desktop-tab-btn' + (tab==='riport'  ? ' active' : '');
-  }
-}
-
-function syncDesktopFormBody() {
-  if (!isDesktop()) return;
-  const desktopBody  = document.getElementById('desktopFormBody');
-  const mobileBody   = document.getElementById('sheetBody');
-  const desktopTitle = document.getElementById('desktopFormTitle');
-  const mobileTitle  = document.getElementById('sheetTitle');
-  if (desktopBody && mobileBody) {
-    desktopBody.innerHTML  = mobileBody.innerHTML;
-    if (desktopTitle && mobileTitle) desktopTitle.textContent = mobileTitle.textContent;
-  }
-}
-
-// Re-render desktop form after window resize
-window.addEventListener('resize', () => {
-  if (isDesktop()) renderDesktopForm();
-});
+window.addEventListener('resize',()=>{if(isDesktop())renderDesktopForm();});
 
 // ── Init ─────────────────────────────────────────────────────
 if (userName){render();fullSync();if(isDesktop())renderDesktopForm();}
