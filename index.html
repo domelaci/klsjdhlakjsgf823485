@@ -1,4 +1,4 @@
-<!-- Kassza v6.5.1 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.7.0 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -366,7 +366,7 @@
   <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
   <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
   <div class="ob-code">kassza.github.io?user=nev</div>
-  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.5.1</div>
+  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.7.0</div>
 </div>
 
 <!-- Main app -->
@@ -374,7 +374,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.5.1</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.7.0</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -555,7 +555,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.5.1'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.7.0'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -944,9 +944,9 @@ async function submitNormal() {
   const cat=CATS.find(c=>c.id===st.selCat);
   const dp=dateVal.split('-');
   const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
-  const amtHUF_normal = await toHUF(rawAmt, currency);
   const entry={
-    id:Date.now(),type:st.selType,origAmt:rawAmt,amtHUF:amtHUF_normal,currency,
+    id:Date.now(),type:st.selType,origAmt:rawAmt,amtHUF:rawAmt, // sheet will store correct HUF via GOOGLEFINANCE
+    currency,
     source:st.selSource,
     note:note||'', // keep empty if not filled in — display uses category name dynamically
     cat:st.selType==='out'?st.selCat:null,
@@ -1123,9 +1123,9 @@ async function submitLoan() {
   if (!st.names.includes(name)) st.names.push(name);
   const dp=dateVal.split('-');
   const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
-  const amtHUF_loan = await toHUF(rawAmt, currency);
   const entry={
-    id:Date.now(),type:'loan',origAmt:rawAmt,amtHUF:amtHUF_loan,currency,
+    id:Date.now(),type:'loan',origAmt:rawAmt,amtHUF:rawAmt, // sheet will store correct HUF via GOOGLEFINANCE
+    currency,
     source:st.selSource,
     note:note||`Kölcsön — ${name}`,
     cat:null,icon:'🤝',personName:name,
@@ -1718,7 +1718,7 @@ async function submitEdit() {
 
   entry.type       = draft.type;
   entry.origAmt    = rawAmt;
-  entry.amtHUF     = await toHUF(rawAmt, currency);
+  entry.amtHUF     = rawAmt; // sheet stores correct HUF via GOOGLEFINANCE — updated on next sync
   entry.currency   = currency;
   entry.source     = draft.source || 'bank';
   entry.note       = note; // allow empty note — display falls back to category name
