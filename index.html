@@ -1,4 +1,4 @@
-<!-- Kassza v6.4.9 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.5.1 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -366,7 +366,7 @@
   <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
   <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
   <div class="ob-code">kassza.github.io?user=nev</div>
-  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.4.8</div>
+  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.5.1</div>
 </div>
 
 <!-- Main app -->
@@ -374,7 +374,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.9</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.5.1</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -528,32 +528,34 @@
 
 <script>
 
-// ── Currency conversion (client-side) ───────────────────────
+// ── Currency conversion via script (Google Finance) ─────────
 const rateCache = {};
 async function toHUF(amount, currency) {
   if (currency === 'HUF') return amount;
   const pair = {GBP:'GBPHUF', RON:'RONHUF', EUR:'EURHUF', USD:'USDHUF'}[currency];
   if (!pair) return amount;
-  // Check cache (10 min)
+  // Check local cache (10 min)
   if (rateCache[pair] && (Date.now() - rateCache[pair].ts) < 600000) {
     return Math.round(amount * rateCache[pair].rate);
   }
   try {
-    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${pair}=X?interval=1d&range=1d`);
+    const q = new URLSearchParams({action:'getRate', pair});
+    const res = await fetch(SCRIPT_URL + '?' + q);
     const data = await res.json();
-    const rate = data.chart.result[0].meta.regularMarketPrice;
-    rateCache[pair] = {rate, ts: Date.now()};
-    return Math.round(amount * rate);
-  } catch(e) {
-    // Fallback rates
-    const fallbacks = {GBPHUF:490, RONHUF:100, EURHUF:400, USDHUF:370};
-    return Math.round(amount * (fallbacks[pair] || 1));
-  }
+    if (data.rate) {
+      rateCache[pair] = {rate: data.rate, ts: Date.now()};
+      return Math.round(amount * data.rate);
+    }
+  } catch(e) {}
+  // Fallback if script unreachable
+  const fallbacks = {GBPHUF:490, RONHUF:77, EURHUF:400, USDHUF:365};
+  return Math.round(amount * (fallbacks[pair] || 1));
 }
+
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.4.9'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.5.1'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
