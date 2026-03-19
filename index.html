@@ -1,4 +1,4 @@
-<!-- Kassza v6.8.3 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.8.4 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -190,16 +190,11 @@
   .type-btn-normal.active-out{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
   .type-btn-normal.active-in{border-color:var(--green);background:var(--green-bg);color:var(--green);}
 
-  /* Cash/Bank toggle */
-  .source-toggle{display:flex;align-items:center;gap:12px;margin-top:14px;background:var(--bg);border-radius:14px;padding:13px 16px;border:2px solid var(--border);}
-  .source-label{font-size:14px;font-weight:500;flex:1;transition:color .2s;}
-  .source-label.active{font-weight:700;}
-  .source-label.bank.active{color:var(--blue);}
-  .source-label.cash.active{color:var(--amber);}
-  .toggle-track{position:relative;width:44px;height:24px;border-radius:12px;background:var(--blue);cursor:pointer;transition:background .25s;flex-shrink:0;}
-  .toggle-track.cash-mode{background:var(--amber);}
-  .toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
-  .toggle-track.cash-mode .toggle-thumb{transform:translateX(20px);}
+  /* Cash/Bank source buttons */
+  .source-row{display:flex;gap:8px;margin-top:14px;}
+  .source-btn{flex:1;padding:13px 8px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .source-btn.active-bank{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);font-weight:700;}
+  .source-btn.active-cash{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);font-weight:700;}
 
   /* Admin list */
   .admin-list{display:flex;flex-direction:column;gap:8px;}
@@ -369,7 +364,7 @@
   <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
   <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
   <div class="ob-code">kassza.github.io?user=nev</div>
-  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.8.3</div>
+  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.8.4</div>
 </div>
 
 <!-- Main app -->
@@ -377,7 +372,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.8.3</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.8.4</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -558,7 +553,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.8.3'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.8.4'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -903,13 +898,9 @@ function normalFormHTML() {
         <span class="curr-arrow">▾</span>
       </div>
     </div>
-    <!-- Cash/Bank toggle -->
-    <div class="source-toggle" onclick="toggleSource()">
-      <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
-      <div class="toggle-track ${isCash?'cash-mode':''}" id="sourceTrack">
-        <div class="toggle-thumb"></div>
-      </div>
-      <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
+    <div class="source-row">
+      <button class="source-btn ${!isCash?'active-bank':''}" id="srcBankBtn" onclick="setSource('bank')">💳 Bank</button>
+      <button class="source-btn ${isCash?'active-cash':''}" id="srcCashBtn" onclick="setSource('cash')">💵 Készpénz</button>
     </div>
     <div class="field-label">DÁTUM</div>
     <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
@@ -925,15 +916,12 @@ function normalFormHTML() {
 
 function initNormalForm() {setNormalType(st.selType==='in'?'in':'out');}
 
-function toggleSource() {
-  st.selSource = st.selSource==='bank'?'cash':'bank';
-  const track=document.getElementById('sourceTrack');
-  if (track) {
-    track.classList.toggle('cash-mode', st.selSource==='cash');
-    const isCash=st.selSource==='cash';
-    document.querySelectorAll('.source-label.bank').forEach(el=>el.classList.toggle('active',!isCash));
-    document.querySelectorAll('.source-label.cash').forEach(el=>el.classList.toggle('active',isCash));
-  }
+function setSource(src) {
+  st.selSource = src;
+  const bankBtn = document.getElementById('srcBankBtn');
+  const cashBtn = document.getElementById('srcCashBtn');
+  if (bankBtn) { bankBtn.className = 'source-btn' + (src==='bank' ? ' active-bank' : ''); }
+  if (cashBtn) { cashBtn.className = 'source-btn' + (src==='cash' ? ' active-cash' : ''); }
 }
 
 function setNormalType(t) {
@@ -1124,10 +1112,9 @@ function loanFormHTML() {
         <span class="curr-arrow">▾</span>
       </div>
     </div>
-    <div class="source-toggle" onclick="toggleSource()">
-      <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
-      <div class="toggle-track ${isCash?'cash-mode':''}" id="sourceTrack"><div class="toggle-thumb"></div></div>
-      <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
+    <div class="source-row">
+      <button class="source-btn ${!isCash?'active-bank':''}" id="srcBankBtn" onclick="setSource('bank')">💳 Bank</button>
+      <button class="source-btn ${isCash?'active-cash':''}" id="srcCashBtn" onclick="setSource('cash')">💵 Készpénz</button>
     </div>
     <div class="field-label">MIRE MENT?</div>
     <input class="text-input" id="noteInput" type="text" placeholder="pl. vacsora, jegy…" maxlength="60" autocomplete="off">
@@ -1713,18 +1700,13 @@ function setEditCat(id) {
   });
 }
 
-function toggleEditSource() {
+function setEditSource(src) {
   if (!st.editTarget) return;
-  st.editTarget.source = (st.editTarget.source||'bank') === 'bank' ? 'cash' : 'bank';
-  const isCash = st.editTarget.source === 'cash';
-  const track = document.getElementById('editSourceTrack');
-  if (track) {
-    track.classList.toggle('cash-mode', isCash);
-    document.querySelectorAll('#editSourceToggle .source-label').forEach(el => {
-      if (el.classList.contains('bank')) el.classList.toggle('active', !isCash);
-      if (el.classList.contains('cash')) el.classList.toggle('active', isCash);
-    });
-  }
+  st.editTarget.source = src;
+  const bankBtn = document.getElementById('editSrcBankBtn');
+  const cashBtn = document.getElementById('editSrcCashBtn');
+  if (bankBtn) bankBtn.className = 'source-btn' + (src==='bank' ? ' active-bank' : '');
+  if (cashBtn) cashBtn.className = 'source-btn' + (src==='cash' ? ' active-cash' : '');
 }
 
 async function submitEdit() {
