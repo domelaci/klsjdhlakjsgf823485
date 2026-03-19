@@ -399,7 +399,7 @@
 
 <script>
 // ── Config ───────────────────────────────────────────────────
-const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
+const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycbzHzRE6d8tyKNCLXTy20qrvEQiNy26rX3Exy2Hndq7pAikToDGQ1rXKxTmfRGf67ogmDw/exec';
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -445,6 +445,7 @@ const st = {
   selType:   'out',
   selName:   '',
   summary:   null,
+  activeTab: 'tetelek',
 };
 function save() {
   localStorage.setItem(STORE + '_entries', JSON.stringify(st.entries));
@@ -743,9 +744,12 @@ function changeMonth(d) {
   st.curM += d;
   if (st.curM > 11) { st.curM=0; st.curY++; }
   if (st.curM < 0)  { st.curM=11; st.curY--; }
-  render(); loadSummary();
+  render();
+  loadSummary();
+  if (st.activeTab === 'riport') renderReport();
 }
 function switchTab(tab) {
+  st.activeTab = tab;
   const isReport = tab==='riport';
   document.getElementById('mainPanel').classList.toggle('hidden-panel', isReport);
   document.getElementById('reportPanel').classList.toggle('active', isReport);
