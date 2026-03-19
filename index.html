@@ -1,4 +1,4 @@
-<!-- Kassza v6.8.7 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.8.9 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -191,8 +191,8 @@
   .type-btn-normal.active-in{border-color:var(--green);background:var(--green-bg);color:var(--green);}
 
   /* Cash/Bank source buttons */
-  .source-row{display:flex;gap:8px;margin-top:14px;}
-  .source-btn{flex:1;padding:13px 8px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .source-row{display:flex;gap:8px;margin-top:14px;flex-wrap:nowrap;}
+  .source-btn{flex:1;min-width:0;padding:13px 4px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;}
   .source-btn.active-bank{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);font-weight:700;}
   .source-btn.active-cash{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);font-weight:700;}
 
@@ -364,7 +364,7 @@
   <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
   <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
   <div class="ob-code">kassza.github.io?user=nev</div>
-  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.8.7</div>
+  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.8.9</div>
 </div>
 
 <!-- Main app -->
@@ -372,7 +372,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.8.7</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.8.9</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -553,7 +553,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.8.7'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.8.9'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -1008,10 +1008,10 @@ function adminListHTML() {
         <div class="admin-icon blue">🤝</div>
         <div><div class="admin-label">Kölcsön adtam</div><div class="admin-hint">Valakinek adtam kölcsönt</div></div>
       </div>
-      ${hasLoans?`<div class="admin-item teal" onclick="goAdminMode('loan-pay')">
+      <div class="admin-item teal" onclick="goAdminMode('loan-pay')">
         <div class="admin-icon teal">↩️</div>
-        <div><div class="admin-label">Visszafizetés</div><div class="admin-hint">${getOutstandingLoans().length} kintlévőség · ${fmtFt(getOutstandingLoans().reduce((s,d)=>s+d.amt,0))}</div></div>
-      </div>`:''}
+        <div><div class="admin-label">Visszafizetés rögzítése</div><div class="admin-hint">${hasLoans ? getOutstandingLoans().length+' kintlévőség · '+fmtFt(getOutstandingLoans().reduce((s,d)=>s+d.amt,0)) : 'Nincs nyitott kintlévőség'}</div></div>
+      </div>
       <div class="admin-item gray" onclick="goAdminMode('correction')">
         <div class="admin-icon gray">🔧</div>
         <div><div class="admin-label">Korrekció</div><div class="admin-hint">Egyenleg igazítása a valósághoz</div></div>
@@ -1189,11 +1189,11 @@ function openPayConfirm(name,amt) {
       <input class="sub-amt-input" id="payAmtInput" type="number" inputmode="decimal" placeholder="0" value="${amt}" min="0" step="any">
       <button class="sub-full-btn" onclick="document.getElementById('payAmtInput').value=${amt}">Teljes</button>
     </div>
-    <div class="source-toggle" onclick="toggleSource()" style="margin-bottom:14px;">
-      <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
-      <div class="toggle-track ${isCash?'cash-mode':''}" id="sourceTrack"><div class="toggle-thumb"></div></div>
-      <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
+    <div class="source-row" style="margin-bottom:14px;">
+      <button class="source-btn ${!isCash?'active-bank':''}" id="srcBankBtn" onclick="setSource('bank')">💳 Bank</button>
+      <button class="source-btn ${isCash?'active-cash':''}" id="srcCashBtn" onclick="setSource('cash')">💵 Készpénz</button>
     </div>
+
     <div class="field-label">DÁTUM</div>
     <input class="date-input" id="payDateInput" type="date" value="${todayStr()}" style="margin-bottom:14px;">
     <div class="sub-actions">
@@ -1529,7 +1529,8 @@ function openLoanPayFromPanel(name,amt) {
   st.payTarget={name,amt};
   st.sheetMode='loan-pay';
   openPayConfirm(name,amt);
-  document.getElementById('sheetOverlay').classList.add('open');
+  if (isDesktop()) syncDesktopFormBody();
+  else document.getElementById('sheetOverlay').classList.add('open');
 }
 
 // ── Main render ──────────────────────────────────────────────
@@ -1636,13 +1637,12 @@ function renderEditSheet() {
       {save:'🐷 Félretett',withdraw:'🏧 Elővett',loan:'🤝 Kölcsön',reimburse:'↩️ Visszafizetés',transfer:'💸 Készpénzfelvét',correction:'🔧 Korrekció'}[entry.type]||entry.type
     }</div>`;
 
-  // Source toggle — for in/out and loan
+  // Source buttons — for in/out and loan
   const showSource = entry.type==='out'||entry.type==='in'||entry.type==='loan';
   const sourceToggle = showSource ? `
-    <div class="source-toggle" onclick="toggleEditSource()" id="editSourceToggle">
-      <span class="source-label bank ${!isCash?'active':''}">💳 Bank</span>
-      <div class="toggle-track ${isCash?'cash-mode':''}" id="editSourceTrack"><div class="toggle-thumb"></div></div>
-      <span class="source-label cash ${isCash?'active':''}">💵 Készpénz</span>
+    <div class="source-row">
+      <button class="source-btn ${!isCash?'active-bank':''}" id="editSrcBankBtn" onclick="setEditSource('bank')">💳 Bank</button>
+      <button class="source-btn ${isCash?'active-cash':''}" id="editSrcCashBtn" onclick="setEditSource('cash')">💵 Készpénz</button>
     </div>` : '';
 
   // Category chips — for out type
