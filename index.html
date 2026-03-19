@@ -1,4 +1,4 @@
-<!-- Kassza v6.4.0 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.4.2 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -367,7 +367,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.0</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.4.2</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -522,7 +522,7 @@
 <script>
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.4.0'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.4.2'; // html version — bump patch for html-only, minor for script changes
 const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
 
 // ── Detect user ──────────────────────────────────────────────
@@ -645,7 +645,7 @@ async function fullSync() {
     const sheetIds=new Set(sheetEntries.map(e=>String(e.id)));
     const localUnsynced=st.entries.filter(e=>!e.synced&&!sheetIds.has(String(e.id)));
     st.entries=[...sheetEntries,...localUnsynced];
-    st.entries.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    st.entries.sort((a,b)=>{ const dateDiff=new Date(b.date)-new Date(a.date); return dateDiff!==0?dateDiff:Number(b.id)-Number(a.id); });
     st.entries.forEach(e=>{if(e.personName&&!st.names.includes(e.personName))st.names.push(e.personName);});
     save();
     if (localUnsynced.length>0) {
@@ -1248,10 +1248,10 @@ function checkVersionMatch(scriptVersion) {
 
 // ── Tile filter ──────────────────────────────────────────────
 const TILE_META = {
-  bank:    {label:'Bank',        icon:'💳', types:['out','in'],             sourceMatch:'bank'},
-  cash:    {label:'Készpénz',    icon:'💵', types:['out','in','transfer'],  sourceMatch:'cash'},
-  savings: {label:'Megtakarítás',icon:'🐷', types:['save','withdraw'],      sourceMatch:null},
-  loans:   {label:'Kintlévőség', icon:'🤝', types:['loan','reimburse'],     sourceMatch:null},
+  bank:    {label:'Bank',        icon:'💳', types:['out','in','loan','reimburse'], sourceMatch:'bank'},
+  cash:    {label:'Készpénz',    icon:'💵', types:['out','in','transfer','loan','reimburse'], sourceMatch:'cash'},
+  savings: {label:'Megtakarítás',icon:'🐷', types:['save','withdraw'],             sourceMatch:null},
+  loans:   {label:'Kintlévőség', icon:'🤝', types:['loan','reimburse'],            sourceMatch:null},
 };
 
 function filterTile(key) {
@@ -1355,7 +1355,7 @@ function buildCatChips() {
 // ── Local entry ──────────────────────────────────────────────
 function addEntryLocal(entry) {
   st.entries.unshift(entry);
-  st.entries.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  st.entries.sort((a,b)=>{ const dateDiff=new Date(b.date)-new Date(a.date); return dateDiff!==0?dateDiff:Number(b.id)-Number(a.id); });
   st.curM=entry.month; st.curY=entry.year;
   save(); render();
 }
@@ -1665,7 +1665,7 @@ async function submitEdit() {
   entry.year       = eDate.getFullYear();
   entry.synced     = false;
 
-  st.entries.sort((a,b) => new Date(b.date) - new Date(a.date));
+  st.entries.sort((a,b) => { const dateDiff=new Date(b.date)-new Date(a.date); return dateDiff!==0?dateDiff:Number(b.id)-Number(a.id); });
   st.curM = entry.month; st.curY = entry.year;
   save(); closeSheet(); render();
   showToast('Tétel frissítve ✓');
