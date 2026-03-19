@@ -31,17 +31,17 @@
 
   /* Header */
   .header{padding:48px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;}
-  .app-name{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;flex-shrink:0;}
+  .app-name{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;flex-shrink:0;}
   .app-name span{color:var(--accent);}
-  .header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
-  .savings-pill{display:flex;align-items:center;gap:5px;background:var(--purple-bg);border-radius:30px;padding:6px 12px;border:1px solid rgba(107,78,170,.2);}
-  .savings-pill-amt{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--purple);}
-  .user-pill{display:flex;align-items:center;gap:7px;background:var(--card);border-radius:30px;padding:6px 12px;border:1px solid var(--border);}
-  .user-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;font-family:'Syne',sans-serif;flex-shrink:0;}
-  .user-name-pill{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;}
+  .header-right{display:flex;gap:8px;align-items:center;}
+  .savings-pill{display:flex;align-items:center;gap:5px;background:var(--purple-bg);border-radius:30px;padding:7px 13px;border:1px solid rgba(107,78,170,.2);}
+  .savings-pill-amt{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--purple);}
+  .user-pill{display:flex;align-items:center;gap:7px;background:var(--card);border-radius:30px;padding:7px 13px;border:1px solid var(--border);}
+  .user-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;font-family:'Syne',sans-serif;flex-shrink:0;}
+  .user-name-pill{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
 
-  /* Sync bar */
-  .sync-bar{margin:10px 20px 0;display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink3);}
+  /* Sync */
+  .sync-bar{margin:10px 20px 0;display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink3);}
   .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex-shrink:0;transition:background .3s;}
   .sync-dot.ok{background:var(--green);}
   .sync-dot.err{background:var(--accent);}
@@ -50,134 +50,70 @@
 
   /* Month nav */
   .month-row{margin:14px 20px 0;display:flex;justify-content:space-between;align-items:center;}
-  .month-switch{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;padding:8px 14px;border:1px solid var(--border);}
-  .month-btn{background:none;border:none;cursor:pointer;color:var(--ink2);font-size:18px;padding:0 2px;line-height:1;}
-  .month-label{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;min-width:80px;text-align:center;}
-  .sync-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 14px;font-size:13px;color:var(--ink2);cursor:pointer;}
+  .month-switch{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;padding:9px 16px;border:1px solid var(--border);}
+  .month-btn{background:none;border:none;cursor:pointer;color:var(--ink2);font-size:20px;padding:0 2px;line-height:1;}
+  .month-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;min-width:84px;text-align:center;}
+  .sync-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 16px;font-size:14px;color:var(--ink2);cursor:pointer;}
 
-  /* Summary card */
-  .summary{margin:12px 20px 0;background:var(--ink);border-radius:var(--r);padding:20px;color:#fff;position:relative;overflow:hidden;}
-  .summary::before{content:'';position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;background:rgba(200,85,61,.18);}
-  .summary::after{content:'';position:absolute;bottom:-30px;left:20px;width:100px;height:100px;border-radius:50%;background:rgba(232,184,75,.12);}
-  .sum-row{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;}
-  .s-label{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
-  .s-big{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;line-height:1;}
-  .s-small{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,.7);line-height:1;}
-  .s-savings{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(187,155,255,.9);}
-  .bar-wrap{margin-top:16px;position:relative;z-index:1;}
-  .bar-track{height:4px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;}
+  /* Summary card — improved contrast */
+  .summary{margin:12px 20px 0;background:var(--ink);border-radius:var(--r);padding:22px;color:#fff;position:relative;overflow:hidden;}
+  .summary::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:rgba(200,85,61,.15);}
+  .sum-inner{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;}
+  .sum-left{}
+  .sum-right{display:flex;flex-direction:column;gap:10px;text-align:right;}
+  .s-label{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+  .s-big{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.1;}
+  .s-med{font-family:'Syne',sans-serif;font-size:19px;font-weight:700;color:#fff;line-height:1;}
+  .s-sav{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:rgba(187,155,255,.95);line-height:1;}
+  .bar-wrap{margin-top:18px;position:relative;z-index:1;}
+  .bar-track{height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;}
   .bar-fill{height:100%;background:var(--accent2);border-radius:2px;transition:width .5s ease;}
-  .bar-labels{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:rgba(255,255,255,.35);}
+  .bar-labels{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:rgba(255,255,255,.45);}
 
-  /* Entries list */
+  /* Debt banner */
+  .debt-banner{margin:10px 20px 0;background:var(--blue-bg);border-radius:14px;padding:12px 16px;border:1px solid rgba(24,95,165,.2);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+  .debt-banner-label{font-size:14px;color:var(--blue);font-weight:500;}
+  .debt-banner-amt{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--blue);}
+
+  /* Entries */
   .entries-wrap{margin:16px 20px 0;}
   .entries-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
   .section-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink2);}
   .entries-list{display:flex;flex-direction:column;gap:8px;}
-  .entry-card{background:var(--card);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;border:1px solid var(--border);animation:slideIn .2s ease;}
+  .entry-card{background:var(--card);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:11px;border:1px solid var(--border);animation:slideIn .2s ease;}
   @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-  .entry-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-  .entry-icon.out{background:var(--red-bg);}
-  .entry-icon.in{background:var(--green-bg);}
-  .entry-icon.save{background:var(--purple-bg);}
+  .entry-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .entry-icon.out     {background:var(--red-bg);}
+  .entry-icon.in      {background:var(--green-bg);}
+  .entry-icon.save    {background:var(--purple-bg);}
   .entry-icon.withdraw{background:var(--amber-bg);}
-  .entry-icon.advance{background:var(--blue-bg);}
+  .entry-icon.advance {background:var(--blue-bg);}
   .entry-icon.reimburse{background:var(--teal-bg);}
   .entry-body{flex:1;min-width:0;}
   .entry-name{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .entry-meta{font-size:11px;color:var(--ink2);margin-top:1px;}
-  .entry-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;}
-  .entry-amount{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;white-space:nowrap;}
-  .entry-amount.out{color:var(--accent);}
-  .entry-amount.in{color:var(--green);}
-  .entry-amount.save{color:var(--purple);}
+  .entry-meta{font-size:12px;color:var(--ink2);margin-top:2px;}
+  .entry-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+  .entry-amount{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;white-space:nowrap;}
+  .entry-amount.out     {color:var(--accent);}
+  .entry-amount.in      {color:var(--green);}
+  .entry-amount.save    {color:var(--purple);}
   .entry-amount.withdraw{color:var(--amber);}
-  .entry-amount.advance{color:var(--blue);}
+  .entry-amount.advance {color:var(--blue);}
   .entry-amount.reimburse{color:var(--teal);}
   .entry-sync{font-size:10px;color:var(--ink3);}
   .entry-sync.synced{color:var(--green);}
-  .entry-del{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:18px;padding:3px;flex-shrink:0;line-height:1;}
-  .empty-state{text-align:center;padding:32px 0;color:var(--ink3);}
-  .empty-icon{font-size:36px;margin-bottom:8px;}
+  .entry-del{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:19px;padding:3px;flex-shrink:0;line-height:1;}
+  .empty-state{text-align:center;padding:36px 0;color:var(--ink3);}
+  .empty-icon{font-size:40px;margin-bottom:10px;}
 
   /* FAB */
-  .fab{position:fixed;bottom:90px;right:50%;transform:translateX(195px);width:56px;height:56px;border-radius:28px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(200,85,61,.4);z-index:70;transition:transform .15s,box-shadow .15s;}
-  .fab:active{transform:translateX(195px) scale(.93);box-shadow:0 2px 8px rgba(200,85,61,.3);}
-  .fab svg{width:24px;height:24px;stroke:#fff;stroke-width:2.5;stroke-linecap:round;}
-
-  /* Bottom sheet overlay */
-  .sheet-overlay{position:fixed;inset:0;background:rgba(26,24,20,0);z-index:150;display:flex;align-items:flex-end;pointer-events:none;transition:background .3s;}
-  .sheet-overlay.open{background:rgba(26,24,20,.45);pointer-events:all;}
-  .bottom-sheet{background:var(--card);border-radius:24px 24px 0 0;padding:0 0 40px;width:100%;max-width:430px;margin:0 auto;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:92vh;overflow-y:auto;}
-  .sheet-overlay.open .bottom-sheet{transform:translateY(0);}
-  .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;}
-  .sheet-header{padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
-  .sheet-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;}
-  .sheet-close{background:none;border:none;font-size:22px;color:var(--ink3);cursor:pointer;line-height:1;padding:0 4px;}
-  .sheet-body{padding:16px 20px 0;}
-
-  /* Type grid — 2x3 */
-  .type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-  .type-btn{padding:10px 6px;border-radius:12px;border:2px solid var(--border);background:var(--card);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;line-height:1.3;}
-  .type-btn .t-icon{display:block;font-size:15px;margin-bottom:2px;}
-  .type-btn.active-out     {border-color:var(--accent);  background:var(--red-bg);   color:var(--accent);}
-  .type-btn.active-in      {border-color:var(--green);   background:var(--green-bg); color:var(--green);}
-  .type-btn.active-save    {border-color:var(--purple);  background:var(--purple-bg);color:var(--purple);}
-  .type-btn.active-withdraw{border-color:var(--amber);   background:var(--amber-bg); color:var(--amber);}
-  .type-btn.active-advance {border-color:var(--blue);    background:var(--blue-bg);  color:var(--blue);}
-  .type-btn.active-reimburse{border-color:var(--teal);   background:var(--teal-bg);  color:var(--teal);}
-
-  /* Type hint */
-  .type-hint{font-size:12px;color:var(--ink3);margin:-2px 0 12px;padding:8px 12px;background:var(--bg);border-radius:10px;border:1px solid var(--border);line-height:1.5;}
-
-  /* Form fields */
-  .field-label{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--ink2);margin-bottom:6px;margin-top:12px;}
-  .amount-row{display:flex;gap:8px;margin-bottom:4px;}
-  .amount-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--ink);outline:none;min-width:0;transition:border-color .2s;}
-  .amount-input:focus{border-color:var(--accent);}
-  .amount-input::placeholder{color:var(--ink3);}
-  .curr-wrap{position:relative;flex-shrink:0;}
-  .curr-select{appearance:none;-webkit-appearance:none;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:0 34px 0 12px;height:100%;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;transition:border-color .2s;min-width:90px;}
-  .curr-select:focus{border-color:var(--accent);}
-  .curr-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:10px;color:var(--ink2);}
-  .date-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
-  .date-input:focus{border-color:var(--accent);}
-  .note-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
-  .note-input:focus{border-color:var(--accent);}
-  .note-input::placeholder{color:var(--ink3);}
-
-  /* Category chips */
-  .cat-row{display:flex;gap:6px;flex-wrap:wrap;}
-  .cat-chip{background:var(--bg);border:2px solid var(--border);border-radius:30px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap;}
-  .cat-chip.active{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
-
-  /* Name chips */
-  .name-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
-  .name-chip{background:var(--bg);border:2px solid var(--border);border-radius:30px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;}
-  .name-chip.active-advance  {border-color:var(--blue);  background:var(--blue-bg);  color:var(--blue);}
-  .name-chip.active-reimburse{border-color:var(--teal);  background:var(--teal-bg);  color:var(--teal);}
-
-  /* Savings avail */
-  .savings-avail{background:var(--purple-bg);border:2px solid rgba(107,78,170,.2);border-radius:14px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;}
-  .savings-avail-amt{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--purple);}
-
-  /* Outstanding debts banner */
-  .debt-banner{margin:0 20px;background:var(--blue-bg);border-radius:14px;padding:12px 16px;border:1px solid rgba(24,95,165,.2);display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
-  .debt-banner-label{font-size:13px;color:var(--blue);font-weight:500;}
-  .debt-banner-amt{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--blue);}
-
-  /* Add button */
-  .add-btn{width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .1s,background .2s;letter-spacing:.02em;margin-top:16px;}
-  .add-btn:active{transform:scale(.98);opacity:.9;}
-  .add-btn.btn-in      {background:var(--green);}
-  .add-btn.btn-save    {background:var(--purple);}
-  .add-btn.btn-withdraw{background:var(--amber);}
-  .add-btn.btn-advance {background:var(--blue);}
-  .add-btn.btn-reimburse{background:var(--teal);}
+  .fab{position:fixed;bottom:90px;right:50%;transform:translateX(195px);width:58px;height:58px;border-radius:29px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(200,85,61,.45);z-index:70;transition:transform .15s,box-shadow .15s;}
+  .fab:active{transform:translateX(195px) scale(.92);}
+  .fab svg{width:26px;height:26px;stroke:#fff;stroke-width:2.5;stroke-linecap:round;}
 
   /* Bottom nav */
   .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);background:var(--card);border-top:1px solid var(--border);display:flex;z-index:80;width:100%;max-width:430px;}
-  .nav-btn{flex:1;padding:10px 8px 16px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink3);transition:color .15s;}
+  .nav-btn{flex:1;padding:11px 8px 17px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink3);transition:color .15s;}
   .nav-btn.active{color:var(--accent);}
   .nav-indicator{width:20px;height:2px;background:transparent;border-radius:1px;margin-top:2px;}
   .nav-btn.active .nav-indicator{background:var(--accent);}
@@ -188,52 +124,128 @@
   .report-panel{display:none;padding:0 0 20px;}
   .report-panel.active{display:block;}
 
-  /* Report cards */
-  .chart-card{margin:14px 20px 0;background:var(--card);border-radius:var(--r);padding:18px;border:1px solid var(--border);}
-  .chart-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--ink2);letter-spacing:.1em;margin-bottom:14px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;}
-  .chart-month-label{font-size:12px;color:var(--ink3);font-weight:400;letter-spacing:0;text-transform:none;}
-  .cat-bars{display:flex;flex-direction:column;gap:12px;}
+  /* Report */
+  .chart-card{margin:14px 20px 0;background:var(--card);border-radius:var(--r);padding:20px;border:1px solid var(--border);}
+  .chart-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--ink2);letter-spacing:.1em;margin-bottom:16px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;}
+  .chart-sub{font-size:12px;color:var(--ink3);font-weight:400;letter-spacing:0;text-transform:none;}
+  .cat-bars{display:flex;flex-direction:column;gap:13px;}
   .cat-bar-row{display:flex;align-items:center;gap:10px;}
-  .cat-bar-icon{font-size:17px;width:24px;text-align:center;flex-shrink:0;}
+  .cat-bar-icon{font-size:18px;width:26px;text-align:center;flex-shrink:0;}
   .cat-bar-body{flex:1;}
-  .cat-bar-top{display:flex;justify-content:space-between;margin-bottom:3px;}
-  .cat-bar-name{font-size:13px;font-weight:500;color:var(--ink);}
-  .cat-bar-amt{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--ink);}
-  .cat-bar-track{height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+  .cat-bar-top{display:flex;justify-content:space-between;margin-bottom:4px;}
+  .cat-bar-name{font-size:14px;font-weight:500;color:var(--ink);}
+  .cat-bar-amt{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--ink);}
+  .cat-bar-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
   .cat-bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
-  .cat-bar-pct{font-size:11px;color:var(--ink3);margin-top:2px;}
-  .sum-row-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);}
+  .cat-bar-pct{font-size:12px;color:var(--ink3);margin-top:2px;}
+  .sum-row-item{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
   .sum-row-item:last-child{border-bottom:none;}
-
-  /* Kintlévőségek */
-  .debt-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+  .debt-row{display:flex;justify-content:space-between;align-items:center;padding:11px 8px;margin:0 -8px;border-bottom:1px solid var(--border);border-radius:10px;cursor:pointer;transition:background .15s;}
+  .debt-row:hover{background:var(--bg);}
   .debt-row:last-child{border-bottom:none;}
   .debt-name{font-size:14px;font-weight:500;color:var(--ink);}
-  .debt-detail{font-size:11px;color:var(--ink3);margin-top:2px;}
-  .debt-amt{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--blue);}
-  .debt-empty{text-align:center;padding:20px 0;color:var(--ink3);font-size:13px;}
+  .debt-hint{font-size:12px;color:var(--ink3);margin-top:2px;}
+  .debt-amt{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--blue);}
+  .debt-empty{text-align:center;padding:20px 0;color:var(--ink3);font-size:14px;}
 
-  /* Toast */
-  .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;}
+  /* Sheet overlay */
+  .sheet-overlay{position:fixed;inset:0;background:rgba(26,24,20,0);z-index:150;display:flex;align-items:flex-end;pointer-events:none;transition:background .3s;}
+  .sheet-overlay.open{background:rgba(26,24,20,.45);pointer-events:all;}
+  .bottom-sheet{background:var(--card);border-radius:24px 24px 0 0;padding:0 0 44px;width:100%;max-width:430px;margin:0 auto;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:92vh;overflow-y:auto;}
+  .sheet-overlay.open .bottom-sheet{transform:translateY(0);}
+  .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;}
+  .sheet-header{padding:16px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
+  .sheet-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;}
+  .sheet-close{background:none;border:none;font-size:24px;color:var(--ink3);cursor:pointer;line-height:1;padding:0 4px;}
+  .sheet-body{padding:18px 20px 0;}
+
+  /* Mode picker — first step */
+  .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+  .mode-btn{padding:20px 12px;border-radius:16px;border:2px solid var(--border);background:var(--bg);cursor:pointer;text-align:center;transition:all .15s;}
+  .mode-btn:active{transform:scale(.97);}
+  .mode-btn .m-icon{font-size:28px;margin-bottom:8px;display:block;}
+  .mode-btn .m-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);display:block;}
+  .mode-btn .m-hint{font-size:12px;color:var(--ink3);display:block;margin-top:3px;line-height:1.4;}
+  .mode-btn.normal:hover,.mode-btn.normal:active{border-color:var(--accent);background:var(--red-bg);}
+  .mode-btn.admin:hover,.mode-btn.admin:active{border-color:var(--blue);background:var(--blue-bg);}
+
+  /* Normal form — type row */
+  .type-row-normal{display:flex;gap:8px;margin-bottom:14px;}
+  .type-btn-normal{flex:1;padding:13px 8px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;}
+  .type-btn-normal.active-out{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
+  .type-btn-normal.active-in {border-color:var(--green);background:var(--green-bg);color:var(--green);}
+
+  /* Admin options list */
+  .admin-list{display:flex;flex-direction:column;gap:8px;}
+  .admin-item{display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:14px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
+  .admin-item:active{transform:scale(.98);}
+  .admin-item.purple:hover,.admin-item.purple:active{border-color:var(--purple);background:var(--purple-bg);}
+  .admin-item.amber:hover,.admin-item.amber:active{border-color:var(--amber);background:var(--amber-bg);}
+  .admin-item.blue:hover,.admin-item.blue:active{border-color:var(--blue);background:var(--blue-bg);}
+  .admin-item.teal:hover,.admin-item.teal:active{border-color:var(--teal);background:var(--teal-bg);}
+  .admin-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+  .admin-icon.purple{background:var(--purple-bg);}
+  .admin-icon.amber{background:var(--amber-bg);}
+  .admin-icon.blue{background:var(--blue-bg);}
+  .admin-icon.teal{background:var(--teal-bg);}
+  .admin-body{}
+  .admin-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .admin-hint{font-size:12px;color:var(--ink2);margin-top:2px;}
+
+  /* Form fields */
+  .field-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink2);margin-bottom:7px;margin-top:14px;}
+  .amount-row{display:flex;gap:8px;}
+  .amount-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--ink);outline:none;min-width:0;transition:border-color .2s;}
+  .amount-input:focus{border-color:var(--accent);}
+  .amount-input::placeholder{color:var(--ink3);}
+  .curr-wrap{position:relative;flex-shrink:0;}
+  .curr-select{appearance:none;-webkit-appearance:none;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:0 34px 0 12px;height:100%;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;transition:border-color .2s;min-width:92px;}
+  .curr-select:focus{border-color:var(--accent);}
+  .curr-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:10px;color:var(--ink2);}
+  .text-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
+  .text-input:focus{border-color:var(--accent);}
+  .text-input::placeholder{color:var(--ink3);}
+  .date-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
+  .date-input:focus{border-color:var(--accent);}
+  .cat-row{display:flex;gap:7px;flex-wrap:wrap;}
+  .cat-chip{background:var(--card);border:2px solid var(--border);border-radius:30px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+  .cat-chip.active{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
+  .savings-info{background:var(--purple-bg);border:1px solid rgba(107,78,170,.2);border-radius:12px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:14px;}
+  .savings-info-amt{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--purple);}
+  .add-btn{width:100%;padding:17px;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .1s;letter-spacing:.02em;margin-top:18px;color:#fff;}
+  .add-btn:active{transform:scale(.98);opacity:.9;}
+  .add-btn.out     {background:var(--accent);}
+  .add-btn.in      {background:var(--green);}
+  .add-btn.save    {background:var(--purple);}
+  .add-btn.withdraw{background:var(--amber);}
+  .add-btn.advance {background:var(--blue);}
+
+  /* Outstanding advances in admin */
+  .advance-list{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+  .advance-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:13px;padding:13px 16px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
+  .advance-item:hover{border-color:var(--teal);background:var(--teal-bg);}
+  .advance-item-left{}
+  .advance-item-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .advance-item-note{font-size:12px;color:var(--ink2);margin-top:2px;}
+  .advance-item-amt{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--blue);}
+  .advance-empty{text-align:center;padding:20px 0;color:var(--ink3);font-size:14px;}
+
+  /* Reimburse confirm sub-sheet */
+  .sub-sheet{background:var(--card);border-radius:20px;padding:20px;margin:0 8px;}
+  .sub-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px;}
+  .sub-sub{font-size:13px;color:var(--ink2);margin-bottom:16px;}
+  .sub-amt-row{display:flex;gap:8px;margin-bottom:14px;}
+  .sub-amt-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:13px 14px;font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--ink);outline:none;transition:border-color .2s;}
+  .sub-amt-input:focus{border-color:var(--teal);}
+  .sub-full-btn{flex-shrink:0;background:var(--teal-bg);border:2px solid rgba(15,110,86,.2);border-radius:12px;padding:0 14px;font-size:13px;font-weight:600;color:var(--teal);cursor:pointer;white-space:nowrap;}
+  .sub-actions{display:flex;gap:8px;}
+  .sub-cancel{flex:1;padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);}
+  .sub-confirm{flex:1;padding:13px;background:var(--teal);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
+  .back-btn{background:none;border:none;font-size:14px;color:var(--ink2);cursor:pointer;padding:0 0 14px;display:flex;align-items:center;gap:6px;}
+
+  /* Toast — top of screen, never blocks form */
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2);}
   .toast.show{transform:translateX(-50%) translateY(0);}
-
-  /* Quick reimburse modal */
-  .modal-overlay{position:fixed;inset:0;background:rgba(26,24,20,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;}
-  .modal-overlay.hidden{display:none!important;}
-  .modal-card{background:var(--card);border-radius:20px;padding:24px;width:100%;max-width:340px;}
-  .modal-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-bottom:4px;}
-  .modal-sub{font-size:13px;color:var(--ink2);margin-bottom:20px;}
-  .modal-amt-row{display:flex;gap:8px;margin-bottom:16px;}
-  .modal-amt-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:12px 14px;font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--ink);outline:none;transition:border-color .2s;}
-  .modal-amt-input:focus{border-color:var(--teal);}
-  .modal-full-btn{flex-shrink:0;background:var(--teal-bg);border:2px solid rgba(15,110,86,.2);border-radius:12px;padding:0 14px;font-size:12px;font-weight:600;color:var(--teal);cursor:pointer;white-space:nowrap;}
-  .modal-actions{display:flex;gap:8px;}
-  .modal-cancel{flex:1;padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);}
-  .modal-confirm{flex:1;padding:13px;background:var(--teal);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;}
-  .debt-row{cursor:pointer;transition:background .15s;border-radius:10px;padding:10px 8px;margin:0 -8px;}
-  .debt-row:hover{background:var(--bg);}
-  .debt-tap-hint{font-size:11px;color:var(--ink3);margin-top:2px;}
-
 </style>
 </head>
 <body>
@@ -249,12 +261,11 @@
 
 <!-- Main app -->
 <div class="app hidden" id="mainApp">
-
   <div class="header">
     <div class="app-name">kass<span>za</span> 💸</div>
     <div class="header-right">
       <div class="savings-pill">
-        <span style="font-size:13px">🐷</span>
+        <span style="font-size:14px">🐷</span>
         <span class="savings-pill-amt" id="savingsPillAmt">Ft 0</span>
       </div>
       <div class="user-pill">
@@ -279,11 +290,16 @@
   </div>
 
   <div class="summary">
-    <div id="sumContent"><div style="font-size:13px;color:rgba(255,255,255,.3);padding:8px 0;position:relative;z-index:1">Betöltés…</div></div>
+    <div class="sum-inner" id="sumContent">
+      <div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Betöltés…</div>
+    </div>
+    <div class="bar-wrap" id="barWrap" style="display:none">
+      <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+      <div class="bar-labels"><span id="barLeft">0% elköltve</span><span id="barRight">Ft 0 maradt</span></div>
+    </div>
   </div>
 
-  <!-- Kintlévőség banner (shown if outstanding debts exist) -->
-  <div class="debt-banner hidden" id="debtBanner" onclick="switchTab('riport')" style="margin-top:12px;">
+  <div class="debt-banner hidden" id="debtBanner" onclick="switchTab('riport')" style="margin-top:0">
     <span class="debt-banner-label">💳 Kintlévőségek</span>
     <span class="debt-banner-amt" id="debtBannerAmt"></span>
   </div>
@@ -293,7 +309,7 @@
     <div class="entries-wrap">
       <div class="entries-header">
         <div class="section-label">TÉTELEK</div>
-        <button style="font-size:12px;color:var(--ink3);background:none;border:none;cursor:pointer;" onclick="clearMonth()">Törli mind</button>
+        <button style="font-size:13px;color:var(--ink3);background:none;border:none;cursor:pointer;" onclick="clearMonth()">Törli mind</button>
       </div>
       <div class="entries-list" id="entryList"></div>
       <div class="empty-state hidden" id="emptyState">
@@ -307,35 +323,17 @@
   <div class="report-panel" id="reportPanel">
     <div style="height:4px"></div>
     <div class="chart-card">
-      <div class="chart-title">Kategóriák <span class="chart-month-label" id="chartMonthLabel"></span></div>
+      <div class="chart-title">Kategóriák <span class="chart-sub" id="chartMonthLabel"></span></div>
       <div class="cat-bars" id="catBars"></div>
-      <div style="text-align:center;padding:24px 0;color:var(--ink3);font-size:13px;display:none" id="catEmpty">Még nincs kiadás ebben a hónapban</div>
+      <div style="text-align:center;padding:24px 0;color:var(--ink3);font-size:14px;display:none" id="catEmpty">Még nincs kiadás ebben a hónapban</div>
     </div>
     <div class="chart-card" style="margin-top:12px;">
       <div class="chart-title">Összefoglaló</div>
       <div id="reportSummaryRows"></div>
     </div>
-    <div class="chart-card" style="margin-top:12px;">
+    <div class="chart-card" style="margin-top:12px;margin-bottom:4px;">
       <div class="chart-title">💳 Kintlévőségek</div>
       <div id="debtList"></div>
-    </div>
-  </div>
-
-</div>
-
-
-<!-- Quick reimburse modal -->
-<div class="modal-overlay hidden" id="reimburseModal">
-  <div class="modal-card">
-    <div class="modal-title" id="modalTitle">Visszafizetés</div>
-    <div class="modal-sub" id="modalSub">Mennyit fizetett vissza?</div>
-    <div class="modal-amt-row">
-      <input class="modal-amt-input" id="modalAmt" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
-      <button class="modal-full-btn" onclick="setFullAmount()">Teljes összeg</button>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-cancel" onclick="closeReimburseModal()">Mégsem</button>
-      <button class="modal-confirm" onclick="confirmReimburse()">Rögzítés ✓</button>
     </div>
   </div>
 </div>
@@ -348,16 +346,16 @@
 <!-- Bottom nav -->
 <div class="bottom-nav hidden" id="bottomNav">
   <button class="nav-btn active" id="navTetelek" onclick="switchTab('tetelek')">
-    <span style="font-size:19px">📋</span><span>Tételek</span>
+    <span style="font-size:20px">📋</span><span>Tételek</span>
     <div class="nav-indicator"></div>
   </button>
   <button class="nav-btn" id="navRiport" onclick="switchTab('riport')">
-    <span style="font-size:19px">📊</span><span>Riport</span>
+    <span style="font-size:20px">📊</span><span>Riport</span>
     <div class="nav-indicator"></div>
   </button>
 </div>
 
-<!-- Bottom sheet overlay -->
+<!-- Bottom sheet -->
 <div class="sheet-overlay" id="sheetOverlay" onclick="maybeCloseSheet(event)">
   <div class="bottom-sheet" id="bottomSheet">
     <div class="sheet-handle"></div>
@@ -365,70 +363,11 @@
       <div class="sheet-title" id="sheetTitle">Új tétel</div>
       <button class="sheet-close" onclick="closeSheet()">×</button>
     </div>
-    <div class="sheet-body">
-
-      <!-- Type grid 2x3 -->
-      <div class="type-grid">
-        <button class="type-btn active-out" id="btnOut"      onclick="setType('out')">      <span class="t-icon">↑</span>Kiment</button>
-        <button class="type-btn"            id="btnIn"       onclick="setType('in')">       <span class="t-icon">↓</span>Bejött</button>
-        <button class="type-btn"            id="btnSave"     onclick="setType('save')">     <span class="t-icon">🐷</span>Félretett</button>
-        <button class="type-btn"            id="btnWithdraw" onclick="setType('withdraw')"> <span class="t-icon">🏧</span>Megtakarításból</button>
-        <button class="type-btn"            id="btnAdvance"  onclick="setType('advance')">  <span class="t-icon">💳</span>Előleg</button>
-        <button class="type-btn"            id="btnReimburse" onclick="setType('reimburse')"><span class="t-icon">↩️</span>Visszafizetés</button>
-      </div>
-
-      <div class="type-hint" id="typeHint">Rendszeres kiadás — élelmiszer, transport, szórakozás…</div>
-
-      <!-- Amount + currency -->
-      <div class="field-label">ÖSSZEG</div>
-      <div class="amount-row">
-        <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
-        <div class="curr-wrap">
-          <select class="curr-select" id="currSelect">
-            <option value="HUF">🇭🇺 HUF</option>
-            <option value="GBP">🇬🇧 GBP</option>
-            <option value="RON">🇷🇴 RON</option>
-            <option value="EUR">🇪🇺 EUR</option>
-            <option value="USD">🇺🇸 USD</option>
-          </select>
-          <span class="curr-arrow">▾</span>
-        </div>
-      </div>
-
-      <!-- Date -->
-      <div class="field-label">DÁTUM</div>
-      <input class="date-input" id="dateInput" type="date">
-
-      <!-- Note -->
-      <div id="noteWrap">
-        <div class="field-label" id="noteLabel">MIRE?</div>
-        <input class="note-input" id="noteInput" type="text" placeholder="pl. ebéd, buszjegy…" maxlength="60" autocomplete="off">
-      </div>
-
-      <!-- Category chips -->
-      <div id="catWrap" class="hidden">
-        <div class="field-label">KATEGÓRIA</div>
-        <div class="cat-row" id="catRow"></div>
-      </div>
-
-      <!-- Savings available -->
-      <div class="savings-avail hidden" id="savingsAvail" style="margin-top:12px;">
-        <span style="font-size:13px;color:var(--purple)">🐷 Elérhető megtakarítás</span>
-        <span class="savings-avail-amt" id="savingsAvailAmt">Ft 0</span>
-      </div>
-
-      <!-- Name (for advance/reimburse) -->
-      <div id="nameWrap" class="hidden">
-        <div class="field-label" id="nameLabel">KINEK FIZETTÉL?</div>
-        <input class="note-input" id="nameInput" type="text" placeholder="pl. Anya, Péter…" maxlength="30" autocomplete="off" oninput="filterNameChips(this.value)">
-        <div class="name-row" id="nameChips"></div>
-      </div>
-
-      <button class="add-btn" id="addBtn" onclick="addEntry()">Hozzáad ＋</button>
-
-    </div><!-- end sheet-body -->
-  </div><!-- end bottom-sheet -->
-</div><!-- end sheet-overlay -->
+    <div class="sheet-body" id="sheetBody">
+      <!-- content injected by JS -->
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -460,31 +399,24 @@ const CATS = [
   {id:'egyeb',  label:'Egyéb',  icon:'🛍️'},
 ];
 const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
-const TYPE_META = {
-  out:       {hint:'Rendszeres kiadás — élelmiszer, transport, szórakozás…',  btnClass:'active-out',       toast:'Kiadás rögzítve ✓',        addCls:'',              showCats:true,  showName:false, noteLbl:'MIRE?',     notePh:'pl. ebéd, buszjegy…',   icon:'🛍️'},
-  in:        {hint:'Bevétel — zsebpénz, ajándék, munka…',                    btnClass:'active-in',        toast:'Bevétel rögzítve ✓',       addCls:'btn-in',        showCats:false, showName:false, noteLbl:'HONNAN?',   notePh:'pl. Apatól, munkából…', icon:'💰'},
-  save:      {hint:'Félreteszel valamit a megtakarításodba (Revolut Pocket)', btnClass:'active-save',      toast:'Megtakarítás rögzítve 🐷', addCls:'btn-save',      showCats:false, showName:false, noteLbl:'MEGJEGYZÉS',notePh:'pl. nyári megtakarítás', icon:'🐷'},
-  withdraw:  {hint:'Kiveszel a megtakarításodból és elkölted',                btnClass:'active-withdraw',  toast:'Kivét rögzítve 🏧',         addCls:'btn-withdraw',  showCats:true,  showName:false, noteLbl:'MIRE?',     notePh:'pl. cipő, kirándulás…', icon:'🏧'},
-  advance:   {hint:'Te fizettél valaki helyett — visszakéred tőle',           btnClass:'active-advance',   toast:'Előleg rögzítve 💳',        addCls:'btn-advance',   showCats:false, showName:true,  noteLbl:'MIRE MENT?',notePh:'pl. vacsora, jegy…',    icon:'💳', nameLbl:'KINEK FIZETTÉL?'},
-  reimburse: {hint:'Valaki visszafizette az előleget',                        btnClass:'active-reimburse', toast:'Visszafizetés rögzítve ↩️', addCls:'btn-reimburse', showCats:false, showName:true,  noteLbl:'MEGJEGYZÉS',notePh:'pl. részleges…',        icon:'↩️', nameLbl:'KI FIZETETT VISSZA?'},
-};
 
 // ── State ────────────────────────────────────────────────────
 const STORE = 'kz_' + (urlUser || 'x');
 const st = {
-  entries:   JSON.parse(localStorage.getItem(STORE + '_entries') || '[]'),
-  names:     JSON.parse(localStorage.getItem(STORE + '_names')   || '[]'),
+  entries:   JSON.parse(localStorage.getItem(STORE+'_entries') || '[]'),
+  names:     JSON.parse(localStorage.getItem(STORE+'_names')   || '[]'),
   curY:      new Date().getFullYear(),
   curM:      new Date().getMonth(),
   selCat:    'egyeb',
   selType:   'out',
-  selName:   '',
   summary:   null,
   activeTab: 'tetelek',
+  sheetMode: null, // 'mode-pick' | 'normal' | 'admin' | 'save' | 'withdraw' | 'advance-new' | 'advance-pay'
+  payTarget: null, // {name, amt} when paying back
 };
 function save() {
-  localStorage.setItem(STORE + '_entries', JSON.stringify(st.entries));
-  localStorage.setItem(STORE + '_names',   JSON.stringify(st.names));
+  localStorage.setItem(STORE+'_entries', JSON.stringify(st.entries));
+  localStorage.setItem(STORE+'_names',   JSON.stringify(st.names));
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -493,23 +425,20 @@ function todayStr() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function getSavingsBalance() {
-  return st.entries.reduce((b, e) => {
-    if (e.type==='save')     return b + (e.amtHUF || e.origAmt);
-    if (e.type==='withdraw') return b - (e.amtHUF || e.origAmt);
+  return st.entries.reduce((b,e) => {
+    if (e.type==='save')     return b + (e.amtHUF||e.origAmt);
+    if (e.type==='withdraw') return b - (e.amtHUF||e.origAmt);
     return b;
   }, 0);
 }
 function getOutstandingDebts() {
-  // Per-name running balance of advance - reimburse
   const debts = {};
   [...st.entries].reverse().forEach(e => {
-    if (e.type==='advance')   { debts[e.personName] = (debts[e.personName]||0) + (e.amtHUF||e.origAmt); }
-    if (e.type==='reimburse') { debts[e.personName] = (debts[e.personName]||0) - (e.amtHUF||e.origAmt); }
+    if (!e.personName) return;
+    if (e.type==='advance')   debts[e.personName] = (debts[e.personName]||0) + (e.amtHUF||e.origAmt);
+    if (e.type==='reimburse') debts[e.personName] = (debts[e.personName]||0) - (e.amtHUF||e.origAmt);
   });
-  return Object.entries(debts)
-    .filter(([,v]) => v > 0)
-    .map(([name, amt]) => ({name, amt}))
-    .sort((a,b) => b.amt - a.amt);
+  return Object.entries(debts).filter(([,v])=>v>0).map(([name,amt])=>({name,amt})).sort((a,b)=>b.amt-a.amt);
 }
 
 // ── Sync ─────────────────────────────────────────────────────
@@ -526,25 +455,22 @@ async function fullSync() {
   updateSync('syncing','Adatok betöltése…');
   try {
     const q   = new URLSearchParams({action:'getEntries', user:userName});
-    const res = await fetch(SCRIPT_URL + '?' + q);
+    const res = await fetch(SCRIPT_URL+'?'+q);
     const data = await res.json();
-    const sheetEntries = data.entries || [];
-    const sheetIds     = new Set(sheetEntries.map(e => String(e.id)));
-    const localUnsynced = st.entries.filter(e => !e.synced && !sheetIds.has(String(e.id)));
+    const sheetEntries  = data.entries || [];
+    const sheetIds      = new Set(sheetEntries.map(e=>String(e.id)));
+    const localUnsynced = st.entries.filter(e=>!e.synced && !sheetIds.has(String(e.id)));
     st.entries = [...sheetEntries, ...localUnsynced];
-    st.entries.sort((a,b) => new Date(b.date) - new Date(a.date));
-    // Rebuild names list from entries
-    st.entries.forEach(e => {
-      if (e.personName && !st.names.includes(e.personName)) st.names.push(e.personName);
-    });
+    st.entries.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    st.entries.forEach(e => { if (e.personName && !st.names.includes(e.personName)) st.names.push(e.personName); });
     save();
-    if (localUnsynced.length > 0) {
-      updateSync('syncing', `${localUnsynced.length} tétel feltöltése…`);
+    if (localUnsynced.length>0) {
+      updateSync('syncing',`${localUnsynced.length} tétel feltöltése…`);
       await pushUnsynced(localUnsynced);
     }
     await loadSummary();
     render();
-    updateSync('ok', `Szinkronizálva ✓ (${st.entries.length} tétel)`);
+    updateSync('ok',`Szinkronizálva ✓ (${st.entries.length} tétel)`);
   } catch(e) {
     updateSync('err','Sync hiba — ellenőrizd a kapcsolatot');
     render();
@@ -558,25 +484,22 @@ async function pushUnsynced(entries) {
         method:'POST', mode:'no-cors',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
-          action:     'addEntry',
-          user:       userName,
-          id:         String(e.id),
-          date:       e.dateStr || new Date(e.date).toLocaleDateString('hu-HU'),
-          note:       e.note,
-          category:   getCategoryLabel(e),
-          type:       getTypusLabel(e.type),
-          amount:     e.origAmt,
-          currency:   e.currency,
-          personName: e.personName || '',
+          action:'addEntry', user:userName, id:String(e.id),
+          date: e.dateStr || new Date(e.date).toLocaleDateString('hu-HU'),
+          note: e.note,
+          category: getCatLabel(e),
+          type: getTypusLabel(e.type),
+          amount: e.origAmt, currency: e.currency,
+          personName: e.personName||'',
         }),
       });
       e.synced = true;
-    } catch(err) { /* retry next sync */ }
+    } catch(err) {}
   }
   save();
 }
 
-function getCategoryLabel(e) {
+function getCatLabel(e) {
   if (e.type==='save')      return 'Félretett';
   if (e.type==='withdraw')  return 'Megtakarításból';
   if (e.type==='advance')   return 'Előleg';
@@ -585,228 +508,472 @@ function getCategoryLabel(e) {
   return CATS.find(c=>c.id===e.cat)?.label || 'Egyéb';
 }
 function getTypusLabel(type) {
-  return {out:'Kiment',in:'Bejött',save:'Félretett',withdraw:'Megtakarításból',advance:'Előleg',reimburse:'Visszafizetés'}[type] || 'Kiment';
+  return {out:'Kiment',in:'Bejött',save:'Félretett',withdraw:'Megtakarításból',advance:'Előleg',reimburse:'Visszafizetés'}[type]||'Kiment';
 }
 
 async function loadSummary() {
   try {
     const q   = new URLSearchParams({action:'getSummary', user:userName, year:st.curY, month:st.curM+1});
-    const res = await fetch(SCRIPT_URL + '?' + q);
+    const res = await fetch(SCRIPT_URL+'?'+q);
     const d   = await res.json();
     st.summary = d;
     renderSummary(d);
-  } catch(e) {
-    renderSummaryFromLocal();
-  }
+  } catch(e) { renderSummaryFromLocal(); }
 }
 
-// ── Summary rendering ────────────────────────────────────────
+// ── Summary ──────────────────────────────────────────────────
 function renderSummaryFromLocal() {
-  const m      = st.entries.filter(e => e.month===st.curM && e.year===st.curY);
+  const m      = st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
   const bejott = m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const kiment = m.filter(e=>e.type==='out'||e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  renderSummary({bejott, kiment, maradt:bejott-kiment, savings:getSavingsBalance(), pct:bejott>0?Math.round(kiment/bejott*100):0});
+  const sav    = getSavingsBalance();
+  renderSummary({bejott,kiment,maradt:bejott-kiment,savings:sav,pct:bejott>0?Math.round(kiment/bejott*100):0});
 }
 
 function renderSummary(d) {
-  const el = document.getElementById('sumContent');
   document.getElementById('savingsPillAmt').textContent = fmtFt(getSavingsBalance());
-  if (!d) { el.innerHTML=`<div style="font-size:13px;color:rgba(255,255,255,.3);padding:8px 0;position:relative;z-index:1">Koppints a ↻ Szinkron gombra</div>`; return; }
+  if (!d) {
+    document.getElementById('sumContent').innerHTML = `<div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Koppints a ↻ Szinkron gombra</div>`;
+    document.getElementById('barWrap').style.display='none';
+    return;
+  }
   const pct = Math.min(100, d.pct||0);
-  const savLine = d.savings>0 ? `<div class="s-label" style="margin-top:8px">Megtakarítás</div><div class="s-savings">${fmtFt(d.savings)}</div>` : '';
-  el.innerHTML = `
-    <div class="sum-row">
-      <div><div class="s-label">Maradt</div><div class="s-big">${fmtFt(d.maradt)}</div>${savLine}</div>
-      <div style="text-align:right">
-        <div class="s-label">Bejött</div><div class="s-small">${fmtFt(d.bejott)}</div>
-        <div class="s-label" style="margin-top:6px">Kiment</div><div class="s-small">${fmtFt(d.kiment)}</div>
-      </div>
+  const savLine = d.savings>0
+    ? `<div style="margin-top:10px"><div class="s-label">Megtakarítás</div><div class="s-sav">${fmtFt(d.savings)}</div></div>`
+    : '';
+  document.getElementById('sumContent').innerHTML = `
+    <div class="sum-left">
+      <div class="s-label">Maradt</div>
+      <div class="s-big">${fmtFt(d.maradt)}</div>
+      ${savLine}
     </div>
-    <div class="bar-wrap">
-      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
-      <div class="bar-labels"><span>${pct}% elköltve</span><span>${fmtFt(Math.max(0,d.maradt))} maradt</span></div>
+    <div class="sum-right">
+      <div>
+        <div class="s-label">Bejött</div>
+        <div class="s-med">${fmtFt(d.bejott)}</div>
+      </div>
+      <div>
+        <div class="s-label">Kiment</div>
+        <div class="s-med">${fmtFt(d.kiment)}</div>
+      </div>
     </div>`;
+  document.getElementById('barWrap').style.display='block';
+  document.getElementById('barFill').style.width = pct+'%';
+  document.getElementById('barLeft').textContent  = pct+'% elköltve';
+  document.getElementById('barRight').textContent = fmtFt(Math.max(0,d.maradt))+' maradt';
+
   // Debt banner
   const debts = getOutstandingDebts();
-  const totalDebt = debts.reduce((s,d)=>s+d.amt,0);
+  const total  = debts.reduce((s,d)=>s+d.amt,0);
   const banner = document.getElementById('debtBanner');
-  if (totalDebt > 0) {
-    banner.classList.remove('hidden');
-    document.getElementById('debtBannerAmt').textContent = fmtFt(totalDebt) + ' →';
-  } else {
-    banner.classList.add('hidden');
-  }
+  if (total>0) { banner.classList.remove('hidden'); document.getElementById('debtBannerAmt').textContent=fmtFt(total)+' →'; }
+  else banner.classList.add('hidden');
 }
 
-// ── Bottom sheet ─────────────────────────────────────────────
+// ── Sheet — mode picker ──────────────────────────────────────
 function openSheet() {
-  document.getElementById('dateInput').value = todayStr();
-  renderNameChips('');
+  st.sheetMode = 'mode-pick';
+  document.getElementById('sheetTitle').textContent = 'Új tétel';
+  renderSheetBody();
   document.getElementById('sheetOverlay').classList.add('open');
 }
 function closeSheet() {
   document.getElementById('sheetOverlay').classList.remove('open');
-  document.getElementById('amtInput').value = '';
-  document.getElementById('noteInput').value = '';
-  document.getElementById('nameInput').value = '';
-  st.selName = '';
+  st.sheetMode = null;
+  st.payTarget = null;
 }
-function maybeCloseSheet(e) {
-  if (e.target.id === 'sheetOverlay') closeSheet();
+function maybeCloseSheet(e) { if (e.target.id==='sheetOverlay') closeSheet(); }
+
+function renderSheetBody() {
+  const body = document.getElementById('sheetBody');
+  if (st.sheetMode==='mode-pick')    { document.getElementById('sheetTitle').textContent='Új tétel';        body.innerHTML = modePickHTML(); }
+  else if (st.sheetMode==='normal')  { document.getElementById('sheetTitle').textContent='Kiadás / bevétel'; body.innerHTML = normalFormHTML(); initNormalForm(); }
+  else if (st.sheetMode==='admin')   { document.getElementById('sheetTitle').textContent='Adminisztráció';  body.innerHTML = adminListHTML(); }
+  else if (st.sheetMode==='save')    { document.getElementById('sheetTitle').textContent='Félreteszek 🐷';  body.innerHTML = savingsFormHTML('save'); initSavingsForm('save'); }
+  else if (st.sheetMode==='withdraw'){ document.getElementById('sheetTitle').textContent='Előveszek 🏧';    body.innerHTML = savingsFormHTML('withdraw'); initSavingsForm('withdraw'); }
+  else if (st.sheetMode==='advance-new') { document.getElementById('sheetTitle').textContent='Előleg 💳';   body.innerHTML = advanceFormHTML(); }
+  else if (st.sheetMode==='advance-pay') { document.getElementById('sheetTitle').textContent='Visszafizetés ↩️'; body.innerHTML = advancePayHTML(); }
 }
 
-// ── Type selection ───────────────────────────────────────────
-function setType(t) {
+// ── Mode pick HTML ───────────────────────────────────────────
+function modePickHTML() {
+  return `
+    <div class="mode-grid" style="padding-bottom:16px;">
+      <button class="mode-btn normal" onclick="goMode('normal')">
+        <span class="m-icon">💰</span>
+        <span class="m-label">Normál</span>
+        <span class="m-hint">Kiadás vagy bevétel rögzítése</span>
+      </button>
+      <button class="mode-btn admin" onclick="goMode('admin')">
+        <span class="m-icon">⚙️</span>
+        <span class="m-label">Adminisztráció</span>
+        <span class="m-hint">Megtakarítás, előlegek</span>
+      </button>
+    </div>`;
+}
+
+function goMode(mode) {
+  if (mode==='normal') st.sheetMode='normal';
+  else st.sheetMode='admin';
+  renderSheetBody();
+}
+
+// ── Normal form HTML ─────────────────────────────────────────
+function normalFormHTML() {
+  const catsHTML = CATS.map(c=>`<div class="cat-chip ${c.id===st.selCat?'active':''}" onclick="selCat('${c.id}')">${c.icon} ${c.label}</div>`).join('');
+  return `
+    <button class="back-btn" onclick="goMode('back')">← Vissza</button>
+    <div class="type-row-normal">
+      <button class="type-btn-normal active-out" id="btnOut" onclick="setNormalType('out')">↑ Kiment</button>
+      <button class="type-btn-normal" id="btnIn"  onclick="setNormalType('in')">↓ Bejött</button>
+    </div>
+    <div class="field-label">ÖSSZEG</div>
+    <div class="amount-row">
+      <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
+      <div class="curr-wrap">
+        <select class="curr-select" id="currSelect">
+          <option value="HUF">🇭🇺 HUF</option>
+          <option value="GBP">🇬🇧 GBP</option>
+          <option value="RON">🇷🇴 RON</option>
+          <option value="EUR">🇪🇺 EUR</option>
+          <option value="USD">🇺🇸 USD</option>
+        </select>
+        <span class="curr-arrow">▾</span>
+      </div>
+    </div>
+    <div class="field-label">DÁTUM</div>
+    <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
+    <div id="noteLabelEl" class="field-label">MIRE?</div>
+    <input class="text-input" id="noteInput" type="text" placeholder="pl. ebéd, buszjegy…" maxlength="60" autocomplete="off">
+    <div id="catWrap">
+      <div class="field-label">KATEGÓRIA</div>
+      <div class="cat-row">${catsHTML}</div>
+    </div>
+    <button class="add-btn out" id="addBtn" onclick="submitNormal()">Hozzáad ＋</button>
+    <div style="height:4px"></div>`;
+}
+
+function initNormalForm() {
+  setNormalType(st.selType==='in'?'in':'out');
+}
+
+function setNormalType(t) {
   st.selType = t;
-  const all = ['out','in','save','withdraw','advance','reimburse'];
-  all.forEach(id => {
-    document.getElementById('btn'+id.charAt(0).toUpperCase()+id.slice(1)).className = 'type-btn';
+  const btnOut = document.getElementById('btnOut');
+  const btnIn  = document.getElementById('btnIn');
+  const addBtn = document.getElementById('addBtn');
+  const noteEl = document.getElementById('noteLabelEl');
+  const catWrap= document.getElementById('catWrap');
+  if (!btnOut) return;
+  btnOut.className = 'type-btn-normal' + (t==='out'?' active-out':'');
+  btnIn.className  = 'type-btn-normal' + (t==='in' ?' active-in' :'');
+  addBtn.className = 'add-btn ' + t;
+  noteEl.textContent = t==='out' ? 'MIRE?' : 'HONNAN?';
+  document.getElementById('noteInput').placeholder = t==='out' ? 'pl. ebéd, buszjegy…' : 'pl. Apatól, munkából…';
+  catWrap.style.display = t==='out' ? 'block' : 'none';
+}
+
+function selCat(id) {
+  st.selCat = id;
+  document.querySelectorAll('.cat-chip').forEach(el => {
+    el.className = 'cat-chip' + (el.textContent.trim().includes(CATS.find(c=>c.id===id)?.label) ? ' active' : '');
   });
-  const btnId = {out:'btnOut',in:'btnIn',save:'btnSave',withdraw:'btnWithdraw',advance:'btnAdvance',reimburse:'btnReimburse'}[t];
-  document.getElementById(btnId).className = 'type-btn ' + TYPE_META[t].btnClass;
-  document.getElementById('typeHint').textContent  = TYPE_META[t].hint;
-  document.getElementById('noteLabel').textContent = TYPE_META[t].noteLbl;
-  document.getElementById('noteInput').placeholder = TYPE_META[t].notePh;
-  // Note field — always shown
-  document.getElementById('noteWrap').classList.remove('hidden');
-  // Categories
-  document.getElementById('catWrap').classList.toggle('hidden', !TYPE_META[t].showCats);
-  // Savings
-  const showSav = t === 'withdraw';
-  document.getElementById('savingsAvail').classList.toggle('hidden', !showSav);
-  if (showSav) document.getElementById('savingsAvailAmt').textContent = fmtFt(getSavingsBalance());
-  // Name
-  document.getElementById('nameWrap').classList.toggle('hidden', !TYPE_META[t].showName);
-  if (TYPE_META[t].showName) {
-    document.getElementById('nameLabel').textContent = TYPE_META[t].nameLbl;
-    renderNameChips('');
-  }
-  // Currency lock for save/withdraw
-  const ce = document.getElementById('currSelect');
-  if (t==='save'||t==='withdraw') { ce.value='HUF'; ce.disabled=true; ce.style.opacity='.4'; }
-  else { ce.disabled=false; ce.style.opacity='1'; }
-  // Button colour
-  document.getElementById('addBtn').className = 'add-btn ' + TYPE_META[t].addCls;
 }
 
-// ── Name chips ───────────────────────────────────────────────
-function renderNameChips(filter) {
-  const filtered = filter
-    ? st.names.filter(n => n.toLowerCase().includes(filter.toLowerCase()))
-    : st.names;
-  // For reimburse — only show names that actually owe money
-  const debtors = st.selType === 'reimburse'
-    ? new Set(getOutstandingDebts().map(d => d.name))
-    : null;
-  const names = debtors ? filtered.filter(n => debtors.has(n)) : filtered;
-  document.getElementById('nameChips').innerHTML = names.map(n =>
-    `<div class="name-chip ${st.selName===n ? 'active-'+st.selType : ''}" onclick="selectName('${n}')">${n}</div>`
-  ).join('');
-}
-function filterNameChips(val) { renderNameChips(val); }
-function selectName(n) {
-  st.selName = n;
-  document.getElementById('nameInput').value = n;
-  renderNameChips(n);
-}
-
-// ── Add entry ────────────────────────────────────────────────
-async function addEntry() {
-  const rawAmt   = parseFloat(document.getElementById('amtInput').value);
-  const currency = document.getElementById('currSelect').value;
-  const note     = document.getElementById('noteInput').value.trim();
-  const dateVal  = document.getElementById('dateInput').value || todayStr();
-  const personName = (document.getElementById('nameInput').value || st.selName || '').trim();
-
-  if (!rawAmt || rawAmt <= 0) { showToast('Add meg az összeget!'); return; }
-  if (st.selType==='withdraw' && rawAmt > getSavingsBalance()) { showToast('Nincs elég megtakarítás! 🐷'); return; }
-  if ((st.selType==='advance'||st.selType==='reimburse') && !personName) { showToast('Add meg a nevet!'); return; }
-
-  // Save new name
-  if (personName && !st.names.includes(personName)) {
-    st.names.push(personName);
-  }
-
-  const cat  = CATS.find(c => c.id === st.selCat);
-  const dateParts = dateVal.split('-');
-  const entryDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1])-1, parseInt(dateParts[2]));
-  const defaultNote = {out:cat.label, in:'Bevétel', save:'Félretett 🐷', withdraw:'Megtakarításból', advance:`Előleg — ${personName}`, reimburse:`Visszafizetés — ${personName}`};
-
+async function submitNormal() {
+  const rawAmt  = parseFloat(document.getElementById('amtInput').value);
+  const currency= document.getElementById('currSelect').value;
+  const note    = document.getElementById('noteInput').value.trim();
+  const dateVal = document.getElementById('dateInput').value || todayStr();
+  if (!rawAmt||rawAmt<=0) { showToast('Add meg az összeget!'); return; }
+  const cat   = CATS.find(c=>c.id===st.selCat);
+  const dp    = dateVal.split('-');
+  const eDate = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
   const entry = {
-    id:         Date.now(),
-    type:       st.selType,
-    origAmt:    rawAmt,
-    amtHUF:     rawAmt,
-    currency,
-    note:       note || defaultNote[st.selType],
-    cat:        (st.selType==='out'||st.selType==='withdraw') ? st.selCat : null,
-    icon:       TYPE_META[st.selType].icon,
-    personName: personName || null,
-    date:       entryDate.toISOString(),
-    dateStr:    new Date(entryDate).toLocaleDateString('hu-HU'),
-    month:      entryDate.getMonth(),
-    year:       entryDate.getFullYear(),
-    synced:     false,
+    id:Date.now(), type:st.selType, origAmt:rawAmt, amtHUF:rawAmt, currency,
+    note: note||(st.selType==='out'?cat.label:'Bevétel'),
+    cat: st.selType==='out'?st.selCat:null,
+    icon: st.selType==='out'?cat.icon:'💰',
+    date:eDate.toISOString(), dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(), year:eDate.getFullYear(), synced:false,
   };
-
-  st.entries.unshift(entry);
-  st.entries.sort((a,b) => new Date(b.date) - new Date(a.date));
-  // Navigate to the month of the entry
-  st.curM = entryDate.getMonth();
-  st.curY = entryDate.getFullYear();
-
-  save();
+  addEntryLocal(entry);
   closeSheet();
-  render();
-  showToast(TYPE_META[st.selType].toast);
+  showToast(st.selType==='out'?'Kiadás rögzítve ✓':'Bevétel rögzítve ✓');
   await pushUnsynced([entry]);
-  render();
-  setTimeout(loadSummary, 1500);
+  render(); setTimeout(loadSummary,1500);
 }
 
-function deleteEntry(id) {
-  st.entries = st.entries.filter(e => String(e.id) !== String(id));
-  save(); render();
+// ── Admin list HTML ──────────────────────────────────────────
+function adminListHTML() {
+  const debts    = getOutstandingDebts();
+  const hasPay   = debts.length > 0;
+  const savBal   = getSavingsBalance();
+  return `
+    <button class="back-btn" onclick="goMode('back')">← Vissza</button>
+    <div class="admin-list" style="padding-bottom:16px;">
+      <div class="admin-item purple" onclick="goAdminMode('save')">
+        <div class="admin-icon purple">🐷</div>
+        <div class="admin-body">
+          <div class="admin-label">Félreteszek</div>
+          <div class="admin-hint">Pénzt teszek a megtakarításba · Jelenlegi: ${fmtFt(savBal)}</div>
+        </div>
+      </div>
+      <div class="admin-item amber" onclick="goAdminMode('withdraw')">
+        <div class="admin-icon amber">🏧</div>
+        <div class="admin-body">
+          <div class="admin-label">Előveszek</div>
+          <div class="admin-hint">Kiveszek a megtakarításból · Elérhető: ${fmtFt(savBal)}</div>
+        </div>
+      </div>
+      <div class="admin-item blue" onclick="goAdminMode('advance-new')">
+        <div class="admin-icon blue">💳</div>
+        <div class="admin-body">
+          <div class="admin-label">Előleg rögzítése</div>
+          <div class="admin-hint">Valaki helyett fizettem, visszakérem</div>
+        </div>
+      </div>
+      ${hasPay ? `
+      <div class="admin-item teal" onclick="goAdminMode('advance-pay')">
+        <div class="admin-icon teal">↩️</div>
+        <div class="admin-body">
+          <div class="admin-label">Visszafizetés rögzítése</div>
+          <div class="admin-hint">${debts.length} kintlévőség · ${fmtFt(debts.reduce((s,d)=>s+d.amt,0))} összesen</div>
+        </div>
+      </div>` : ''}
+    </div>`;
 }
-function clearMonth() {
-  if (!confirm('Biztosan törlöd az összes helyi tételt ebből a hónapból?')) return;
-  st.entries = st.entries.filter(e => !(e.month===st.curM && e.year===st.curY));
-  save(); render();
+
+function goAdminMode(mode) {
+  if (mode==='back') { st.sheetMode='mode-pick'; renderSheetBody(); return; }
+  st.sheetMode = mode;
+  renderSheetBody();
+}
+
+// ── Savings form HTML ────────────────────────────────────────
+function savingsFormHTML(type) {
+  const savBal = getSavingsBalance();
+  const isSave = type==='save';
+  return `
+    <button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
+    <div class="savings-info">
+      <span style="font-size:13px;color:var(--purple)">🐷 Megtakarítás egyenleg</span>
+      <span class="savings-info-amt">${fmtFt(savBal)}</span>
+    </div>
+    <div class="field-label">ÖSSZEG</div>
+    <div class="amount-row">
+      <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
+    </div>
+    <div class="field-label">DÁTUM</div>
+    <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
+    <div class="field-label">MEGJEGYZÉS</div>
+    <input class="text-input" id="noteInput" type="text" placeholder="opcionális…" maxlength="60" autocomplete="off">
+    <button class="add-btn ${type}" id="addBtn" onclick="submitSavings('${type}')">${isSave?'Félreteszem 🐷':'Előveszem 🏧'}</button>
+    <div style="height:4px"></div>`;
+}
+
+function initSavingsForm(type) {}
+
+async function submitSavings(type) {
+  const rawAmt = parseFloat(document.getElementById('amtInput').value);
+  const note   = document.getElementById('noteInput').value.trim();
+  const dateVal= document.getElementById('dateInput').value || todayStr();
+  if (!rawAmt||rawAmt<=0) { showToast('Add meg az összeget!'); return; }
+  if (type==='withdraw' && rawAmt>getSavingsBalance()) { showToast('Nincs elég megtakarítás! 🐷'); return; }
+  const dp    = dateVal.split('-');
+  const eDate = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const entry = {
+    id:Date.now(), type, origAmt:rawAmt, amtHUF:rawAmt, currency:'HUF',
+    note: note||(type==='save'?'Félretett 🐷':'Elővett 🏧'),
+    cat:null, icon: type==='save'?'🐷':'🏧',
+    date:eDate.toISOString(), dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(), year:eDate.getFullYear(), synced:false,
+  };
+  addEntryLocal(entry);
+  closeSheet();
+  showToast(type==='save'?'Félretéve 🐷':'Elővéve 🏧');
+  await pushUnsynced([entry]);
+  render(); setTimeout(loadSummary,1500);
+}
+
+// ── Advance new form ─────────────────────────────────────────
+function advanceFormHTML() {
+  const namesHTML = st.names.length>0
+    ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${st.names.map(n=>`<div class="cat-chip" onclick="pickAdvanceName('${n}')">${n}</div>`).join('')}</div>`
+    : '';
+  return `
+    <button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
+    <div class="field-label">KINEK FIZETTÉL?</div>
+    <input class="text-input" id="nameInput" type="text" placeholder="pl. Anya, Péter…" maxlength="30" autocomplete="off">
+    ${namesHTML}
+    <div class="field-label">ÖSSZEG</div>
+    <div class="amount-row">
+      <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
+      <div class="curr-wrap">
+        <select class="curr-select" id="currSelect">
+          <option value="HUF">🇭🇺 HUF</option>
+          <option value="GBP">🇬🇧 GBP</option>
+          <option value="RON">🇷🇴 RON</option>
+          <option value="EUR">🇪🇺 EUR</option>
+          <option value="USD">🇺🇸 USD</option>
+        </select>
+        <span class="curr-arrow">▾</span>
+      </div>
+    </div>
+    <div class="field-label">MIRE MENT?</div>
+    <input class="text-input" id="noteInput" type="text" placeholder="pl. vacsora, jegy…" maxlength="60" autocomplete="off">
+    <div class="field-label">DÁTUM</div>
+    <input class="date-input" id="dateInput" type="date" value="${todayStr()}">
+    <button class="add-btn advance" onclick="submitAdvance()">Előleg rögzítése 💳</button>
+    <div style="height:4px"></div>`;
+}
+
+function pickAdvanceName(n) {
+  const inp = document.getElementById('nameInput');
+  if (inp) inp.value = n;
+}
+
+async function submitAdvance() {
+  const name    = document.getElementById('nameInput').value.trim();
+  const rawAmt  = parseFloat(document.getElementById('amtInput').value);
+  const currency= document.getElementById('currSelect').value;
+  const note    = document.getElementById('noteInput').value.trim();
+  const dateVal = document.getElementById('dateInput').value || todayStr();
+  if (!name)           { showToast('Add meg a nevet!'); return; }
+  if (!rawAmt||rawAmt<=0){ showToast('Add meg az összeget!'); return; }
+  if (!st.names.includes(name)) st.names.push(name);
+  const dp    = dateVal.split('-');
+  const eDate = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const entry = {
+    id:Date.now(), type:'advance', origAmt:rawAmt, amtHUF:rawAmt, currency,
+    note: note||`Előleg — ${name}`,
+    cat:null, icon:'💳', personName:name,
+    date:eDate.toISOString(), dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(), year:eDate.getFullYear(), synced:false,
+  };
+  addEntryLocal(entry);
+  closeSheet();
+  showToast('Előleg rögzítve 💳');
+  await pushUnsynced([entry]);
+  render(); setTimeout(loadSummary,1500);
+}
+
+// ── Advance pay — pick from outstanding list ──────────────────
+function advancePayHTML() {
+  const debts = getOutstandingDebts();
+  if (debts.length===0) {
+    return `<button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
+    <div class="advance-empty">Nincs kintlévőség 🎉</div>`;
+  }
+  return `
+    <button class="back-btn" onclick="goAdminMode('back-to-admin')">← Vissza</button>
+    <div style="font-size:14px;color:var(--ink2);margin-bottom:12px;">Válaszd ki, ki fizetett vissza:</div>
+    <div class="advance-list">
+      ${debts.map(d=>`
+        <div class="advance-item" onclick="openPayConfirm('${d.name}',${d.amt})">
+          <div class="advance-item-left">
+            <div class="advance-item-name">${d.name}</div>
+            <div class="advance-item-note">Koppints a visszafizetés rögzítéséhez</div>
+          </div>
+          <div class="advance-item-amt">${fmtFt(d.amt)}</div>
+        </div>`).join('')}
+    </div>
+    <div style="height:8px"></div>`;
+}
+
+function openPayConfirm(name, amt) {
+  st.payTarget = {name, amt};
+  document.getElementById('sheetTitle').textContent = 'Visszafizetés rögzítése';
+  document.getElementById('sheetBody').innerHTML = `
+    <button class="back-btn" onclick="goAdminMode('advance-pay')">← Vissza</button>
+    <div class="sub-sheet" style="margin:0;padding:16px 0 0;background:none;">
+      <div class="sub-title">${name}</div>
+      <div class="sub-sub">Kintlévőség: ${fmtFt(amt)}</div>
+      <div class="sub-amt-row">
+        <input class="sub-amt-input" id="payAmtInput" type="number" inputmode="decimal" placeholder="0" value="${amt}" min="0" step="any">
+        <button class="sub-full-btn" onclick="document.getElementById('payAmtInput').value=${amt}">Teljes</button>
+      </div>
+      <div class="field-label">DÁTUM</div>
+      <input class="date-input" id="payDateInput" type="date" value="${todayStr()}" style="margin-bottom:14px;">
+      <div class="sub-actions">
+        <button class="sub-cancel" onclick="goAdminMode('advance-pay')">Mégsem</button>
+        <button class="sub-confirm" onclick="submitReimburse()">Rögzítés ✓</button>
+      </div>
+    </div>
+    <div style="height:8px"></div>`;
+}
+
+async function submitReimburse() {
+  const amt     = parseFloat(document.getElementById('payAmtInput').value);
+  const dateVal = document.getElementById('payDateInput').value || todayStr();
+  const {name, amt:maxAmt} = st.payTarget;
+  if (!amt||amt<=0)  { showToast('Add meg az összeget!'); return; }
+  if (amt>maxAmt)    { showToast(`Maximum ${fmtFt(maxAmt)} rögzíthető`); return; }
+  const dp    = dateVal.split('-');
+  const eDate = new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const entry = {
+    id:Date.now(), type:'reimburse', origAmt:amt, amtHUF:amt, currency:'HUF',
+    note:`Visszafizetés — ${name}`,
+    cat:null, icon:'↩️', personName:name,
+    date:eDate.toISOString(), dateStr:eDate.toLocaleDateString('hu-HU'),
+    month:eDate.getMonth(), year:eDate.getFullYear(), synced:false,
+  };
+  addEntryLocal(entry);
+  closeSheet();
+  showToast('Visszafizetés rögzítve ↩️');
+  await pushUnsynced([entry]);
+  render(); renderReport(); setTimeout(loadSummary,1500);
+}
+
+// back navigation within admin
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('back-btn')) {
+    const txt = e.target.textContent;
+    if (st.sheetMode==='normal'||st.sheetMode==='admin') { st.sheetMode='mode-pick'; renderSheetBody(); }
+    else if (['save','withdraw','advance-new','advance-pay'].includes(st.sheetMode)) { st.sheetMode='admin'; renderSheetBody(); }
+    else if (st.sheetMode==='advance-pay' && txt.includes('Vissza')) { st.sheetMode='admin'; renderSheetBody(); }
+  }
+}, true);
+
+// ── Local entry add ──────────────────────────────────────────
+function addEntryLocal(entry) {
+  st.entries.unshift(entry);
+  st.entries.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  st.curM = entry.month;
+  st.curY = entry.year;
+  save();
+  render();
 }
 
 // ── Navigation ───────────────────────────────────────────────
 function changeMonth(d) {
-  st.curM += d;
-  if (st.curM > 11) { st.curM=0; st.curY++; }
-  if (st.curM < 0)  { st.curM=11; st.curY--; }
-  render();
-  loadSummary();
-  if (st.activeTab === 'riport') renderReport();
+  st.curM+=d;
+  if (st.curM>11){st.curM=0;st.curY++;}
+  if (st.curM<0) {st.curM=11;st.curY--;}
+  render(); loadSummary();
+  if (st.activeTab==='riport') renderReport();
 }
 function switchTab(tab) {
-  st.activeTab = tab;
-  const isReport = tab==='riport';
-  document.getElementById('mainPanel').classList.toggle('hidden-panel', isReport);
-  document.getElementById('reportPanel').classList.toggle('active', isReport);
-  document.getElementById('navTetelek').classList.toggle('active', !isReport);
-  document.getElementById('navRiport').classList.toggle('active', isReport);
+  st.activeTab=tab;
+  const isReport=tab==='riport';
+  document.getElementById('mainPanel').classList.toggle('hidden-panel',isReport);
+  document.getElementById('reportPanel').classList.toggle('active',isReport);
+  document.getElementById('navTetelek').classList.toggle('active',!isReport);
+  document.getElementById('navRiport').classList.toggle('active',isReport);
   if (isReport) renderReport();
 }
 
 // ── Report ───────────────────────────────────────────────────
 function renderReport() {
   document.getElementById('chartMonthLabel').textContent = MONTHS_SHORT[st.curM]+' '+st.curY;
-  // Only out + withdraw for category chart
-  const spendEntries = st.entries.filter(e => e.month===st.curM && e.year===st.curY && (e.type==='out'||e.type==='withdraw'));
-  const barsEl  = document.getElementById('catBars');
-  const emptyEl = document.getElementById('catEmpty');
-  if (spendEntries.length===0) {
-    barsEl.innerHTML=''; emptyEl.style.display='block';
-  } else {
+  const spendE = st.entries.filter(e=>e.month===st.curM&&e.year===st.curY&&(e.type==='out'||e.type==='withdraw'));
+  const barsEl = document.getElementById('catBars');
+  const emptyEl= document.getElementById('catEmpty');
+  if (spendE.length===0) { barsEl.innerHTML=''; emptyEl.style.display='block'; }
+  else {
     emptyEl.style.display='none';
-    const totals={};
-    CATS.forEach(c=>{totals[c.id]=0;});
-    spendEntries.forEach(e=>{const id=e.cat||'egyeb';totals[id]=(totals[id]||0)+(e.amtHUF||e.origAmt);});
+    const totals={};CATS.forEach(c=>{totals[c.id]=0;});
+    spendE.forEach(e=>{const id=e.cat||'egyeb';totals[id]=(totals[id]||0)+(e.amtHUF||e.origAmt);});
     const total=Object.values(totals).reduce((s,v)=>s+v,0);
     const sorted=CATS.map(c=>({...c,amt:totals[c.id]||0})).filter(c=>c.amt>0).sort((a,b)=>b.amt-a.amt);
     barsEl.innerHTML=sorted.map(c=>{
@@ -821,40 +988,38 @@ function renderReport() {
       </div>`;
     }).join('');
   }
-
-  // Summary — exclude advance/reimburse
-  const allM     = st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const totalIn  = allM.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const totalOut = allM.filter(e=>e.type==='out'||e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const totalSav = allM.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const balance  = totalIn-totalOut-totalSav;
+  const allM    =st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
+  const totalIn =allM.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const totalOut=allM.filter(e=>e.type==='out'||e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const totalSav=allM.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const balance =totalIn-totalOut-totalSav;
   const rows=[
-    {label:'↓ Bejött',     amt:totalIn,  colour:'var(--green)'},
-    {label:'↑ Kiment',     amt:totalOut, colour:'var(--accent)'},
-    {label:'🐷 Félretett', amt:totalSav, colour:'var(--purple)'},
-    {label:'Maradt',       amt:balance,  colour:balance>=0?'var(--green)':'var(--accent)',bold:true},
+    {label:'↓ Bejött',amt:totalIn,colour:'var(--green)'},
+    {label:'↑ Kiment',amt:totalOut,colour:'var(--accent)'},
+    {label:'🐷 Félretett',amt:totalSav,colour:'var(--purple)'},
+    {label:'Maradt',amt:balance,colour:balance>=0?'var(--green)':'var(--accent)',bold:true},
   ];
   document.getElementById('reportSummaryRows').innerHTML=rows.filter(r=>r.amt!==0).map(r=>
     `<div class="sum-row-item">
       <span style="font-size:14px;${r.bold?'font-weight:700;color:var(--ink)':''}">${r.label}</span>
-      <span style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:${r.colour}">${fmtFt(Math.abs(r.amt))}</span>
+      <span style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:${r.colour}">${fmtFt(Math.abs(r.amt))}</span>
     </div>`).join('');
-
-  // Kintlévőségek
-  const debts = getOutstandingDebts();
-  const debtEl = document.getElementById('debtList');
-  if (debts.length===0) {
-    debtEl.innerHTML='<div class="debt-empty">Nincs kintlévőség 🎉</div>';
-  } else {
-    debtEl.innerHTML=debts.map(d=>`
-      <div class="debt-row" onclick="openReimburseModal('${d.name}', ${d.amt})">
-        <div>
-          <div class="debt-name">${d.name}</div>
-          <div class="debt-tap-hint">Koppints a rögzítéshez →</div>
-        </div>
+  const debts=getOutstandingDebts();
+  document.getElementById('debtList').innerHTML=debts.length===0
+    ? '<div class="debt-empty">Nincs kintlévőség 🎉</div>'
+    : debts.map(d=>`
+      <div class="debt-row" onclick="openDebtFromReport('${d.name}',${d.amt})">
+        <div><div class="debt-name">${d.name}</div><div class="debt-hint">Koppints a visszafizetés rögzítéséhez</div></div>
         <div class="debt-amt">${fmtFt(d.amt)}</div>
       </div>`).join('');
-  }
+}
+
+function openDebtFromReport(name, amt) {
+  st.payTarget = {name, amt};
+  st.sheetMode = 'advance-pay';
+  document.getElementById('sheetTitle').textContent = 'Visszafizetés rögzítése';
+  openPayConfirm(name, amt);
+  document.getElementById('sheetOverlay').classList.add('open');
 }
 
 // ── Main render ──────────────────────────────────────────────
@@ -865,24 +1030,16 @@ function render() {
   document.getElementById('monthLabel').textContent = MONTHS_SHORT[st.curM]+' '+st.curY;
   document.getElementById('savingsPillAmt').textContent = fmtFt(getSavingsBalance());
 
-  // Category chips in sheet
-  document.getElementById('catRow').innerHTML = CATS.map(c=>
-    `<div class="cat-chip ${c.id===st.selCat?'active':''}" onclick="selectCat('${c.id}')">
-      <span style="font-size:14px">${c.icon}</span>${c.label}
-    </div>`).join('');
-
-  const entries = st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const list    = document.getElementById('entryList');
-  const empty   = document.getElementById('emptyState');
-
-  if (entries.length===0) { list.innerHTML=''; empty.classList.remove('hidden'); }
+  const entries=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
+  const list   =document.getElementById('entryList');
+  const empty  =document.getElementById('emptyState');
+  if (entries.length===0){list.innerHTML='';empty.classList.remove('hidden');}
   else {
     empty.classList.add('hidden');
     const typeSign={out:'−',in:'+',save:'🐷',withdraw:'🏧',advance:'💳',reimburse:'↩️'};
     list.innerHTML=entries.map(e=>{
       const currNote=(e.currency&&e.currency!=='HUF')?` · ${e.origAmt} ${e.currency}`:'';
-      const catName=e.cat?CATS.find(c=>c.id===e.cat)?.label:
-        {save:'Félretett',withdraw:'Megtakarításból',in:'Bevétel',advance:'Előleg',reimburse:'Visszafizetés'}[e.type];
+      const catName=e.cat?CATS.find(c=>c.id===e.cat)?.label:{save:'Félretett',withdraw:'Megtakarításból',in:'Bevétel',advance:'Előleg',reimburse:'Visszafizetés'}[e.type];
       const nameNote=e.personName?` · ${e.personName}`:'';
       const syncMark=e.synced?'<span class="entry-sync synced">✓</span>':'<span class="entry-sync">○</span>';
       const amtStr=(e.type==='save'||e.type==='withdraw'||e.type==='advance'||e.type==='reimburse')?fmtFt(e.origAmt):fmtAmt(e.origAmt,e.currency);
@@ -903,70 +1060,25 @@ function render() {
   renderSummaryFromLocal();
 }
 
-function selectCat(id) { st.selCat=id; render(); }
-function fmtFt(n)      { return 'Ft '+Math.round(n||0).toLocaleString('hu-HU'); }
-function fmtAmt(n,c)   { return c==='HUF'?fmtFt(n):n.toLocaleString('hu-HU')+' '+c; }
-function fmtDate(iso)  { const d=new Date(iso); return `${d.getMonth()+1}/${d.getDate()}`; }
-function showToast(msg){ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500); }
-
-
-// ── Quick reimburse modal ────────────────────────────────────
-let _modalName = '';
-let _modalMax  = 0;
-
-function openReimburseModal(name, amt) {
-  _modalName = name;
-  _modalMax  = amt;
-  document.getElementById('modalTitle').textContent = `Visszafizetés — ${name}`;
-  document.getElementById('modalSub').textContent   = `Kintlévőség: ${fmtFt(amt)}`;
-  document.getElementById('modalAmt').value         = amt;
-  document.getElementById('reimburseModal').classList.remove('hidden');
+function deleteEntry(id){st.entries=st.entries.filter(e=>String(e.id)!==String(id));save();render();}
+function clearMonth(){
+  if(!confirm('Biztosan törlöd az összes helyi tételt ebből a hónapból?'))return;
+  st.entries=st.entries.filter(e=>!(e.month===st.curM&&e.year===st.curY));
+  save();render();
 }
-function closeReimburseModal() {
-  document.getElementById('reimburseModal').classList.add('hidden');
-  document.getElementById('modalAmt').value = '';
-}
-function setFullAmount() {
-  document.getElementById('modalAmt').value = _modalMax;
-}
-async function confirmReimburse() {
-  const amt = parseFloat(document.getElementById('modalAmt').value);
-  if (!amt || amt <= 0) { showToast('Add meg az összeget!'); return; }
-  if (amt > _modalMax)  { showToast(`Maximum ${fmtFt(_modalMax)} rögzíthető`); return; }
 
-  const now = new Date();
-  const entry = {
-    id:         Date.now(),
-    type:       'reimburse',
-    origAmt:    amt,
-    amtHUF:     amt,
-    currency:   'HUF',
-    note:       `Visszafizetés — ${_modalName}`,
-    cat:        null,
-    icon:       '↩️',
-    personName: _modalName,
-    date:       now.toISOString(),
-    dateStr:    now.toLocaleDateString('hu-HU'),
-    month:      now.getMonth(),
-    year:       now.getFullYear(),
-    synced:     false,
-  };
-
-  st.entries.unshift(entry);
-  st.entries.sort((a,b) => new Date(b.date) - new Date(a.date));
-  save();
-  closeReimburseModal();
-  render();
-  renderReport();
-  showToast(`Visszafizetés rögzítve ↩️`);
-  await pushUnsynced([entry]);
-  render();
-  renderReport();
-  setTimeout(loadSummary, 1500);
+function fmtFt(n)    {return 'Ft '+Math.round(n||0).toLocaleString('hu-HU');}
+function fmtAmt(n,c) {return c==='HUF'?fmtFt(n):n.toLocaleString('hu-HU')+' '+c;}
+function fmtDate(iso){const d=new Date(iso);return `${d.getMonth()+1}/${d.getDate()}`;}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
 // ── Init ─────────────────────────────────────────────────────
-if (userName) { render(); fullSync(); }
+if (userName){render();fullSync();}
 </script>
 </body>
 </html>
