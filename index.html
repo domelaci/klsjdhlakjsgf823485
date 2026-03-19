@@ -729,12 +729,17 @@ function openSheet() {
   st.sheetMode = 'mode-pick';
   document.getElementById('sheetTitle').textContent = 'Új tétel';
   renderSheetBody();
-  document.getElementById('sheetOverlay').classList.add('open');
+  if (isDesktop()) {
+    syncDesktopFormBody();
+  } else {
+    document.getElementById('sheetOverlay').classList.add('open');
+  }
 }
 function closeSheet() {
   document.getElementById('sheetOverlay').classList.remove('open');
   st.sheetMode = null;
   st.payTarget = null;
+  if (isDesktop()) renderDesktopForm();
 }
 function maybeCloseSheet(e) { if (e.target.id==='sheetOverlay') closeSheet(); }
 
@@ -747,6 +752,7 @@ function renderSheetBody() {
   else if (st.sheetMode==='withdraw'){ document.getElementById('sheetTitle').textContent='Előveszek 🏧';    body.innerHTML = savingsFormHTML('withdraw'); initSavingsForm('withdraw'); }
   else if (st.sheetMode==='advance-new') { document.getElementById('sheetTitle').textContent='Előleg 💳';   body.innerHTML = advanceFormHTML(); }
   else if (st.sheetMode==='advance-pay') { document.getElementById('sheetTitle').textContent='Visszafizetés ↩️'; body.innerHTML = advancePayHTML(); }
+  syncDesktopFormBody();
 }
 
 // ── Mode pick HTML ───────────────────────────────────────────
@@ -770,6 +776,7 @@ function goMode(mode) {
   if (mode==='normal') st.sheetMode='normal';
   else st.sheetMode='admin';
   renderSheetBody();
+  if (isDesktop()) syncDesktopFormBody();
 }
 
 // ── Normal form HTML ─────────────────────────────────────────
@@ -1114,6 +1121,7 @@ function switchTab(tab) {
   document.getElementById('reportPanel').classList.toggle('active',isReport);
   document.getElementById('navTetelek').classList.toggle('active',!isReport);
   document.getElementById('navRiport').classList.toggle('active',isReport);
+  syncDesktopTabs(tab);
   if (isReport) renderReport();
 }
 
@@ -1236,19 +1244,16 @@ function showToast(msg){
 const isDesktop = () => window.innerWidth >= 768;
 
 function renderDesktopForm() {
-  if (!isDesktop()) return;
-  const body = document.getElementById('desktopFormBody');
+  const body  = document.getElementById('desktopFormBody');
   const title = document.getElementById('desktopFormTitle');
   if (!body) return;
   title.textContent = 'Új tétel';
+  // Render mode pick directly into desktop left panel
+  st.sheetMode = 'mode-pick';
   body.innerHTML = modePickHTML().replace('padding-bottom:16px', 'padding-bottom:4px');
 }
 
-// Update switchTab to also update desktop tab bar
-const _origSwitchTab = switchTab;
-function switchTab(tab) {
-  _origSwitchTab(tab);
-  // Sync desktop tab buttons
+function syncDesktopTabs(tab) {
   const deskT = document.getElementById('deskNavTetelek');
   const deskR = document.getElementById('deskNavRiport');
   if (deskT && deskR) {
@@ -1257,36 +1262,15 @@ function switchTab(tab) {
   }
 }
 
-// On desktop, openSheet renders into the left panel instead of the overlay
-const _origOpenSheet = openSheet;
-function openSheet() {
-  if (isDesktop()) {
-    renderDesktopForm();
-  } else {
-    _origOpenSheet();
-  }
-}
-
-// On desktop, closeSheet resets the left panel back to mode pick
-const _origCloseSheet = closeSheet;
-function closeSheet() {
-  _origCloseSheet();
-  if (isDesktop()) renderDesktopForm();
-}
-
-// On desktop, renderSheetBody also renders into desktop form
-const _origRenderSheetBody = renderSheetBody;
-function renderSheetBody() {
-  _origRenderSheetBody();
-  if (isDesktop()) {
-    const desktopBody = document.getElementById('desktopFormBody');
-    const mobileBody  = document.getElementById('sheetBody');
-    const desktopTitle = document.getElementById('desktopFormTitle');
-    const mobileTitle  = document.getElementById('sheetTitle');
-    if (desktopBody && mobileBody) {
-      desktopBody.innerHTML = mobileBody.innerHTML;
-      if (desktopTitle && mobileTitle) desktopTitle.textContent = mobileTitle.textContent;
-    }
+function syncDesktopFormBody() {
+  if (!isDesktop()) return;
+  const desktopBody  = document.getElementById('desktopFormBody');
+  const mobileBody   = document.getElementById('sheetBody');
+  const desktopTitle = document.getElementById('desktopFormTitle');
+  const mobileTitle  = document.getElementById('sheetTitle');
+  if (desktopBody && mobileBody) {
+    desktopBody.innerHTML  = mobileBody.innerHTML;
+    if (desktopTitle && mobileTitle) desktopTitle.textContent = mobileTitle.textContent;
   }
 }
 
