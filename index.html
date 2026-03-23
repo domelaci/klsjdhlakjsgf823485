@@ -1,4 +1,4 @@
-<!-- Kassza v6.10.0 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.10.1 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -367,6 +367,28 @@
   .login-version{font-size:11px;color:var(--ink3);margin-top:24px;}
   .login-error{font-size:13px;color:var(--accent);margin-top:12px;display:none;}
 
+
+  /* Launcher screen (Döme only) */
+  .launcher-screen{position:fixed;inset:0;background:var(--bg);z-index:190;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px;}
+  .launcher-screen.visible{display:flex;}
+  .launcher-logo{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin-bottom:4px;}
+  .launcher-logo span{color:var(--accent);}
+  .launcher-sub{font-size:13px;color:var(--ink3);margin-bottom:36px;}
+  .launcher-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:360px;}
+  .launcher-tile{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .15s;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .launcher-tile:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
+  .launcher-tile .t-icon{font-size:32px;}
+  .launcher-tile .t-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .launcher-tile .t-hint{font-size:12px;color:var(--ink3);}
+  .launcher-tile.accent{border-color:var(--accent);background:var(--red-bg);}
+  .launcher-tile.blue{border-color:var(--blue);background:var(--blue-bg);}
+  .launcher-tile.purple{border-color:var(--purple);background:var(--purple-bg);}
+  .launcher-tile.teal{border-color:var(--teal);background:var(--teal-bg);}
+  .launcher-tile.amber{border-color:var(--amber);background:var(--amber-bg);}
+  .launcher-wide{grid-column:1/-1;}
+  .launcher-signout{margin-top:20px;font-size:13px;color:var(--ink3);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;}
+  .launcher-signout:hover{color:var(--accent);}
+
 </style>
 </head>
 <body>
@@ -390,12 +412,47 @@
 </div>
 </div>
 
+<!-- Launcher (Döme only) -->
+<div class="launcher-screen" id="launcherScreen">
+  <div class="launcher-logo">kass<span>za</span> 💸</div>
+  <div class="launcher-sub" id="launcherGreet">Szia Döme!</div>
+  <div class="launcher-grid">
+    <div class="launcher-tile accent launcher-wide" onclick="openDashboard()">
+      <span class="t-icon">📊</span>
+      <span class="t-label">Dashboard</span>
+      <span class="t-hint">Mindhárom felhasználó egyben</span>
+    </div>
+    <div class="launcher-tile blue" onclick="launchAs('Döme')">
+      <span class="t-icon">👤</span>
+      <span class="t-label">Döme</span>
+      <span class="t-hint">Saját oldalam</span>
+    </div>
+    <div class="launcher-tile purple" onclick="launchAs('Emma')">
+      <span class="t-icon">👧</span>
+      <span class="t-label">Emma</span>
+      <span class="t-hint">Emma nézete</span>
+    </div>
+    <div class="launcher-tile teal" onclick="launchAs('Éva')">
+      <span class="t-icon">👧</span>
+      <span class="t-label">Éva</span>
+      <span class="t-hint">Éva nézete</span>
+    </div>
+    <div class="launcher-tile amber launcher-wide" onclick="openProjects()">
+      <span class="t-icon">🗂️</span>
+      <span class="t-label">Projektek</span>
+      <span class="t-hint">Közös kiadások, utazások…</span>
+    </div>
+  </div>
+  <button class="launcher-signout" onclick="signOut()">← Kijelentkezés</button>
+</div>
+
 <!-- Main app -->
 <div class="app hidden" id="mainApp">
+  <button class="hidden" id="launcherBackBtn" onclick="backToLauncher()" style="position:fixed;top:12px;left:12px;z-index:100;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;">← Vissza</button>
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.10.0</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.10.1</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -576,7 +633,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.10.0'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.10.1'; // html version — bump patch for html-only, minor for script changes
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
   'domelaci@gmail.com':  'Döme',
@@ -597,7 +654,7 @@ let userEmail = '';
 
 function signInWithGoogle() {
   const client = google.accounts.oauth2.initTokenClient({
-    client_id: '53917763443-3hjc5rge271njo0ojtrj5j3cohic4v4r.apps.googleusercontent.com', // ← replace this!
+    client_id: 'PASTE_YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com', // ← replace this!
     scope: 'email profile',
     callback: handleToken,
   });
@@ -629,14 +686,75 @@ function showLoginError() {
 
 function onAuthSuccess() {
   document.getElementById('loginScreen').style.display = 'none';
+  logLogin();
+  if (userName === 'Döme') {
+    // Show launcher for Döme
+    document.getElementById('launcherScreen').classList.add('visible');
+    document.getElementById('launcherGreet').textContent = 'Szia Döme! 👋';
+  } else {
+    // Go straight to app for Emma/Éva
+    launchApp(userName);
+  }
+}
+
+function launchApp(name) {
+  userName = name;
+  // Reset entries for the chosen user
+  const stored = JSON.parse(localStorage.getItem('kz_'+name.toLowerCase().replace('é','e').replace('á','a')+'_entries') || '[]');
+  st.entries   = JSON.parse(localStorage.getItem(STORE()+'_entries') || '[]');
+  st.names     = JSON.parse(localStorage.getItem(STORE()+'_names')   || '[]');
+  st.customCats= JSON.parse(localStorage.getItem(STORE()+'_customcats') || '[]');
   document.getElementById('mainApp').classList.remove('hidden');
   document.getElementById('bottomNav').classList.remove('hidden');
   document.getElementById('fab').classList.remove('hidden');
   render();
   fullSync();
   if (isDesktop()) renderDesktopForm();
-  // Log the login
-  logLogin();
+}
+
+function launchAs(name) {
+  // Döme impersonating another user
+  document.getElementById('launcherScreen').classList.remove('visible');
+  userName = name;
+  st.entries    = JSON.parse(localStorage.getItem(STORE()+'_entries')    || '[]');
+  st.names      = JSON.parse(localStorage.getItem(STORE()+'_names')      || '[]');
+  st.customCats = JSON.parse(localStorage.getItem(STORE()+'_customcats') || '[]');
+  document.getElementById('mainApp').classList.remove('hidden');
+  document.getElementById('bottomNav').classList.remove('hidden');
+  document.getElementById('fab').classList.remove('hidden');
+  // Show back-to-launcher button
+  document.getElementById('launcherBackBtn').classList.remove('hidden');
+  render();
+  fullSync();
+  if (isDesktop()) renderDesktopForm();
+}
+
+function backToLauncher() {
+  document.getElementById('mainApp').classList.add('hidden');
+  document.getElementById('bottomNav').classList.add('hidden');
+  document.getElementById('fab').classList.add('hidden');
+  document.getElementById('launcherBackBtn').classList.add('hidden');
+  document.getElementById('launcherScreen').classList.add('visible');
+  userName = 'Döme';
+}
+
+function openDashboard() {
+  window.open('dashboard.html', '_blank');
+}
+
+function openProjects() {
+  window.open('projects.html', '_blank');
+}
+
+function signOut() {
+  sessionStorage.clear();
+  userName = '';
+  userEmail = '';
+  document.getElementById('launcherScreen').classList.remove('visible');
+  document.getElementById('mainApp').classList.add('hidden');
+  document.getElementById('bottomNav').classList.add('hidden');
+  document.getElementById('fab').classList.add('hidden');
+  document.getElementById('loginScreen').style.display = 'flex';
 }
 
 async function logLogin() {
