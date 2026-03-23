@@ -1,10 +1,11 @@
-<!-- Kassza v6.9.0 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.10.0 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Kassza 💸</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -353,18 +354,40 @@
 
   .entry-sync.pending-huf{color:var(--amber);animation:pulse .8s infinite;}
 
+
+  /* Login screen */
+  .login-screen{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;}
+  .login-logo{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;margin-bottom:6px;}
+  .login-logo span{color:var(--accent);}
+  .login-line{width:36px;height:3px;background:var(--accent);border-radius:2px;margin:16px auto 28px;}
+  .login-msg{font-size:15px;color:var(--ink2);line-height:1.6;max-width:280px;margin-bottom:32px;}
+  .login-btn{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 24px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .login-btn:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);}
+  .login-btn svg{width:20px;height:20px;flex-shrink:0;}
+  .login-version{font-size:11px;color:var(--ink3);margin-top:24px;}
+  .login-error{font-size:13px;color:var(--accent);margin-top:12px;display:none;}
+
 </style>
 </head>
 <body>
 
-<!-- Unknown user -->
-<div class="unknown hidden" id="unknownScreen">
-  <div class="ob-logo">kass<span>za</span> 💸</div>
-  <div class="ob-line"></div>
-  <div class="ob-msg">Nem ismert felhasználó.<br>Kérlek használd a személyes linkedet.</div>
-  <div class="ob-hint">Ha nincs linked, kérd a szüleidtől.</div>
-  <div class="ob-code">kassza.github.io?user=nev</div>
-  <div style="font-size:11px;color:var(--ink3);margin-top:16px;font-family:'DM Sans',sans-serif;">v6.9.0</div>
+<!-- Login screen -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-logo">kass<span>za</span> 💸</div>
+  <div class="login-line"></div>
+  <div class="login-msg">Jelentkezz be a Google fiókodba a folytatáshoz.</div>
+  <button class="login-btn" id="loginBtn" onclick="signInWithGoogle()">
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+    </svg>
+    Bejelentkezés Google fiókkal
+  </button>
+  <div class="login-error" id="loginError">Ez az email cím nincs regisztrálva a Kasszában.</div>
+  <div class="login-version" id="loginVersion">v6.10.0</div>
+</div>
 </div>
 
 <!-- Main app -->
@@ -372,7 +395,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.9.0</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.10.0</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -553,19 +576,98 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.9.0'; // html version — bump patch for html-only, minor for script changes
-const KNOWN_USERS = { dome:'Döme', emma:'Emma', eva:'Éva' };
+const APP_VERSION = '6.10.0'; // html version — bump patch for html-only, minor for script changes
+// ── Known users (email → display name) ──────────────────────
+const KNOWN_USERS = {
+  'domelaci@gmail.com':  'Döme',
+  'dem.emma8@gmail.com': 'Emma',
+  'vicusdome@gmail.com': 'Éva',
+};
 
-// ── Detect user ──────────────────────────────────────────────
-const urlUser  = (new URLSearchParams(window.location.search).get('user')||'').toLowerCase().trim();
-const userName = KNOWN_USERS[urlUser]||'';
-if (!userName) {
-  document.getElementById('unknownScreen').classList.remove('hidden');
-} else {
+// Correction limits (Ft per month, null = unlimited)
+const CORRECTION_LIMITS = {
+  'Döme': null,
+  'Emma': 5000,
+  'Éva':  5000,
+};
+
+// ── Auth state ───────────────────────────────────────────────
+let userName  = '';
+let userEmail = '';
+
+function signInWithGoogle() {
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: '53917763443-3hjc5rge271njo0ojtrj5j3cohic4v4r.apps.googleusercontent.com', // ← replace this!
+    scope: 'email profile',
+    callback: handleToken,
+  });
+  client.requestAccessToken();
+}
+
+async function handleToken(response) {
+  if (response.error) { showLoginError(); return; }
+  try {
+    const res  = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: 'Bearer ' + response.access_token }
+    });
+    const info = await res.json();
+    const email = (info.email || '').toLowerCase();
+    const name  = KNOWN_USERS[email];
+    if (!name) { showLoginError(); return; }
+    userName  = name;
+    userEmail = email;
+    // Store session
+    sessionStorage.setItem('kz_auth_name',  name);
+    sessionStorage.setItem('kz_auth_email', email);
+    onAuthSuccess();
+  } catch(e) { showLoginError(); }
+}
+
+function showLoginError() {
+  document.getElementById('loginError').style.display = 'block';
+}
+
+function onAuthSuccess() {
+  document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('mainApp').classList.remove('hidden');
   document.getElementById('bottomNav').classList.remove('hidden');
   document.getElementById('fab').classList.remove('hidden');
+  render();
+  fullSync();
+  if (isDesktop()) renderDesktopForm();
+  // Log the login
+  logLogin();
 }
+
+async function logLogin() {
+  try {
+    const ua = navigator.userAgent;
+    const device = /iPhone|iPad/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : 'Desktop';
+    const browser = /Chrome/.test(ua) ? 'Chrome' : /Firefox/.test(ua) ? 'Firefox' : /Safari/.test(ua) ? 'Safari' : 'Edge';
+    await fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        action: 'logLogin',
+        user:   userName,
+        email:  userEmail,
+        device: device + ' / ' + browser,
+      }),
+    });
+  } catch(e) {}
+}
+
+// Check for existing session on load
+(function checkSession() {
+  const name  = sessionStorage.getItem('kz_auth_name');
+  const email = sessionStorage.getItem('kz_auth_email');
+  if (name && email && KNOWN_USERS[email] === name) {
+    userName  = name;
+    userEmail = email;
+    onAuthSuccess();
+  }
+  // else login screen stays visible
+})();
 
 // ── Constants ────────────────────────────────────────────────
 const MONTHS_SHORT = ['Jan','Feb','Már','Ápr','Máj','Jún','Júl','Aug','Sze','Okt','Nov','Dec'];
@@ -580,10 +682,10 @@ const CATS = [
 const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
 
 // ── State ────────────────────────────────────────────────────
-const STORE = 'kz_'+(urlUser||'x');
+const STORE = () => 'kz_'+(userName||'x');
 const st = {
-  entries:    JSON.parse(localStorage.getItem(STORE+'_entries')||'[]'),
-  names:      JSON.parse(localStorage.getItem(STORE+'_names')  ||'[]'),
+  entries:    JSON.parse(localStorage.getItem(STORE()+'_entries')||'[]'),
+  names:      JSON.parse(localStorage.getItem(STORE()+'_names')  ||'[]'),
   curY:       new Date().getFullYear(),
   curM:       new Date().getMonth(),
   selCat:     'egyeb',
@@ -595,13 +697,13 @@ const st = {
   summary:    null,
   activeFilter: null, // 'bank'|'cash'|'savings'|'loans'
   editTarget:   null,
-  customCats: JSON.parse(localStorage.getItem('kz_'+(urlUser||'x')+'_customcats')||'[]'),
+  customCats: JSON.parse(localStorage.getItem(STORE()+'_customcats')||'[]'),
   newCatIcon: '🏷️',
 };
 function save() {
-  localStorage.setItem(STORE+'_entries',     JSON.stringify(st.entries));
-  localStorage.setItem(STORE+'_names',       JSON.stringify(st.names));
-  localStorage.setItem(STORE+'_customcats',  JSON.stringify(st.customCats));
+  localStorage.setItem(STORE()+'_entries',     JSON.stringify(st.entries));
+  localStorage.setItem(STORE()+'_names',       JSON.stringify(st.names));
+  localStorage.setItem(STORE()+'_customcats',  JSON.stringify(st.customCats));
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -1266,6 +1368,24 @@ function selCorrectionPot(pot) {
 }
 
 async function submitCorrection() {
+  // Check monthly correction limit
+  const limit = CORRECTION_LIMITS[userName];
+  if (limit !== null && limit !== undefined) {
+    const now = new Date();
+    const monthCorrs = st.entries.filter(e =>
+      e.type === 'correction' && e.month === now.getMonth() && e.year === now.getFullYear()
+    );
+    const totalCorr = monthCorrs.reduce((s,e) => s + Math.abs(e.origAmt||0), 0);
+    const realAmt2 = parseFloat(document.getElementById('corrAmtInput').value);
+    const pot = st.correctionPot||'bank';
+    const bal = getBalances();
+    const current = {bank:bal.bank,cash:bal.cash,savings:bal.savings}[pot];
+    const delta = Math.abs(realAmt2 - current);
+    if (totalCorr + delta > limit) {
+      showToast(`Havi korrekció limit: ${fmtFt(limit)} — már felhasználva: ${fmtFt(totalCorr)}`);
+      return;
+    }
+  }
   const realAmt=parseFloat(document.getElementById('corrAmtInput').value);
   const note=document.getElementById('corrNoteInput').value.trim();
   const dateVal=document.getElementById('dateInput').value||todayStr();
@@ -1781,7 +1901,7 @@ async function submitEdit() {
 // Clean any timestamps that crept into names list
 st.names = st.names.filter(n => !/^Thu|^Mon|^Tue|^Wed|^Fri|^Sat|^Sun|^\d{4}/.test(n));
 save();
-if (userName){render();fullSync();if(isDesktop())renderDesktopForm();}
+// Init handled by onAuthSuccess() after Google Sign-In
 </script>
 </body>
 </html>
