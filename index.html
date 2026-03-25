@@ -408,7 +408,7 @@
     Bejelentkezés Google fiókkal
   </button>
   <div class="login-error" id="loginError">Ez az email cím nincs regisztrálva a Kasszában.</div>
-  <div class="login-version" id="loginVersion">v6.10.0</div>
+  <div class="login-version" id="loginVersion"></div>
 </div>
 </div>
 
@@ -634,6 +634,7 @@ async function toHUF(amount, currency) {
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
 const APP_VERSION = '6.10.2'; // html version — bump patch for html-only, minor for script changes
+document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
   'domelaci@gmail.com':  'Döme',
