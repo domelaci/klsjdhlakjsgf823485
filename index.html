@@ -1,4 +1,4 @@
-<!-- Kassza v6.10.1 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.10.2 — 2026-03-19 — Full edit form, version sync check -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -452,7 +452,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.10.1</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.10.2</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -633,7 +633,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.10.1'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.10.2'; // html version — bump patch for html-only, minor for script changes
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
   'domelaci@gmail.com':  'Döme',
@@ -654,7 +654,7 @@ let userEmail = '';
 
 function signInWithGoogle() {
   const client = google.accounts.oauth2.initTokenClient({
-    client_id: 'PASTE_YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com', // ← replace this!
+    client_id: '53917763443-3hjc5rge271njo0ojtrj5j3cohic4v4r.apps.googleusercontent.com',
     scope: 'email profile',
     callback: handleToken,
   });
