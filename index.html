@@ -1,4 +1,4 @@
-<!-- Kassza v6.10.2 — 2026-03-19 — Full edit form, version sync check -->
+<!-- Kassza v6.10.3 — 2026-03-25 — Bug fixes, cleanup, font update -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Kassza 💸</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:#F5F2EC; --card:#FFFFFF; --ink:#1A1814; --ink2:#6B6760; --ink3:#B0ADA8;
@@ -18,12 +18,12 @@
     --teal:#0F6E56; --teal-bg:#E1F5EE;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-  html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);}
+  html,body{min-height:100%;background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);}
   .hidden{display:none!important;}
 
   /* Unknown user */
   .unknown{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;}
-  .ob-logo{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;margin-bottom:6px;}
+  .ob-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:48px;font-weight:800;margin-bottom:6px;}
   .ob-logo span{color:var(--accent);}
   .ob-line{width:36px;height:3px;background:var(--accent);border-radius:2px;margin:16px auto 28px;}
   .ob-msg{font-size:15px;color:var(--ink2);line-height:1.6;max-width:280px;margin-bottom:8px;}
@@ -35,11 +35,11 @@
 
   /* Header */
   .header{padding:48px 20px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;}
-  .app-name{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;flex-shrink:0;}
+  .app-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;flex-shrink:0;}
   .app-name span{color:var(--accent);}
   .user-pill{display:flex;align-items:center;gap:7px;background:var(--card);border-radius:30px;padding:7px 13px;border:1px solid var(--border);}
-  .user-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;font-family:'Syne',sans-serif;flex-shrink:0;}
-  .user-name-pill{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
+  .user-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;}
+  .user-name-pill{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;}
 
   /* Sync */
   .sync-bar{margin:10px 20px 0;display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink3);}
@@ -53,7 +53,7 @@
   .month-row{margin:14px 20px 0;display:flex;justify-content:space-between;align-items:center;}
   .month-switch{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;padding:9px 16px;border:1px solid var(--border);}
   .month-btn{background:none;border:none;cursor:pointer;color:var(--ink2);font-size:20px;padding:0 2px;line-height:1;}
-  .month-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;min-width:84px;text-align:center;}
+  .month-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;min-width:84px;text-align:center;}
   .sync-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 16px;font-size:14px;color:var(--ink2);cursor:pointer;}
 
   /* Summary card */
@@ -63,9 +63,9 @@
   .sum-left{}
   .sum-right{display:flex;flex-direction:column;gap:10px;text-align:right;}
   .s-label{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
-  .s-big{font-family:'DM Sans',sans-serif;font-size:32px;font-weight:700;letter-spacing:-.5px;line-height:1.1;}
-  .s-med{font-family:'DM Sans',sans-serif;font-size:19px;font-weight:700;color:#fff;line-height:1;}
-  .s-sav{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:rgba(187,155,255,.95);line-height:1;}
+  .s-big{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:700;letter-spacing:-.5px;line-height:1.1;}
+  .s-med{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:700;color:#fff;line-height:1;}
+  .s-sav{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:rgba(187,155,255,.95);line-height:1;}
   .bar-wrap{margin-top:18px;position:relative;z-index:1;}
   .bar-track{height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;}
   .bar-fill{height:100%;background:var(--accent2);border-radius:2px;transition:width .5s ease;}
@@ -77,7 +77,7 @@
   .bal-tile:hover{border-color:var(--ink2);}
   .bal-tile-icon{font-size:18px;margin-bottom:6px;}
   .bal-tile-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px;}
-  .bal-tile-amt{font-family:'DM Sans',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.3px;color:var(--ink);}
+  .bal-tile-amt{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.3px;color:var(--ink);}
   .bal-tile.bank    .bal-tile-amt{color:var(--ink);}
   .bal-tile.cash    .bal-tile-amt{color:var(--ink);}
   .bal-tile.savings .bal-tile-amt{color:var(--ink);}
@@ -90,7 +90,7 @@
   /* Entries */
   .entries-wrap{margin:16px 20px 0;}
   .entries-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-  .section-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink2);}
+  .section-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink2);}
   .entries-list{display:flex;flex-direction:column;gap:8px;}
   .entry-card{background:var(--card);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:11px;border:1px solid var(--border);animation:slideIn .2s ease;}
   @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
@@ -107,7 +107,7 @@
   .entry-name{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .entry-meta{font-size:12px;color:var(--ink2);margin-top:2px;}
   .entry-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
-  .entry-amount{font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;white-space:nowrap;}
+  .entry-amount{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;white-space:nowrap;}
   .entry-amount.out      {color:var(--accent);}
   .entry-amount.in       {color:var(--green);}
   .entry-amount.save     {color:var(--purple);}
@@ -128,7 +128,7 @@
 
   /* Bottom nav */
   .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);background:var(--card);border-top:1px solid var(--border);display:flex;z-index:80;width:100%;max-width:430px;}
-  .nav-btn{flex:1;padding:11px 8px 17px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink3);transition:color .15s;}
+  .nav-btn{flex:1;padding:11px 8px 17px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:var(--ink3);transition:color .15s;}
   .nav-btn.active{color:var(--accent);}
   .nav-indicator{width:20px;height:2px;background:transparent;border-radius:1px;margin-top:2px;}
   .nav-btn.active .nav-indicator{background:var(--accent);}
@@ -143,7 +143,7 @@
 
   /* Report */
   .chart-card{margin:14px 20px 0;background:var(--card);border-radius:var(--r);padding:20px;border:1px solid var(--border);}
-  .chart-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--ink2);letter-spacing:.1em;margin-bottom:16px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;}
+  .chart-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;color:var(--ink2);letter-spacing:.1em;margin-bottom:16px;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;}
   .chart-sub{font-size:12px;color:var(--ink3);font-weight:400;letter-spacing:0;text-transform:none;}
   .cat-bars{display:flex;flex-direction:column;gap:13px;}
   .cat-bar-row{display:flex;align-items:center;gap:10px;}
@@ -151,7 +151,7 @@
   .cat-bar-body{flex:1;}
   .cat-bar-top{display:flex;justify-content:space-between;margin-bottom:4px;}
   .cat-bar-name{font-size:14px;font-weight:500;color:var(--ink);}
-  .cat-bar-amt{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--ink);}
+  .cat-bar-amt{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--ink);}
   .cat-bar-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
   .cat-bar-fill{height:100%;border-radius:4px;transition:width .6s ease;}
   .cat-bar-pct{font-size:12px;color:var(--ink3);margin-top:2px;}
@@ -162,7 +162,7 @@
   .debt-row:last-child{border-bottom:none;}
   .debt-name{font-size:14px;font-weight:500;color:var(--ink);}
   .debt-hint{font-size:12px;color:var(--ink3);margin-top:2px;}
-  .debt-amt{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;color:var(--teal);}
+  .debt-amt{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--teal);}
   .debt-empty{text-align:center;padding:20px 0;color:var(--ink3);font-size:14px;}
 
   /* Sheet overlay */
@@ -172,7 +172,7 @@
   .sheet-overlay.open .bottom-sheet{transform:translateY(0);}
   .sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;}
   .sheet-header{padding:16px 20px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
-  .sheet-title{font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;}
+  .sheet-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:700;}
   .sheet-close{background:none;border:none;font-size:24px;color:var(--ink3);cursor:pointer;line-height:1;padding:0 4px;}
   .sheet-body{padding:18px 20px 0;}
 
@@ -180,20 +180,20 @@
   .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
   .mode-btn{padding:20px 12px;border-radius:16px;border:2px solid var(--border);background:var(--bg);cursor:pointer;text-align:center;transition:all .15s;}
   .mode-btn .m-icon{font-size:28px;margin-bottom:8px;display:block;}
-  .mode-btn .m-label{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);display:block;}
+  .mode-btn .m-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);display:block;}
   .mode-btn .m-hint{font-size:12px;color:var(--ink3);display:block;margin-top:3px;line-height:1.4;}
   .mode-btn.normal:hover{border-color:var(--accent);background:var(--red-bg);}
   .mode-btn.admin:hover{border-color:var(--blue);background:var(--blue-bg);}
 
   /* Normal form */
   .type-row-normal{display:flex;gap:8px;margin-bottom:14px;}
-  .type-btn-normal{flex:1;padding:13px 8px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;}
+  .type-btn-normal{flex:1;padding:13px 8px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;}
   .type-btn-normal.active-out{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
   .type-btn-normal.active-in{border-color:var(--green);background:var(--green-bg);color:var(--green);}
 
   /* Cash/Bank source buttons */
   .source-row{display:flex;gap:8px;margin-top:14px;flex-wrap:nowrap;}
-  .source-btn{flex:1;min-width:0;padding:13px 4px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;}
+  .source-btn{flex:1;min-width:0;padding:13px 4px;border-radius:13px;border:2px solid var(--border);background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;}
   .source-btn.active-bank{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);font-weight:700;}
   .source-btn.active-cash{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);font-weight:700;}
 
@@ -201,7 +201,7 @@
   .admin-list{display:flex;flex-direction:column;gap:8px;}
   .admin-item{display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:14px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
   .admin-icon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-  .admin-label{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
+  .admin-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
   .admin-hint{font-size:12px;color:var(--ink2);margin-top:2px;}
   .admin-item.purple:hover{border-color:var(--purple);background:var(--purple-bg);}
   .admin-item.amber:hover{border-color:var(--amber);background:var(--amber-bg);}
@@ -215,25 +215,25 @@
   .admin-icon.gray{background:#E8E4DC;}
 
   /* Form fields */
-  .field-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink2);margin-bottom:7px;margin-top:14px;}
+  .field-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink2);margin-bottom:7px;margin-top:14px;}
   .amount-row{display:flex;gap:8px;}
-  .amount-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:26px;font-weight:700;color:var(--ink);outline:none;min-width:0;transition:border-color .2s;}
+  .amount-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:700;color:var(--ink);outline:none;min-width:0;transition:border-color .2s;}
   .amount-input:focus{border-color:var(--accent);}
   .amount-input::placeholder{color:var(--ink3);}
   .curr-wrap{position:relative;flex-shrink:0;}
-  .curr-select{appearance:none;-webkit-appearance:none;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:0 34px 0 12px;height:100%;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;transition:border-color .2s;min-width:92px;}
+  .curr-select{appearance:none;-webkit-appearance:none;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:0 34px 0 12px;height:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;outline:none;transition:border-color .2s;min-width:92px;}
   .curr-select:focus{border-color:var(--accent);}
   .curr-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:10px;color:var(--ink2);}
-  .text-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
+  .text-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
   .text-input:focus{border-color:var(--accent);}
   .text-input::placeholder{color:var(--ink3);}
-  .date-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
+  .date-input{width:100%;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:13px 16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s;}
   .cat-row{display:flex;gap:7px;flex-wrap:wrap;}
   .cat-chip{background:var(--card);border:2px solid var(--border);border-radius:30px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
   .cat-chip.active{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
   .savings-info{background:var(--purple-bg);border:1px solid rgba(107,78,170,.2);border-radius:12px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:14px;}
-  .savings-info-amt{font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;color:var(--purple);}
-  .add-btn{width:100%;padding:17px;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .1s;letter-spacing:.02em;margin-top:18px;color:#fff;}
+  .savings-info-amt{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:var(--purple);}
+  .add-btn{width:100%;padding:17px;border:none;border-radius:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .1s;letter-spacing:.02em;margin-top:18px;color:#fff;}
   .add-btn:active{transform:scale(.98);opacity:.9;}
   .add-btn.out{background:var(--accent);}
   .add-btn.in{background:var(--green);}
@@ -248,9 +248,9 @@
   .advance-list{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
   .advance-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:13px;padding:13px 16px;border:2px solid var(--border);cursor:pointer;transition:all .15s;}
   .advance-item:hover{border-color:var(--teal);background:var(--teal-bg);}
-  .advance-item-name{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
+  .advance-item-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;color:var(--ink);}
   .advance-item-note{font-size:12px;color:var(--ink2);margin-top:2px;}
-  .advance-item-amt{font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;color:var(--blue);}
+  .advance-item-amt{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:var(--blue);}
   .advance-empty{text-align:center;padding:20px 0;color:var(--ink3);font-size:14px;}
 
   /* Correction form */
@@ -261,15 +261,15 @@
   .pot-btn.active-purple{border-color:var(--purple);background:var(--purple-bg);}
   .pot-icon{font-size:20px;width:32px;text-align:center;}
   .pot-label{font-size:14px;font-weight:500;color:var(--ink);}
-  .pot-bal{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;margin-left:auto;}
+  .pot-bal{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;margin-left:auto;}
 
   /* Sub-sheet (reimburse confirm) */
   .sub-amt-row{display:flex;gap:8px;margin-bottom:14px;}
-  .sub-amt-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:13px 14px;font-family:'DM Sans',sans-serif;font-size:22px;font-weight:700;color:var(--ink);outline:none;transition:border-color .2s;}
+  .sub-amt-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:13px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:700;color:var(--ink);outline:none;transition:border-color .2s;}
   .sub-full-btn{flex-shrink:0;background:var(--teal-bg);border:2px solid rgba(15,110,86,.2);border-radius:12px;padding:0 14px;font-size:13px;font-weight:600;color:var(--teal);cursor:pointer;}
   .sub-actions{display:flex;gap:8px;}
-  .sub-cancel{flex:1;padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);}
-  .sub-confirm{flex:1;padding:13px;background:var(--teal);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#fff;cursor:pointer;}
+  .sub-cancel{flex:1;padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);}
+  .sub-confirm{flex:1;padding:13px;background:var(--teal);border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#fff;cursor:pointer;}
 
   /* Toast */
   .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2);}
@@ -293,10 +293,10 @@
     .chart-card:last-child{margin-bottom:0;}
     .desktop-form-card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;}
     .desktop-form-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-    .desktop-form-title{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;}
+    .desktop-form-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;}
     .desktop-form-body{padding:16px 20px 20px;}
     .desktop-tab-bar{display:flex;gap:4px;background:var(--card);border-radius:12px;padding:4px;border:1px solid var(--border);}
-    .desktop-tab-btn{flex:1;padding:8px 16px;border:none;border-radius:9px;background:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+    .desktop-tab-btn{flex:1;padding:8px 16px;border:none;border-radius:9px;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
     .desktop-tab-btn.active{background:var(--accent);color:#fff;}
     .fab{display:none!important;}
     .bottom-nav{display:none!important;}
@@ -327,10 +327,10 @@
   /* Custom category */
   .new-cat-wrap{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
   .new-cat-input-row{display:flex;gap:8px;}
-  .new-cat-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s;}
+  .new-cat-input{flex:1;background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:10px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s;}
   .new-cat-input:focus{border-color:var(--accent);}
   .new-cat-input::placeholder{color:var(--ink3);}
-  .new-cat-save{padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .new-cat-save{padding:10px 16px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;}
   .emoji-picker{display:flex;gap:6px;flex-wrap:wrap;}
   .emoji-opt{font-size:20px;cursor:pointer;padding:4px;border-radius:8px;border:2px solid transparent;transition:all .15s;}
   .emoji-opt.selected{border-color:var(--accent);background:var(--red-bg);}
@@ -357,11 +357,11 @@
 
   /* Login screen */
   .login-screen{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;}
-  .login-logo{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;margin-bottom:6px;}
+  .login-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;margin-bottom:6px;}
   .login-logo span{color:var(--accent);}
   .login-line{width:36px;height:3px;background:var(--accent);border-radius:2px;margin:16px auto 28px;}
   .login-msg{font-size:15px;color:var(--ink2);line-height:1.6;max-width:280px;margin-bottom:32px;}
-  .login-btn{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 24px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .login-btn{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 24px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:500;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;box-shadow:0 2px 8px rgba(0,0,0,.06);}
   .login-btn:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);}
   .login-btn svg{width:20px;height:20px;flex-shrink:0;}
   .login-version{font-size:11px;color:var(--ink3);margin-top:24px;}
@@ -371,14 +371,14 @@
   /* Launcher screen (Döme only) */
   .launcher-screen{position:fixed;inset:0;background:var(--bg);z-index:190;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px;}
   .launcher-screen.visible{display:flex;}
-  .launcher-logo{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin-bottom:4px;}
+  .launcher-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:36px;font-weight:800;margin-bottom:4px;}
   .launcher-logo span{color:var(--accent);}
   .launcher-sub{font-size:13px;color:var(--ink3);margin-bottom:36px;}
   .launcher-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:360px;}
   .launcher-tile{background:var(--card);border:2px solid var(--border);border-radius:18px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .15s;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:8px;}
   .launcher-tile:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08);}
   .launcher-tile .t-icon{font-size:32px;}
-  .launcher-tile .t-label{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .launcher-tile .t-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--ink);}
   .launcher-tile .t-hint{font-size:12px;color:var(--ink3);}
   .launcher-tile.accent{border-color:var(--accent);background:var(--red-bg);}
   .launcher-tile.blue{border-color:var(--blue);background:var(--blue-bg);}
@@ -386,7 +386,7 @@
   .launcher-tile.teal{border-color:var(--teal);background:var(--teal-bg);}
   .launcher-tile.amber{border-color:var(--amber);background:var(--amber-bg);}
   .launcher-wide{grid-column:1/-1;}
-  .launcher-signout{margin-top:20px;font-size:13px;color:var(--ink3);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;}
+  .launcher-signout{margin-top:20px;font-size:13px;color:var(--ink3);cursor:pointer;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;}
   .launcher-signout:hover{color:var(--accent);}
 
 </style>
@@ -448,11 +448,11 @@
 
 <!-- Main app -->
 <div class="app hidden" id="mainApp">
-  <button class="hidden" id="launcherBackBtn" onclick="backToLauncher()" style="position:fixed;top:12px;left:12px;z-index:100;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;">← Vissza</button>
+  <button class="hidden" id="launcherBackBtn" onclick="backToLauncher()" style="position:fixed;top:12px;left:12px;z-index:100;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;color:var(--ink2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;">← Vissza</button>
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'DM Sans',sans-serif;" id="versionDisplay">v6.10.2</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'Plus Jakarta Sans',sans-serif;" id="versionDisplay">v6.10.3</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -633,7 +633,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.10.2'; // html version — bump patch for html-only, minor for script changes
+const APP_VERSION = '6.10.3';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -700,11 +700,10 @@ function onAuthSuccess() {
 
 function launchApp(name) {
   userName = name;
-  // Reset entries for the chosen user
-  const stored = JSON.parse(localStorage.getItem('kz_'+name.toLowerCase().replace('é','e').replace('á','a')+'_entries') || '[]');
-  st.entries   = JSON.parse(localStorage.getItem(STORE()+'_entries') || '[]');
-  st.names     = JSON.parse(localStorage.getItem(STORE()+'_names')   || '[]');
-  st.customCats= JSON.parse(localStorage.getItem(STORE()+'_customcats') || '[]');
+  updateStore();
+  st.entries   = JSON.parse(localStorage.getItem(STORE+'_entries') || '[]');
+  st.names     = JSON.parse(localStorage.getItem(STORE+'_names')   || '[]');
+  st.customCats= JSON.parse(localStorage.getItem(STORE+'_customcats') || '[]');
   document.getElementById('mainApp').classList.remove('hidden');
   document.getElementById('bottomNav').classList.remove('hidden');
   document.getElementById('fab').classList.remove('hidden');
@@ -717,9 +716,10 @@ function launchAs(name) {
   // Döme impersonating another user
   document.getElementById('launcherScreen').classList.remove('visible');
   userName = name;
-  st.entries    = JSON.parse(localStorage.getItem(STORE()+'_entries')    || '[]');
-  st.names      = JSON.parse(localStorage.getItem(STORE()+'_names')      || '[]');
-  st.customCats = JSON.parse(localStorage.getItem(STORE()+'_customcats') || '[]');
+  updateStore();
+  st.entries    = JSON.parse(localStorage.getItem(STORE+'_entries')    || '[]');
+  st.names      = JSON.parse(localStorage.getItem(STORE+'_names')      || '[]');
+  st.customCats = JSON.parse(localStorage.getItem(STORE+'_customcats') || '[]');
   document.getElementById('mainApp').classList.remove('hidden');
   document.getElementById('bottomNav').classList.remove('hidden');
   document.getElementById('fab').classList.remove('hidden');
@@ -801,10 +801,11 @@ const CATS = [
 const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
 
 // ── State ────────────────────────────────────────────────────
-const STORE = () => 'kz_'+(userName||'x');
+let STORE = 'kz_x';
+function updateStore() { STORE = 'kz_' + (userName || 'x'); }
 const st = {
-  entries:    JSON.parse(localStorage.getItem(STORE()+'_entries')||'[]'),
-  names:      JSON.parse(localStorage.getItem(STORE()+'_names')  ||'[]'),
+  entries:    JSON.parse(localStorage.getItem(STORE+'_entries')||'[]'),
+  names:      JSON.parse(localStorage.getItem(STORE+'_names')  ||'[]'),
   curY:       new Date().getFullYear(),
   curM:       new Date().getMonth(),
   selCat:     'egyeb',
@@ -816,13 +817,13 @@ const st = {
   summary:    null,
   activeFilter: null, // 'bank'|'cash'|'savings'|'loans'
   editTarget:   null,
-  customCats: JSON.parse(localStorage.getItem(STORE()+'_customcats')||'[]'),
+  customCats: JSON.parse(localStorage.getItem(STORE+'_customcats')||'[]'),
   newCatIcon: '🏷️',
 };
 function save() {
-  localStorage.setItem(STORE()+'_entries',     JSON.stringify(st.entries));
-  localStorage.setItem(STORE()+'_names',       JSON.stringify(st.names));
-  localStorage.setItem(STORE()+'_customcats',  JSON.stringify(st.customCats));
+  localStorage.setItem(STORE+'_entries',     JSON.stringify(st.entries));
+  localStorage.setItem(STORE+'_names',       JSON.stringify(st.names));
+  localStorage.setItem(STORE+'_customcats',  JSON.stringify(st.customCats));
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -830,6 +831,30 @@ const isDesktop = () => window.innerWidth >= 768;
 function todayStr() {
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function currSelectHTML(selected='HUF') {
+  return `<div class="curr-wrap">
+    <select class="curr-select" id="currSelect">
+      <option value="HUF" ${selected==='HUF'?'selected':''}>🇭🇺 HUF</option>
+      <option value="GBP" ${selected==='GBP'?'selected':''}>🇬🇧 GBP</option>
+      <option value="RON" ${selected==='RON'?'selected':''}>🇷🇴 RON</option>
+      <option value="EUR" ${selected==='EUR'?'selected':''}>🇪🇺 EUR</option>
+      <option value="USD" ${selected==='USD'?'selected':''}>🇺🇸 USD</option>
+    </select>
+    <span class="curr-arrow">▾</span>
+  </div>`;
+}
+function editCurrSelectHTML(selected='HUF') {
+  return `<div class="curr-wrap">
+    <select class="curr-select" id="editCurr">
+      <option value="HUF" ${selected==='HUF'?'selected':''}>🇭🇺 HUF</option>
+      <option value="GBP" ${selected==='GBP'?'selected':''}>🇬🇧 GBP</option>
+      <option value="RON" ${selected==='RON'?'selected':''}>🇷🇴 RON</option>
+      <option value="EUR" ${selected==='EUR'?'selected':''}>🇪🇺 EUR</option>
+      <option value="USD" ${selected==='USD'?'selected':''}>🇺🇸 USD</option>
+    </select>
+    <span class="curr-arrow">▾</span>
+  </div>`;
 }
 
 // Running balances (all-time)
@@ -888,6 +913,7 @@ function updateSync(s,msg) {
 
 async function fullSync() {
   if (!userName) return;
+  clearTimeout(window._syncRetryTimer);
   updateSync('syncing','Adatok betöltése…');
   try {
     const q=new URLSearchParams({action:'getEntries',user:userName});
@@ -932,14 +958,19 @@ async function fullSync() {
     // If any foreign entries still have unconverted amtHUF, re-sync after delay
     const needsRefresh = st.entries.some(e => e.currency && e.currency !== 'HUF' && (e.amtHUF == null || e.amtHUF === 0 || e.amtHUF === e.origAmt));
     if (needsRefresh) {
-      // Poll for converted values — retry at 3s, 6s, 10s, 18s, 30s
-      [3000, 6000, 10000, 18000, 30000].forEach(delay => {
-        setTimeout(async () => {
+      clearTimeout(window._syncRetryTimer);
+      let retryCount = 0;
+      const retryDelays = [3000, 6000, 10000, 18000, 30000];
+      function scheduleRetry() {
+        if (retryCount >= retryDelays.length) return;
+        window._syncRetryTimer = setTimeout(async () => {
           const stillPending = st.entries.some(e => e.currency && e.currency !== 'HUF' &&
             (e.amtHUF == null || e.amtHUF === 0 || e.amtHUF === e.origAmt));
-          if (stillPending) await fullSync();
-        }, delay);
-      });
+          if (stillPending) { await fullSync(); retryCount++; scheduleRetry(); }
+        }, retryDelays[retryCount]);
+        retryCount++;
+      }
+      scheduleRetry();
     }
   } catch(e) {
     updateSync('err','Sync hiba — ellenőrizd a kapcsolatot');
@@ -948,25 +979,28 @@ async function fullSync() {
 }
 
 async function pushUnsynced(entries) {
-  for (const e of entries) {
-    try {
-      await fetch(SCRIPT_URL,{
-        method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          action:'addEntry',user:userName,id:String(e.id),
+  if (!entries.length) return;
+  try {
+    await fetch(SCRIPT_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        action:'syncBatch',
+        user: userName,
+        entries: entries.map(e => ({
+          action:'addEntry', user:userName, id:String(e.id),
           date:e.dateStr||new Date(e.date).toLocaleDateString('hu-HU'),
           note:e.note, category:getCatLabel(e),
           type:getTypusLabel(e.type),
           amount:e.origAmt, currency:e.currency||'HUF',
           source:e.source||'bank',
           personName:e.personName||'',
-          pot:e.pot||'',delta:e.delta||0,
-        }),
-      });
-      e.synced=true;
-    } catch(err){}
-  }
+          pot:e.pot||'', delta:e.delta||0,
+        })),
+      }),
+    });
+    entries.forEach(e => e.synced=true);
+  } catch(err) {}
   save();
 }
 
@@ -998,8 +1032,7 @@ async function loadSummary() {
 // ── Summary ──────────────────────────────────────────────────
 function renderSummaryFromLocal() {
   const m=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const bejott=m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
-              +m.filter(e=>e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const bejott=m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const kiment=m.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   renderSummary({bejott,kiment,maradt:bejott-kiment,pct:bejott>0?Math.round(kiment/bejott*100):0});
 }
@@ -1118,16 +1151,7 @@ function normalFormHTML() {
     <div class="field-label">ÖSSZEG</div>
     <div class="amount-row">
       <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
-      <div class="curr-wrap">
-        <select class="curr-select" id="currSelect">
-          <option value="HUF">🇭🇺 HUF</option>
-          <option value="GBP">🇬🇧 GBP</option>
-          <option value="RON">🇷🇴 RON</option>
-          <option value="EUR">🇪🇺 EUR</option>
-          <option value="USD">🇺🇸 USD</option>
-        </select>
-        <span class="curr-arrow">▾</span>
-      </div>
+      ${currSelectHTML()}
     </div>
     <div class="source-row">
       <button class="source-btn ${!isCash?'active-bank':''}" id="srcBankBtn" onclick="setSource('bank')">💳 Bank</button>
@@ -1139,7 +1163,7 @@ function normalFormHTML() {
     <input class="text-input" id="noteInput" type="text" placeholder="pl. ebéd, buszjegy…" maxlength="60" autocomplete="off">
     <div id="catWrap">
       <div class="field-label">KATEGÓRIA</div>
-      <div class="cat-row">${catsHTML}</div>
+      <div class="cat-row" id="catRow">${catsHTML}</div>
     </div>
     <button class="add-btn out" id="addBtn" onclick="submitNormal()">Hozzáad ＋</button>
     <div style="height:4px"></div>`;
@@ -1190,8 +1214,9 @@ async function submitNormal() {
   const cat=CATS.find(c=>c.id===st.selCat);
   const dp=dateVal.split('-');
   const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const hufAmt = await toHUF(rawAmt, currency);
   const entry={
-    id:Date.now(),type:st.selType,origAmt:rawAmt,amtHUF:rawAmt, // sheet will store correct HUF via GOOGLEFINANCE
+    id:Date.now(),type:st.selType,origAmt:rawAmt,amtHUF:hufAmt,
     currency,
     source:st.selSource,
     note:note||'', // keep empty if not filled in — display uses category name dynamically
@@ -1334,16 +1359,7 @@ function loanFormHTML() {
     <div class="field-label">ÖSSZEG</div>
     <div class="amount-row">
       <input class="amount-input" id="amtInput" type="number" inputmode="decimal" placeholder="0" min="0" step="any">
-      <div class="curr-wrap">
-        <select class="curr-select" id="currSelect">
-          <option value="HUF">🇭🇺 HUF</option>
-          <option value="GBP">🇬🇧 GBP</option>
-          <option value="RON">🇷🇴 RON</option>
-          <option value="EUR">🇪🇺 EUR</option>
-          <option value="USD">🇺🇸 USD</option>
-        </select>
-        <span class="curr-arrow">▾</span>
-      </div>
+      ${currSelectHTML()}
     </div>
     <div class="source-row">
       <button class="source-btn ${!isCash?'active-bank':''}" id="srcBankBtn" onclick="setSource('bank')">💳 Bank</button>
@@ -1368,8 +1384,9 @@ async function submitLoan() {
   if (!st.names.includes(name)) st.names.push(name);
   const dp=dateVal.split('-');
   const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+  const hufAmt = await toHUF(rawAmt, currency);
   const entry={
-    id:Date.now(),type:'loan',origAmt:rawAmt,amtHUF:rawAmt, // sheet will store correct HUF via GOOGLEFINANCE
+    id:Date.now(),type:'loan',origAmt:rawAmt,amtHUF:hufAmt,
     currency,
     source:st.selSource,
     note:note||`Kölcsön — ${name}`,
@@ -1405,7 +1422,7 @@ function openPayConfirm(name,amt) {
   const isCash=st.selSource==='cash';
   document.getElementById('sheetBody').innerHTML=`
     <button class="back-btn" onclick="goAdminMode('loan-pay')">← Vissza</button>
-    <div style="font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px;">${name}</div>
+    <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px;">${name}</div>
     <div style="font-size:13px;color:var(--ink2);margin-bottom:16px;">Kintlévőség: ${fmtFt(amt)}</div>
     <div class="sub-amt-row">
       <input class="sub-amt-input" id="payAmtInput" type="number" inputmode="decimal" placeholder="0" value="${amt}" min="0" step="any">
@@ -1548,15 +1565,6 @@ function checkVersionMatch(scriptVersion) {
   }
 }
 
-
-function isDateLike(s) {
-  if (!s) return false;
-  // Reject anything that looks like a date, timestamp, or number ID
-  return /^\d{4}[.\-\/]/.test(s) ||  // 2026.03...
-         /^\d{13,}$/.test(s) ||          // unix timestamp
-         /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.test(s) || // JS date string
-         /^\d{2}\/\d{2}\/\d{4}/.test(s);  // dd/mm/yyyy
-}
 
 // ── Tile filter ──────────────────────────────────────────────
 const TILE_META = {
@@ -1751,7 +1759,7 @@ function renderReport() {
   document.getElementById('reportSummaryRows').innerHTML=rows.filter(r=>r.amt!==0).map(r=>
     `<div class="sum-row-item">
       <span style="font-size:14px;${r.bold?'font-weight:700;color:var(--ink)':''}">${r.label}</span>
-      <span style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:${r.colour}">${fmtFt(Math.abs(r.amt))}</span>
+      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:${r.colour}">${fmtFt(Math.abs(r.amt))}</span>
     </div>`).join('');
 }
 
@@ -1839,7 +1847,12 @@ function render() {
 // delete and clearMonth removed — edit replaces delete
 
 function fmtFt(n)   {return 'Ft '+Math.round(n||0).toLocaleString('hu-HU');}
-function fmtDate(iso){const d=new Date(iso);return `${d.getMonth()+1}/${d.getDate()}`;}
+function fmtDate(iso){
+  const d=new Date(iso);
+  const now=new Date();
+  if (d.getFullYear()!==now.getFullYear()) return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
@@ -1909,16 +1922,7 @@ function renderEditSheet() {
     <div class="field-label">ÖSSZEG</div>
     <div class="amount-row">
       <input class="amount-input" id="editAmt" type="number" inputmode="decimal" value="${entry.origAmt}" min="0" step="any">
-      <div class="curr-wrap">
-        <select class="curr-select" id="editCurr">
-          <option value="HUF" ${entry.currency==='HUF'?'selected':''}>🇭🇺 HUF</option>
-          <option value="GBP" ${entry.currency==='GBP'?'selected':''}>🇬🇧 GBP</option>
-          <option value="RON" ${entry.currency==='RON'?'selected':''}>🇷🇴 RON</option>
-          <option value="EUR" ${entry.currency==='EUR'?'selected':''}>🇪🇺 EUR</option>
-          <option value="USD" ${entry.currency==='USD'?'selected':''}>🇺🇸 USD</option>
-        </select>
-        <span class="curr-arrow">▾</span>
-      </div>
+      ${editCurrSelectHTML(entry.currency||'HUF')}
     </div>
     ${sourceToggle}
     <div class="field-label">DÁTUM</div>
@@ -1928,8 +1932,8 @@ function renderEditSheet() {
     ${catsHTML}
     ${nameHTML}
     <div style="display:flex;gap:8px;margin-top:18px;padding-bottom:4px;">
-      <button style="flex:1;padding:15px;background:var(--bg);border:1px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);" onclick="closeSheet()">Mégsem</button>
-      <button style="flex:2;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;" onclick="submitEdit()">Mentés ✓</button>
+      <button style="flex:1;padding:15px;background:var(--bg);border:1px solid var(--border);border-radius:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;cursor:pointer;color:var(--ink2);" onclick="closeSheet()">Mégsem</button>
+      <button style="flex:2;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;" onclick="submitEdit()">Mentés ✓</button>
     </div>`;
   syncDesktopFormBody();
 }
@@ -1947,8 +1951,8 @@ function setEditCat(id) {
   st.editTarget.cat = id;
   st.editTarget.icon = allCats().find(c=>c.id===id)?.icon || '🛍️';
   document.querySelectorAll('#editCatRow .cat-chip').forEach(el => {
-    const c = allCats().find(c => el.textContent.trim().startsWith(c.icon)||el.textContent.trim().startsWith(c.label));
-    if (c) el.classList.toggle('active', c.id === id);
+    const onclick = el.getAttribute('onclick') || '';
+    el.classList.toggle('active', onclick.includes("'"+id+"'") || onclick.includes('"'+id+'"'));
   });
 }
 
