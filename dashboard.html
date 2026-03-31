@@ -220,7 +220,7 @@ function setColMode(user, mode) {
 
 // ── Open as user ──────────────────────────────────────────────
 function openAsUser(user) {
-  // Stay as Döme (authenticated), but signal kasszako.html to launch as this user
+  // Stay as Döme (authenticated), but signal index.html to launch as this user
   sessionStorage.setItem('kz_launch_as', user);
   sessionStorage.setItem('kz_from_dashboard', '1');
   window.location.href = 'index.html';
