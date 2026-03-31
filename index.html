@@ -1,4 +1,4 @@
-<!-- Kassza v6.10.3 — 2026-03-25 — Bug fixes, cleanup, font update -->
+<!-- Kassza v6.11.0 — 2026-03-31 — Summary toggle havi/összes, report time selector, dashboard return -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -51,10 +51,25 @@
 
   /* Month nav */
   .month-row{margin:14px 20px 0;display:flex;justify-content:space-between;align-items:center;}
-  .month-switch{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;padding:9px 16px;border:1px solid var(--border);}
+  .month-switch{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;padding:9px 16px;border:1px solid var(--border);transition:opacity .2s;}
+  .month-switch.dimmed{opacity:.4;pointer-events:none;}
   .month-btn{background:none;border:none;cursor:pointer;color:var(--ink2);font-size:20px;padding:0 2px;line-height:1;}
   .month-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;min-width:84px;text-align:center;}
   .sync-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 16px;font-size:14px;color:var(--ink2);cursor:pointer;}
+
+  /* Summary toggle (havi / összes) */
+  .summary-toggle{display:flex;background:rgba(255,255,255,.12);border-radius:8px;padding:2px;gap:2px;position:relative;z-index:1;}
+  .sum-toggle-btn{padding:5px 12px;border:none;border-radius:6px;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .sum-toggle-btn.active{background:rgba(255,255,255,.2);color:#fff;}
+
+  /* Report time selector */
+  .report-time-bar{display:flex;gap:8px;margin:14px 20px 0;align-items:center;flex-wrap:wrap;}
+  .report-time-btn{padding:8px 16px;border-radius:10px;border:2px solid var(--border);background:var(--card);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .report-time-btn.active{border-color:var(--accent);background:var(--red-bg);color:var(--accent);}
+  .report-range-row{display:flex;gap:8px;align-items:center;margin:10px 20px 0;flex-wrap:wrap;}
+  .report-range-row.hidden{display:none;}
+  .range-select{appearance:none;-webkit-appearance:none;background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:8px 28px 8px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;outline:none;position:relative;}
+  .range-sep{font-size:13px;color:var(--ink3);flex-shrink:0;}
 
   /* Summary card */
   .summary{margin:12px 20px 0;background:var(--ink);border-radius:var(--r);padding:22px;color:#fff;position:relative;overflow:hidden;}
@@ -452,7 +467,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'Plus Jakarta Sans',sans-serif;" id="versionDisplay">v6.10.3</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'Plus Jakarta Sans',sans-serif;" id="versionDisplay">v6.11.0</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -467,7 +482,7 @@
 
   <div id="versionWarning"></div>
   <div class="month-row">
-    <div class="month-switch">
+    <div class="month-switch" id="monthSwitch">
       <button class="month-btn" onclick="changeMonth(-1)">‹</button>
       <div class="month-label" id="monthLabel">—</div>
       <button class="month-btn" onclick="changeMonth(1)">›</button>
@@ -489,6 +504,12 @@
 
       <!-- Summary card -->
       <div class="summary">
+        <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;margin-bottom:12px;">
+          <div class="summary-toggle">
+            <button class="sum-toggle-btn active" id="sumToggleHavi" onclick="setSumMode('havi')">Havi</button>
+            <button class="sum-toggle-btn" id="sumToggleOsszes" onclick="setSumMode('osszes')">Összes</button>
+          </div>
+        </div>
         <div class="sum-inner" id="sumContent">
           <div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Betöltés…</div>
         </div>
@@ -541,6 +562,20 @@
             <div class="empty-icon">📋</div>
             <div>Még nincs tétel ebben a hónapban</div>
           </div>
+        </div>
+      </div>
+
+      <!-- Report time selector (mobile: injected above report panel; desktop: inside) -->
+      <div id="reportTimeBar" style="display:none;">
+        <div class="report-time-bar">
+          <button class="report-time-btn active" id="rtbHavi" onclick="setReportMode('havi')">Ez a hónap</button>
+          <button class="report-time-btn" id="rtbOsszes" onclick="setReportMode('osszes')">Összes</button>
+          <button class="report-time-btn" id="rtbIdoszak" onclick="setReportMode('idoszak')">Időszak</button>
+        </div>
+        <div class="report-range-row hidden" id="reportRangeRow">
+          <select class="range-select" id="rangeFromSel" onchange="renderReport()"></select>
+          <span class="range-sep">→</span>
+          <select class="range-select" id="rangeToSel" onchange="renderReport()"></select>
         </div>
       </div>
 
@@ -633,7 +668,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.10.3';
+const APP_VERSION = '6.11.0';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -688,6 +723,15 @@ function showLoginError() {
 function onAuthSuccess() {
   document.getElementById('loginScreen').style.display = 'none';
   logLogin();
+  // Coming from dashboard with a specific user to view as
+  const launchAs_ = sessionStorage.getItem('kz_launch_as');
+  const fromDash  = sessionStorage.getItem('kz_from_dashboard');
+  if (launchAs_ && fromDash) {
+    sessionStorage.removeItem('kz_launch_as');
+    sessionStorage.removeItem('kz_from_dashboard');
+    launchAsFromDashboard(launchAs_);
+    return;
+  }
   if (userName === 'Döme') {
     // Show launcher for Döme
     document.getElementById('launcherScreen').classList.add('visible');
@@ -696,6 +740,25 @@ function onAuthSuccess() {
     // Go straight to app for Emma/Éva
     launchApp(userName);
   }
+}
+
+function launchAsFromDashboard(name) {
+  userName = name;
+  updateStore();
+  st.entries    = JSON.parse(localStorage.getItem(STORE+'_entries')    || '[]');
+  st.names      = JSON.parse(localStorage.getItem(STORE+'_names')      || '[]');
+  st.customCats = JSON.parse(localStorage.getItem(STORE+'_customcats') || '[]');
+  document.getElementById('mainApp').classList.remove('hidden');
+  document.getElementById('bottomNav').classList.remove('hidden');
+  document.getElementById('fab').classList.remove('hidden');
+  // Show "← Dashboard" back button
+  const btn = document.getElementById('launcherBackBtn');
+  btn.textContent = '← Dashboard';
+  btn.onclick = () => { window.location.href = 'dashboard.html'; };
+  btn.classList.remove('hidden');
+  render();
+  fullSync();
+  if (isDesktop()) renderDesktopForm();
 }
 
 function launchApp(name) {
@@ -740,7 +803,7 @@ function backToLauncher() {
 }
 
 function openDashboard() {
-  window.open('dashboard.html', '_blank');
+  window.location.href = 'dashboard.html';
 }
 
 function openProjects() {
@@ -783,6 +846,16 @@ async function logLogin() {
   if (name && email && KNOWN_USERS[email] === name) {
     userName  = name;
     userEmail = email;
+    // Check if coming from dashboard with a launch-as target
+    const launchAs_ = sessionStorage.getItem('kz_launch_as');
+    const fromDash  = sessionStorage.getItem('kz_from_dashboard');
+    if (launchAs_ && fromDash) {
+      sessionStorage.removeItem('kz_launch_as');
+      sessionStorage.removeItem('kz_from_dashboard');
+      document.getElementById('loginScreen').style.display = 'none';
+      launchAsFromDashboard(launchAs_);
+      return;
+    }
     onAuthSuccess();
   }
   // else login screen stays visible
@@ -819,6 +892,8 @@ const st = {
   editTarget:   null,
   customCats: JSON.parse(localStorage.getItem(STORE+'_customcats')||'[]'),
   newCatIcon: '🏷️',
+  sumMode:    'havi',    // 'havi' | 'osszes'
+  reportMode: 'havi',   // 'havi' | 'osszes' | 'idoszak'
 };
 function save() {
   localStorage.setItem(STORE+'_entries',     JSON.stringify(st.entries));
@@ -1020,6 +1095,7 @@ function getTypusLabel(type) {
 }
 
 async function loadSummary() {
+  if (st.sumMode === 'osszes') { renderSummaryAllTime(); return; }
   try {
     const q=new URLSearchParams({action:'getSummary',user:userName,year:st.curY,month:st.curM+1});
     const res=await fetch(SCRIPT_URL+'?'+q);
@@ -1029,8 +1105,56 @@ async function loadSummary() {
   } catch(e){renderSummaryFromLocal();}
 }
 
+// ── Summary mode (havi / összes) ─────────────────────────────
+function setSumMode(mode) {
+  st.sumMode = mode;
+  document.getElementById('sumToggleHavi').classList.toggle('active', mode === 'havi');
+  document.getElementById('sumToggleOsszes').classList.toggle('active', mode === 'osszes');
+  updateMonthNavDimmed();
+  if (mode === 'havi') {
+    renderSummaryFromLocal();
+    loadSummary();
+  } else {
+    renderSummaryAllTime();
+  }
+}
+
+function updateMonthNavDimmed() {
+  const el = document.getElementById('monthSwitch');
+  if (el) el.classList.toggle('dimmed', st.sumMode === 'osszes');
+}
+
+function renderSummaryAllTime() {
+  const bal = getBalances();
+  document.getElementById('tileBankAmt').textContent    = fmtFt(bal.bank);
+  document.getElementById('tileCashAmt').textContent    = fmtFt(bal.cash);
+  document.getElementById('tileSavingsAmt').textContent = fmtFt(bal.savings);
+  const outstandingTotal = getOutstandingLoans().reduce((s,d)=>s+d.amt, 0);
+  document.getElementById('tileLoansAmt').textContent   = fmtFt(outstandingTotal);
+
+  const bejott = st.entries.filter(e=>e.type==='in'||e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const kiment = st.entries.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const maradt = bejott - kiment;
+  const pct = bejott > 0 ? Math.min(100, Math.round(kiment/bejott*100)) : 0;
+
+  document.getElementById('sumContent').innerHTML=`
+    <div class="sum-left">
+      <div class="s-label">Nettó egyenleg</div>
+      <div class="s-big">${fmtFt(maradt)}</div>
+    </div>
+    <div class="sum-right">
+      <div><div class="s-label">Összes bevétel</div><div class="s-med">${fmtFt(bejott)}</div></div>
+      <div><div class="s-label">Összes kiadás</div><div class="s-med">${fmtFt(kiment)}</div></div>
+    </div>`;
+  document.getElementById('barWrap').style.display='block';
+  document.getElementById('barFill').style.width=pct+'%';
+  document.getElementById('barLeft').textContent=pct+'% elköltve';
+  document.getElementById('barRight').textContent='teljes időszak · '+st.entries.length+' tétel';
+}
+
 // ── Summary ──────────────────────────────────────────────────
 function renderSummaryFromLocal() {
+  if (st.sumMode === 'osszes') { renderSummaryAllTime(); return; }
   const m=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
   const bejott=m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const kiment=m.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
@@ -1687,6 +1811,7 @@ function changeMonth(d) {
   st.curM+=d;
   if (st.curM>11){st.curM=0;st.curY++;}
   if (st.curM<0) {st.curM=11;st.curY--;}
+  updateMonthNavDimmed();
   render(); loadSummary();
   if (st.activeTab==='riport') renderReport();
 }
@@ -1698,6 +1823,9 @@ function switchTab(tab) {
   document.getElementById('mainPanel').classList.toggle('hidden-panel', tab!=='tetelek');
   document.getElementById('reportPanel').classList.toggle('active', tab==='riport');
   document.getElementById('loansPanel').classList.toggle('active', tab==='loans');
+  // Show report time bar only on riport tab
+  const rtb = document.getElementById('reportTimeBar');
+  if (rtb) rtb.style.display = tab === 'riport' ? 'block' : 'none';
   // Mobile nav
   ['navTetelek','navRiport','navLoans'].forEach(id=>{
     const el=document.getElementById(id);
@@ -1714,16 +1842,98 @@ function switchTab(tab) {
   const deskMap={tetelek:'deskNavTetelek',riport:'deskNavRiport',loans:'deskNavLoans'};
   const del=document.getElementById(deskMap[tab]);
   if(del) del.classList.add('active');
-  if (tab==='riport') renderReport();
+  if (tab==='riport') { initReportTimeBar(); renderReport(); }
   if (tab==='loans')  renderLoansPanel();
 }
 
 // ── Report ───────────────────────────────────────────────────
+
+function initReportTimeBar() {
+  // Populate year-month selects for the range picker
+  const allDates = st.entries.map(e => ({y:e.year, m:e.month}));
+  if (!allDates.length) return;
+  const minY = Math.min(...allDates.map(d=>d.y));
+  const minM = Math.min(...allDates.filter(d=>d.y===minY).map(d=>d.m));
+  const now = new Date();
+  const maxY = now.getFullYear(), maxM = now.getMonth();
+
+  function buildOptions(selId, defaultY, defaultM) {
+    const sel = document.getElementById(selId);
+    if (!sel) return;
+    sel.innerHTML = '';
+    for (let y = maxY; y >= minY; y--) {
+      const mStart = y === minY ? minM : 0;
+      const mEnd   = y === maxY ? maxM : 11;
+      for (let m = mEnd; m >= mStart; m--) {
+        const opt = document.createElement('option');
+        opt.value = `${y}-${m}`;
+        opt.textContent = `${MONTHS_SHORT[m]} ${y}`;
+        if (y === defaultY && m === defaultM) opt.selected = true;
+        sel.appendChild(opt);
+      }
+    }
+  }
+
+  // Default: from = 6 months ago, to = current month
+  const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+  buildOptions('rangeFromSel', sixMonthsAgo.getFullYear(), sixMonthsAgo.getMonth());
+  buildOptions('rangeToSel',   maxY, maxM);
+}
+
+function setReportMode(mode) {
+  st.reportMode = mode;
+  ['rtbHavi','rtbOsszes','rtbIdoszak'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  const btnMap = {havi:'rtbHavi', osszes:'rtbOsszes', idoszak:'rtbIdoszak'};
+  const active = document.getElementById(btnMap[mode]);
+  if (active) active.classList.add('active');
+  const rangeRow = document.getElementById('reportRangeRow');
+  if (rangeRow) rangeRow.classList.toggle('hidden', mode !== 'idoszak');
+  renderReport();
+}
+
+function getReportEntries() {
+  if (st.reportMode === 'osszes') return st.entries;
+  if (st.reportMode === 'idoszak') {
+    const fromSel = document.getElementById('rangeFromSel');
+    const toSel   = document.getElementById('rangeToSel');
+    if (!fromSel || !toSel) return st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
+    const [fy, fm] = fromSel.value.split('-').map(Number);
+    const [ty, tm] = toSel.value.split('-').map(Number);
+    // Ensure from <= to
+    const fromN = fy * 12 + fm, toN = ty * 12 + tm;
+    const [realFrom, realTo] = fromN <= toN ? [fromN, toN] : [toN, fromN];
+    return st.entries.filter(e => {
+      const n = e.year * 12 + e.month;
+      return n >= realFrom && n <= realTo;
+    });
+  }
+  // havi — default
+  return st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
+}
+
+function reportPeriodLabel() {
+  if (st.reportMode === 'osszes') return 'teljes időszak';
+  if (st.reportMode === 'idoszak') {
+    const fromSel = document.getElementById('rangeFromSel');
+    const toSel   = document.getElementById('rangeToSel');
+    if (!fromSel || !toSel) return '';
+    return `${fromSel.options[fromSel.selectedIndex]?.text||''} → ${toSel.options[toSel.selectedIndex]?.text||''}`;
+  }
+  return MONTHS_SHORT[st.curM]+' '+st.curY;
+}
+
 function renderReport() {
-  document.getElementById('chartMonthLabel').textContent=MONTHS_SHORT[st.curM]+' '+st.curY;
-  const spendE=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY&&e.type==='out');
-  const barsEl=document.getElementById('catBars');
-  const emptyEl=document.getElementById('catEmpty');
+  const periodEntries = getReportEntries();
+  const label = reportPeriodLabel();
+  document.getElementById('chartMonthLabel').textContent = label;
+
+  const spendE = periodEntries.filter(e=>e.type==='out');
+  const barsEl  = document.getElementById('catBars');
+  const emptyEl = document.getElementById('catEmpty');
+
   if (spendE.length===0){barsEl.innerHTML='';emptyEl.style.display='block';}
   else {
     emptyEl.style.display='none';
@@ -1744,12 +1954,12 @@ function renderReport() {
       </div>`;
     }).join('');
   }
-  const allM=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const totalIn=allM.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
-               +allM.filter(e=>e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const totalOut=allM.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const totalSav=allM.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const balance=totalIn-totalOut-totalSav;
+
+  const totalIn  = periodEntries.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                 + periodEntries.filter(e=>e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const totalOut = periodEntries.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const totalSav = periodEntries.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const balance  = totalIn - totalOut - totalSav;
   const rows=[
     {label:'↓ Bejött',amt:totalIn,colour:'var(--green)'},
     {label:'↑ Kiment',amt:totalOut,colour:'var(--accent)'},
@@ -1788,6 +1998,7 @@ function render() {
   document.getElementById('uAvatar').textContent=userName[0].toUpperCase();
   document.getElementById('uName').textContent=userName;
   document.getElementById('monthLabel').textContent=MONTHS_SHORT[st.curM]+' '+st.curY;
+  updateMonthNavDimmed();
 
   const allEntries=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
   const entries=allEntries.filter(e=>entryMatchesFilter(e,st.activeFilter));
