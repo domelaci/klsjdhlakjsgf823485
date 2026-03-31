@@ -876,7 +876,7 @@ const CATS = [
 const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',szallas:'#2E7D9A',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
 
 // ── State ────────────────────────────────────────────────────
-let STORE = 'kz_x';
+var STORE = 'kz_x';
 function updateStore() { STORE = 'kz_' + (userName || 'x'); }
 const st = {
   entries:    JSON.parse(localStorage.getItem(STORE+'_entries')||'[]'),
