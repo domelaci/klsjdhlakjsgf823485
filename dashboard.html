@@ -1,4 +1,4 @@
-<!-- Kassza Dashboard v6.11.0 — 2026-03-31 — Per-column toggle, last entry stamp, open-as-user -->
+<!-- Kassza Dashboard v6.12.0 — 2026-03-31 — Szállás category added -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -133,7 +133,7 @@
         <div class="month-label" id="monthLabel">—</div>
         <button class="month-btn" onclick="changeMonth(1)">›</button>
       </div>
-      <a class="back-btn" href="index.html">← Vissza</a>
+      <a class="back-btn" href="kasszako.html">← Vissza</a>
     </div>
   </div>
   <div class="sync-bar">
@@ -151,10 +151,11 @@ const DASH_USERS   = ['Döme', 'Emma', 'Éva'];
 const MONTHS_SHORT = ['Jan','Feb','Már','Ápr','Máj','Jún','Júl','Aug','Sze','Okt','Nov','Dec'];
 const CATS = [
   {id:'kaja',label:'Kaja',icon:'🍔'},{id:'ruha',label:'Ruha',icon:'👗'},
-  {id:'utazas',label:'Utazás',icon:'🚌'},{id:'konyv',label:'Könyv',icon:'📚'},
-  {id:'fancy',label:'Fancy',icon:'✨'},{id:'egyeb',label:'Egyéb',icon:'🛍️'},
+  {id:'utazas',label:'Utazás',icon:'🚌'},{id:'szallas',label:'Szállás',icon:'🏨'},
+  {id:'konyv',label:'Könyv',icon:'📚'},{id:'fancy',label:'Fancy',icon:'✨'},
+  {id:'egyeb',label:'Egyéb',icon:'🛍️'},
 ];
-const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
+const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',szallas:'#2E7D9A',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
 
 let curY = new Date().getFullYear();
 let curM = new Date().getMonth();
@@ -219,10 +220,10 @@ function setColMode(user, mode) {
 
 // ── Open as user ──────────────────────────────────────────────
 function openAsUser(user) {
-  // Stay as Döme (authenticated), but signal index.html to launch as this user
+  // Stay as Döme (authenticated), but signal kasszako.html to launch as this user
   sessionStorage.setItem('kz_launch_as', user);
   sessionStorage.setItem('kz_from_dashboard', '1');
-  window.location.href = 'index.html';
+  window.location.href = 'kasszako.html';
 }
 
 // ── Load all users ────────────────────────────────────────────
