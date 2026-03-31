@@ -1,4 +1,4 @@
-<!-- Kassza Projektek v6.10.2 — 2026-03-26 — Font update -->
+<!-- Kassza Projektek v6.12.0 — 2026-03-31 — Full projects feature -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -8,45 +8,810 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#F5F2EC; --card:#FFFFFF; --ink:#1A1814; --ink2:#6B6760; --ink3:#B0ADA8;
-    --accent:#C8553D; --green:#3A7D5C; --border:#E8E4DC; --r:18px;
-    --amber:#B07A10; --amber-bg:#FDF3DC; --blue:#185FA5; --blue-bg:#E6F1FB;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);min-height:100vh;}
-  .header{padding:40px 24px 0;display:flex;justify-content:space-between;align-items:center;}
-  .title{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;}
-  .title span{color:var(--accent);}
-  .back-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 16px;font-size:13px;color:var(--ink2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;}
-  .body{padding:24px;}
-  .coming-card{background:var(--card);border-radius:var(--r);border:2px dashed var(--border);padding:48px 24px;text-align:center;margin-top:16px;}
-  .coming-icon{font-size:52px;margin-bottom:16px;}
-  .coming-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px;}
-  .coming-msg{font-size:14px;color:var(--ink2);line-height:1.6;max-width:320px;margin:0 auto;}
-  .feature-list{margin-top:24px;display:flex;flex-direction:column;gap:8px;text-align:left;max-width:300px;margin-left:auto;margin-right:auto;}
-  .feature-item{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink2);background:var(--bg);border-radius:10px;padding:10px 14px;}
-  .feature-item span{font-size:18px;}
+:root {
+  --bg:#F5F2EC; --card:#FFFFFF; --ink:#1A1814; --ink2:#6B6760; --ink3:#B0ADA8;
+  --accent:#C8553D; --green:#3A7D5C; --border:#E8E4DC; --r:18px;
+  --amber:#B07A10; --amber-bg:#FDF3DC; --blue:#2E7D9A; --blue-bg:#E3F2F7;
+  --purple:#6B4EAA; --purple-bg:#F0EBFA;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);min-height:100vh;padding-bottom:100px;}
+
+/* ── Header ── */
+.header{padding:40px 24px 0;display:flex;justify-content:space-between;align-items:center;}
+.title{font-size:24px;font-weight:800;}
+.title span{color:var(--accent);}
+.back-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 16px;font-size:13px;color:var(--ink2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;}
+
+/* ── Body ── */
+.body{padding:20px 24px;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--ink3);text-transform:uppercase;margin:24px 0 10px;}
+
+/* ── Project card ── */
+.proj-card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:box-shadow .15s;}
+.proj-card:active{box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.proj-card.closed{opacity:.65;}
+.proj-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.proj-name{font-weight:700;font-size:16px;}
+.proj-meta{font-size:12px;color:var(--ink2);margin-top:4px;}
+.proj-badge{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;}
+.badge-open{background:#EBF4EE;color:var(--green);}
+.badge-closed{background:var(--border);color:var(--ink3);}
+.proj-collab{font-size:12px;color:var(--blue);margin-top:3px;}
+.proj-totals{display:flex;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.proj-total-item{flex:1;text-align:center;}
+.proj-total-label{font-size:10px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+.proj-total-amt{font-size:15px;font-weight:800;margin-top:2px;}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:28px;right:24px;background:var(--accent);color:#fff;border:none;border-radius:50px;padding:14px 22px;font-size:15px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;box-shadow:0 4px 20px rgba(200,85,61,.35);display:flex;align-items:center;gap:8px;z-index:100;}
+
+/* ── Modal overlay ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,24,20,.5);z-index:200;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border-radius:24px 24px 0 0;padding:28px 24px 40px;width:100%;max-height:92vh;overflow-y:auto;}
+.modal-title{font-size:19px;font-weight:800;margin-bottom:20px;}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:22px;color:var(--ink3);cursor:pointer;}
+
+/* ── Form elements ── */
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase;}
+.field input,.field select{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--ink);outline:none;}
+.field input:focus,.field select:focus{border-color:var(--accent);}
+.field-row{display:flex;gap:12px;}
+.field-row .field{flex:1;}
+
+/* ── Buttons ── */
+.btn{width:100%;padding:14px;border:none;border-radius:14px;font-size:15px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-secondary{background:var(--bg);color:var(--ink2);border:1.5px solid var(--border);margin-top:10px;}
+.btn-danger{background:#FAEAE7;color:var(--accent);border:1.5px solid #f0c8c0;margin-top:10px;}
+
+/* ── Detail view ── */
+.detail-header{padding:36px 24px 0;display:flex;align-items:center;gap:14px;}
+.detail-back{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 14px;font-size:13px;color:var(--ink2);cursor:pointer;white-space:nowrap;}
+.detail-title{font-size:20px;font-weight:800;flex:1;}
+.detail-body{padding:16px 24px;}
+
+/* ── Summary strip ── */
+.summary-strip{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:16px;display:flex;gap:0;margin-bottom:6px;overflow:hidden;}
+.sum-col{flex:1;text-align:center;padding:0 8px;}
+.sum-col+.sum-col{border-left:1px solid var(--border);}
+.sum-label{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+.sum-val{font-size:18px;font-weight:800;margin-top:4px;}
+.sum-val.dome{color:var(--accent);}
+.sum-val.hajni{color:var(--blue);}
+.sum-val.total{color:var(--ink);}
+
+/* ── Delta bar ── */
+.delta-card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:14px 16px;margin-bottom:16px;}
+.delta-label{font-size:12px;color:var(--ink2);margin-bottom:8px;}
+.delta-bar-bg{height:8px;background:var(--bg);border-radius:99px;overflow:hidden;margin-bottom:8px;}
+.delta-bar-fill{height:100%;border-radius:99px;background:var(--accent);transition:width .4s;}
+.delta-text{font-size:13px;font-weight:700;text-align:center;}
+
+/* ── Expense list ── */
+.exp-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.exp-icon{font-size:22px;width:36px;text-align:center;flex-shrink:0;}
+.exp-info{flex:1;min-width:0;}
+.exp-note{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.exp-meta{font-size:12px;color:var(--ink2);margin-top:2px;}
+.exp-paidby{display:inline-block;border-radius:99px;padding:1px 8px;font-size:11px;font-weight:700;}
+.paidby-dome{background:#FAEAE7;color:var(--accent);}
+.paidby-hajni{background:var(--blue-bg);color:var(--blue);}
+.exp-amt{font-size:15px;font-weight:800;text-align:right;flex-shrink:0;}
+
+/* ── Settlement ── */
+.settle-card{background:var(--amber-bg);border:1.5px solid #e8d08a;border-radius:var(--r);padding:18px;margin-bottom:16px;}
+.settle-title{font-weight:800;font-size:15px;color:var(--amber);margin-bottom:6px;}
+.settle-msg{font-size:13px;color:var(--ink2);line-height:1.5;}
+.settle-amt{font-size:22px;font-weight:800;margin:10px 0 4px;}
+.settle-direction{font-size:13px;color:var(--ink2);}
+
+/* ── Auth screen ── */
+.auth-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:40px 24px;text-align:center;}
+.auth-icon{font-size:56px;margin-bottom:16px;}
+.auth-title{font-size:22px;font-weight:800;margin-bottom:8px;}
+.auth-msg{font-size:14px;color:var(--ink2);max-width:280px;line-height:1.6;margin-bottom:28px;}
+
+/* ── Category chips ── */
+.cat-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.cat-chip{border:1.5px solid var(--border);border-radius:99px;padding:6px 14px;font-size:13px;cursor:pointer;background:var(--bg);transition:all .15s;}
+.cat-chip.active{border-color:var(--accent);background:#FAEAE7;color:var(--accent);font-weight:700;}
+
+/* ── Source chips ── */
+.src-chips{display:flex;gap:8px;margin-top:6px;}
+.src-chip{flex:1;border:1.5px solid var(--border);border-radius:12px;padding:10px;font-size:13px;cursor:pointer;background:var(--bg);text-align:center;transition:all .15s;}
+.src-chip.active{border-color:var(--accent);background:#FAEAE7;color:var(--accent);font-weight:700;}
+
+/* ── Payer chips ── */
+.payer-chips{display:flex;gap:10px;margin-top:6px;}
+.payer-chip{flex:1;border:1.5px solid var(--border);border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;background:var(--bg);text-align:center;transition:all .15s;}
+.payer-chip.active-dome{border-color:var(--accent);background:#FAEAE7;color:var(--accent);}
+.payer-chip.active-hajni{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1814;color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:48px 24px;color:var(--ink3);}
+.empty-icon{font-size:44px;margin-bottom:12px;}
+.empty-msg{font-size:14px;line-height:1.6;}
+
+/* ── Loader ── */
+.loader{display:flex;align-items:center;justify-content:center;padding:48px;gap:8px;color:var(--ink3);font-size:14px;}
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="title">kass<span>za</span> 🗂️ Projektek</div>
-  <a class="back-btn" href="index.html">← Vissza</a>
+
+<!-- Auth screen -->
+<div id="authScreen" class="auth-screen" style="display:none;">
+  <div class="auth-icon">🗂️</div>
+  <div class="auth-title">Kassza Projektek</div>
+  <div class="auth-msg">Jelentkezz be Google-fiókkal a projektek eléréséhez.</div>
+  <div id="g_id_onload"
+    data-client_id="53917763443-3hjc5rge271njo0ojtrj5j3cohic4v4r.apps.googleusercontent.com"
+    data-callback="onGoogleSignIn"
+    data-auto_select="true">
+  </div>
+  <div class="g_id_signin" data-type="standard" data-shape="pill" data-size="large" data-text="signin_with"></div>
 </div>
-<div class="body">
-  <div class="coming-card">
-    <div class="coming-icon">🚧</div>
-    <div class="coming-title">Hamarosan</div>
-    <div class="coming-msg">A Projektek funkció fejlesztés alatt van. Hamarosan itt tudod majd kezelni a közös kiadásokat, utazásokat és egyéb projekteket.</div>
-    <div class="feature-list">
-      <div class="feature-item"><span>✈️</span> Utazások közös költségei</div>
-      <div class="feature-item"><span>🔗</span> Megosztható link partnernek</div>
-      <div class="feature-item"><span>💰</span> Ki mennyit fizetett</div>
-      <div class="feature-item"><span>📊</span> Projekt összefoglaló</div>
-      <div class="feature-item"><span>✅</span> Elszámolás egy gombbal</div>
+
+<!-- Main: project list -->
+<div id="viewList" style="display:none;">
+  <div class="header">
+    <div class="title">kass<span>za</span> 🗂️</div>
+    <a class="back-btn" href="index.html" id="backToMain">← Kassza</a>
+  </div>
+  <div class="body">
+    <div id="openSection">
+      <div class="section-label">Aktív projektek</div>
+      <div id="openList"><div class="loader">⏳ Betöltés…</div></div>
+    </div>
+    <div id="closedSection" style="display:none;">
+      <div class="section-label">Lezárt projektek</div>
+      <div id="closedList"></div>
     </div>
   </div>
+  <button class="fab" onclick="openNewProjectModal()">＋ Új projekt</button>
 </div>
+
+<!-- Detail view -->
+<div id="viewDetail" style="display:none;">
+  <div class="detail-header">
+    <button class="detail-back" onclick="showList()">← Vissza</button>
+    <div class="detail-title" id="detailTitle">—</div>
+    <span id="detailBadge" class="proj-badge badge-open">● Aktív</span>
+  </div>
+  <div class="detail-body">
+    <div id="detailSummary"></div>
+    <div id="detailExpenses"></div>
+    <div id="detailSettlement"></div>
+    <div id="detailActions"></div>
+  </div>
+  <button class="fab" id="addExpenseFab" onclick="openAddExpenseModal()">＋ Kiadás</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ Modal: New Project ══ -->
+<div class="modal-overlay" id="modalNewProject" onclick="closeModal(event,'modalNewProject')">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModalById('modalNewProject')">✕</button>
+    <div class="modal-title">Új projekt</div>
+    <div class="field">
+      <label>Projekt neve</label>
+      <input id="npName" type="text" placeholder="pl. Görögország 2026">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Kezdés</label>
+        <input id="npStart" type="date">
+      </div>
+      <div class="field-row" style="flex:1;">
+        <div class="field" style="flex:1;">
+          <label>Vége (opció)</label>
+          <input id="npEnd" type="date">
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Cél összeg (Ft, opció)</label>
+      <input id="npTarget" type="number" placeholder="0" min="0">
+    </div>
+    <div class="field">
+      <label>Együttműködő</label>
+      <select id="npCollab">
+        <option value="">Nincs (solo projekt)</option>
+        <option value="Hajni">Hajni</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="saveNewProject()">Létrehozás</button>
+    <button class="btn btn-secondary" onclick="closeModalById('modalNewProject')">Mégsem</button>
+  </div>
+</div>
+
+<!-- ══ Modal: Add Expense ══ -->
+<div class="modal-overlay" id="modalAddExpense" onclick="closeModal(event,'modalAddExpense')">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModalById('modalAddExpense')">✕</button>
+    <div class="modal-title">Kiadás rögzítése</div>
+
+    <div class="field">
+      <label>Ki fizette?</label>
+      <div class="payer-chips" id="payerChips"></div>
+    </div>
+
+    <div class="field">
+      <label>Mire?</label>
+      <input id="aeNote" type="text" placeholder="pl. Szállás foglalás">
+    </div>
+
+    <div class="field">
+      <label>Összeg</label>
+      <div class="field-row">
+        <div class="field" style="flex:2;margin-bottom:0;">
+          <input id="aeAmt" type="number" placeholder="0" min="0" step="1">
+        </div>
+        <div class="field" style="flex:1;margin-bottom:0;">
+          <select id="aeCurr">
+            <option value="HUF">HUF</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="USD">USD</option>
+            <option value="RON">RON</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Dátum</label>
+      <input id="aeDate" type="date">
+    </div>
+
+    <div class="field">
+      <label>Kategória</label>
+      <div class="cat-chips" id="aeCatChips"></div>
+    </div>
+
+    <div class="field">
+      <label>Forrás</label>
+      <div class="src-chips">
+        <div class="src-chip active" data-src="bank" onclick="selectSrc(this)">💳 Bank</div>
+        <div class="src-chip" data-src="cash" onclick="selectSrc(this)">💵 Készpénz</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="saveExpense()">Mentés</button>
+    <button class="btn btn-secondary" onclick="closeModalById('modalAddExpense')">Mégsem</button>
+  </div>
+</div>
+
+<!-- ══ Modal: Close / Settle ══ -->
+<div class="modal-overlay" id="modalClose" onclick="closeModal(event,'modalClose')">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModalById('modalClose')">✕</button>
+    <div class="modal-title" id="closeModalTitle">Projekt lezárása</div>
+    <div id="closeModalBody"></div>
+    <button class="btn btn-primary" id="closeModalConfirm">Lezárás</button>
+    <button class="btn btn-secondary" onclick="closeModalById('modalClose')">Mégsem</button>
+  </div>
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────
+const API_URL = 'YOUR_SCRIPT_URL'; // same as kasszako.html
+const KNOWN_USERS = {
+  'domelaci@gmail.com':  'Döme',
+  'dem.emma8@gmail.com': 'Emma',
+  'vicusdome@gmail.com': 'Éva',
+  'gkhajni@gmail.com':   'Hajni',
+};
+// Users who only see projects (no personal Kassza access)
+const PROJECT_ONLY_USERS = ['Hajni'];
+// Personal Kassza users (show back link)
+const PERSONAL_USERS = ['Döme', 'Emma', 'Éva'];
+
+const CATS = [
+  {id:'kaja',    label:'Kaja',    icon:'🍔'},
+  {id:'ruha',    label:'Ruha',    icon:'👗'},
+  {id:'utazas',  label:'Utazás',  icon:'🚌'},
+  {id:'szallas', label:'Szállás', icon:'🏨'},
+  {id:'konyv',   label:'Könyv',   icon:'📚'},
+  {id:'fancy',   label:'Fancy',   icon:'✨'},
+  {id:'egyeb',   label:'Egyéb',   icon:'🛍️'},
+];
+const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',szallas:'#2E7D9A',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
+
+// ── State ─────────────────────────────────────────────────────
+let userName  = '';
+let userEmail = '';
+let projects  = [];
+let currentProject = null;
+let currentExpenses = [];
+let selCat    = 'egyeb';
+let selPayer  = '';
+let customCats = [];
+
+// ── Auth ──────────────────────────────────────────────────────
+function onGoogleSignIn(resp) {
+  const payload = parseJwt(resp.credential);
+  const email   = payload.email || '';
+  const name    = KNOWN_USERS[email];
+  if (!name) { showToast('Ismeretlen fiók: ' + email); return; }
+  userName  = name;
+  userEmail = email;
+  // Hide back link for project-only users
+  if (PROJECT_ONLY_USERS.includes(userName)) {
+    document.getElementById('backToMain').style.display = 'none';
+  }
+  document.getElementById('authScreen').style.display = 'none';
+  showList();
+  loadProjects();
+}
+
+function parseJwt(token) {
+  try { return JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))); }
+  catch(e) { return {}; }
+}
+
+// ── Views ─────────────────────────────────────────────────────
+function showView(id) {
+  ['authScreen','viewList','viewDetail'].forEach(v => {
+    document.getElementById(v).style.display = 'none';
+  });
+  document.getElementById(id).style.display = 'block';
+}
+
+function showList() {
+  showView('viewList');
+  currentProject = null;
+}
+
+function showDetail(proj) {
+  currentProject = proj;
+  document.getElementById('detailTitle').textContent = proj.name;
+  const badge = document.getElementById('detailBadge');
+  badge.textContent = proj.status === 'open' ? '● Aktív' : '✓ Lezárt';
+  badge.className = 'proj-badge ' + (proj.status === 'open' ? 'badge-open' : 'badge-closed');
+  // Show/hide add expense FAB
+  document.getElementById('addExpenseFab').style.display = proj.status === 'open' ? 'flex' : 'none';
+  showView('viewDetail');
+  loadExpenses(proj.id);
+}
+
+// ── API calls ─────────────────────────────────────────────────
+async function api(params) {
+  const url = API_URL + '?' + new URLSearchParams(params);
+  const r = await fetch(url);
+  return r.json();
+}
+
+async function apiPost(body) {
+  const r = await fetch(API_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body),
+  });
+  return r.json();
+}
+
+// ── Load projects ─────────────────────────────────────────────
+async function loadProjects() {
+  document.getElementById('openList').innerHTML = '<div class="loader">⏳ Betöltés…</div>';
+  try {
+    const data = await api({action:'getProjects', user: userName});
+    projects = data.projects || [];
+    renderProjectList();
+  } catch(e) {
+    document.getElementById('openList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-msg">Nem sikerült betölteni a projekteket.</div></div>';
+  }
+}
+
+function renderProjectList() {
+  const open   = projects.filter(p => p.status === 'open');
+  const closed = projects.filter(p => p.status === 'closed');
+
+  const openEl   = document.getElementById('openList');
+  const closedEl = document.getElementById('closedList');
+  const closedSec = document.getElementById('closedSection');
+
+  openEl.innerHTML = open.length ? open.map(projCardHTML).join('') :
+    '<div class="empty"><div class="empty-icon">📂</div><div class="empty-msg">Még nincs aktív projekt.<br>Hozz létre egyet!</div></div>';
+
+  if (closed.length) {
+    closedSec.style.display = 'block';
+    closedEl.innerHTML = closed.map(p => projCardHTML(p)).join('');
+  } else {
+    closedSec.style.display = 'none';
+  }
+}
+
+function projCardHTML(p) {
+  const collabLine = p.collaborator ? `<div class="proj-collab">👥 ${p.collaborator}</div>` : '';
+  const startFmt = p.startDate ? fmtDate(p.startDate) : '—';
+  return `<div class="proj-card${p.status==='closed'?' closed':''}" onclick="openProject('${p.id}')">
+    <div class="proj-row">
+      <div>
+        <div class="proj-name">${esc(p.name)}</div>
+        <div class="proj-meta">📅 ${startFmt}${p.targetAmt>0?' · 🎯 '+fmtAmt(p.targetAmt)+' Ft':''}</div>
+        ${collabLine}
+      </div>
+      <span class="proj-badge ${p.status==='open'?'badge-open':'badge-closed'}">${p.status==='open'?'● Aktív':'✓ Lezárt'}</span>
+    </div>
+  </div>`;
+}
+
+function openProject(id) {
+  const proj = projects.find(p => p.id === id);
+  if (proj) showDetail(proj);
+}
+
+// ── Load expenses ─────────────────────────────────────────────
+async function loadExpenses(projectId) {
+  document.getElementById('detailSummary').innerHTML = '<div class="loader">⏳ Betöltés…</div>';
+  document.getElementById('detailExpenses').innerHTML = '';
+  document.getElementById('detailSettlement').innerHTML = '';
+  document.getElementById('detailActions').innerHTML = '';
+  try {
+    const data = await api({action:'getProjectExpenses', projectId});
+    currentExpenses = data.expenses || [];
+    renderDetail();
+  } catch(e) {
+    document.getElementById('detailSummary').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-msg">Nem sikerült betölteni.</div></div>';
+  }
+}
+
+function renderDetail() {
+  const proj = currentProject;
+  const exps = currentExpenses;
+
+  // Totals
+  let domeTotal = 0, hajniTotal = 0;
+  exps.forEach(e => {
+    const amt = e.amtHUF || e.origAmt;
+    if (e.paidBy === 'Döme') domeTotal += amt;
+    else if (e.paidBy === 'Hajni') hajniTotal += amt;
+  });
+  const total = domeTotal + hajniTotal;
+  const half  = total / 2;
+  const delta = Math.abs(domeTotal - hajniTotal) / 2; // amount to settle
+  const domePays = hajniTotal > domeTotal; // if true, Döme owes Hajni
+
+  // Summary strip
+  const hasBoth = proj.collaborator;
+  let summaryHTML = `<div class="summary-strip">
+    <div class="sum-col"><div class="sum-label">Döme</div><div class="sum-val dome">${fmtAmt(domeTotal)} Ft</div></div>`;
+  if (hasBoth) {
+    summaryHTML += `<div class="sum-col"><div class="sum-label">Hajni</div><div class="sum-val hajni">${fmtAmt(hajniTotal)} Ft</div></div>`;
+  }
+  summaryHTML += `<div class="sum-col"><div class="sum-label">Összesen</div><div class="sum-val total">${fmtAmt(total)} Ft</div></div></div>`;
+
+  // Delta bar (only for shared projects)
+  let deltaHTML = '';
+  if (hasBoth && total > 0) {
+    const domePct = Math.round((domeTotal / total) * 100);
+    const direction = domePays ? `Döme tartozik Hajninak ${fmtAmt(delta)} Ft-tal` : `Hajni tartozik Dömének ${fmtAmt(delta)} Ft-tal`;
+    deltaHTML = `<div class="delta-card">
+      <div class="delta-label">50/50 egyenleg</div>
+      <div class="delta-bar-bg"><div class="delta-bar-fill" style="width:${domePct}%;background:var(--accent);"></div></div>
+      <div class="delta-text" style="color:${delta>0?'var(--accent)':'var(--green)'}">${delta > 0 ? direction : '✓ Kiegyenlített'}</div>
+    </div>`;
+  }
+
+  document.getElementById('detailSummary').innerHTML = summaryHTML + deltaHTML;
+
+  // Expense list
+  let expHTML = `<div class="section-label">Kiadások</div>`;
+  if (exps.length === 0) {
+    expHTML += `<div class="empty"><div class="empty-icon">🧾</div><div class="empty-msg">Még nincs kiadás rögzítve.</div></div>`;
+  } else {
+    const sorted = [...exps].sort((a,b) => new Date(b.date) - new Date(a.date));
+    expHTML += sorted.map(e => {
+      const cat = CATS.find(c => c.id === e.cat) || CATS[CATS.length-1];
+      const payClass = e.paidBy === 'Dome' || e.paidBy === 'Döme' ? 'paidby-dome' : 'paidby-hajni';
+      const amtFmt = e.currency !== 'HUF'
+        ? `${fmtAmt(e.origAmt)} ${e.currency}` + (e.amtHUF ? ` <span style="font-size:12px;color:var(--ink2)">(≈${fmtAmt(e.amtHUF)} Ft)</span>` : '')
+        : `${fmtAmt(e.origAmt)} Ft`;
+      return `<div class="exp-card">
+        <div class="exp-icon">${cat.icon}</div>
+        <div class="exp-info">
+          <div class="exp-note">${esc(e.note)||cat.label}</div>
+          <div class="exp-meta">${fmtDate(e.date)} · <span class="exp-paidby ${payClass}">${e.paidBy}</span></div>
+        </div>
+        <div class="exp-amt">${amtFmt}</div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('detailExpenses').innerHTML = expHTML;
+
+  // Settlement & actions
+  let settleHTML = '';
+  let actionsHTML = '';
+
+  if (proj.status === 'open' && proj.collaborator) {
+    if (delta > 0) {
+      const payer    = domePays ? 'Döme' : 'Hajni';
+      const receiver = domePays ? 'Hajni' : 'Döme';
+      settleHTML = `<div class="settle-card">
+        <div class="settle-title">💸 Elszámolás</div>
+        <div class="settle-msg">Ha most zárjuk le a projektet:</div>
+        <div class="settle-amt">${fmtAmt(delta)} Ft</div>
+        <div class="settle-direction">${payer} → ${receiver}</div>
+      </div>`;
+    } else {
+      settleHTML = `<div class="settle-card" style="background:#EBF4EE;border-color:#a8d5ba;">
+        <div class="settle-title" style="color:var(--green)">✓ Kiegyenlített</div>
+        <div class="settle-msg">Nincs nyitott tartozás, a projekt azonnal lezárható.</div>
+      </div>`;
+    }
+  }
+
+  if (proj.status === 'open') {
+    actionsHTML = `<button class="btn btn-danger" onclick="openCloseModal()">Projekt lezárása</button>`;
+  }
+
+  document.getElementById('detailSettlement').innerHTML = settleHTML;
+  document.getElementById('detailActions').innerHTML = actionsHTML;
+}
+
+// ── New project modal ─────────────────────────────────────────
+function openNewProjectModal() {
+  document.getElementById('npName').value   = '';
+  document.getElementById('npStart').value  = todayStr();
+  document.getElementById('npEnd').value    = '';
+  document.getElementById('npTarget').value = '';
+  document.getElementById('npCollab').value = '';
+  document.getElementById('modalNewProject').classList.add('open');
+}
+
+async function saveNewProject() {
+  const name = document.getElementById('npName').value.trim();
+  if (!name) { showToast('Add meg a projekt nevét!'); return; }
+  try {
+    await apiPost({
+      action:      'createProject',
+      name,
+      startDate:   document.getElementById('npStart').value,
+      endDate:     document.getElementById('npEnd').value,
+      targetAmt:   parseFloat(document.getElementById('npTarget').value)||0,
+      collaborator:document.getElementById('npCollab').value,
+      createdBy:   userName,
+    });
+    closeModalById('modalNewProject');
+    showToast('✓ Projekt létrehozva!');
+    loadProjects();
+  } catch(e) {
+    showToast('Hiba a mentésnél.');
+  }
+}
+
+// ── Add expense modal ─────────────────────────────────────────
+function openAddExpenseModal() {
+  const proj = currentProject;
+  selCat   = 'egyeb';
+  selPayer = userName; // default to current user
+
+  // Payer chips
+  const payers = ['Döme'];
+  if (proj.collaborator) payers.push(proj.collaborator);
+  document.getElementById('payerChips').innerHTML = payers.map(p =>
+    `<div class="payer-chip ${p===selPayer?('active-'+(p==='Döme'?'dome':'hajni')):''}\"
+      data-payer="${p}" onclick="selectPayer(this,'${p}')">${p}</div>`
+  ).join('');
+
+  // Category chips
+  const allCats = [...CATS, ...customCats];
+  document.getElementById('aeCatChips').innerHTML = allCats.map(c =>
+    `<div class="cat-chip${c.id===selCat?' active':''}" data-cat="${c.id}" onclick="selectCat(this,'${c.id}')">${c.icon} ${c.label}</div>`
+  ).join('') + `<div class="cat-chip" onclick="promptCustomCat()">＋ Egyéni</div>`;
+
+  document.getElementById('aeNote').value  = '';
+  document.getElementById('aeAmt').value   = '';
+  document.getElementById('aeCurr').value  = 'HUF';
+  document.getElementById('aeDate').value  = todayStr();
+  // Reset source
+  document.querySelectorAll('#modalAddExpense .src-chip').forEach(el => {
+    el.classList.toggle('active', el.dataset.src === 'bank');
+  });
+
+  document.getElementById('modalAddExpense').classList.add('open');
+}
+
+function selectPayer(el, payer) {
+  selPayer = payer;
+  document.querySelectorAll('#payerChips .payer-chip').forEach(c => {
+    c.className = 'payer-chip';
+    if (c.dataset.payer === payer) {
+      c.classList.add(payer === 'Döme' ? 'active-dome' : 'active-hajni');
+    }
+  });
+}
+
+function selectCat(el, catId) {
+  selCat = catId;
+  document.querySelectorAll('#aeCatChips .cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectSrc(el) {
+  document.querySelectorAll('#modalAddExpense .src-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function promptCustomCat() {
+  const label = prompt('Új kategória neve:');
+  if (!label || !label.trim()) return;
+  const id = 'custom_' + label.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  const cat = {id, label:label.trim(), icon:'🏷️'};
+  customCats.push(cat);
+  selCat = id;
+  // Re-render chips
+  const allCats = [...CATS, ...customCats];
+  document.getElementById('aeCatChips').innerHTML = allCats.map(c =>
+    `<div class="cat-chip${c.id===selCat?' active':''}" data-cat="${c.id}" onclick="selectCat(this,'${c.id}')">${c.icon} ${c.label}</div>`
+  ).join('') + `<div class="cat-chip" onclick="promptCustomCat()">＋ Egyéni</div>`;
+}
+
+async function saveExpense() {
+  const amt  = parseFloat(document.getElementById('aeAmt').value);
+  const note = document.getElementById('aeNote').value.trim();
+  if (!amt || amt <= 0) { showToast('Add meg az összeget!'); return; }
+  const src  = document.querySelector('#modalAddExpense .src-chip.active')?.dataset.src || 'bank';
+  try {
+    await apiPost({
+      action:      'addProjectExpense',
+      projectId:   currentProject.id,
+      projectName: currentProject.name,
+      date:        document.getElementById('aeDate').value,
+      note,
+      cat:         selCat,
+      amount:      amt,
+      currency:    document.getElementById('aeCurr').value,
+      source:      src,
+      paidBy:      selPayer,
+    });
+    closeModalById('modalAddExpense');
+    showToast('✓ Kiadás rögzítve!');
+    loadExpenses(currentProject.id);
+  } catch(e) {
+    showToast('Hiba a mentésnél.');
+  }
+}
+
+// ── Close / settle modal ──────────────────────────────────────
+function openCloseModal() {
+  const proj = currentProject;
+  const exps = currentExpenses;
+  let domeTotal = 0, hajniTotal = 0;
+  exps.forEach(e => {
+    const amt = e.amtHUF || e.origAmt;
+    if (e.paidBy === 'Döme') domeTotal += amt;
+    else if (e.paidBy === 'Hajni') hajniTotal += amt;
+  });
+  const total = domeTotal + hajniTotal;
+  const delta = Math.abs(domeTotal - hajniTotal) / 2;
+  const domePays = hajniTotal > domeTotal;
+  const payer    = domePays ? 'Döme' : 'Hajni';
+  const receiver = domePays ? 'Hajni' : 'Döme';
+
+  let bodyHTML = '';
+  let confirmLabel = 'Lezárás';
+
+  if (!proj.collaborator) {
+    // Solo project: just close
+    bodyHTML = `<p style="font-size:14px;color:var(--ink2);margin-bottom:20px;">Biztosan lezárod a projektet? A kiadások megmaradnak, de újabbat nem lehet felvenni.</p>`;
+    document.getElementById('closeModalConfirm').onclick = () => confirmClose(false, null, null, null);
+  } else if (delta === 0) {
+    bodyHTML = `<p style="font-size:14px;color:var(--ink2);margin-bottom:20px;">A projekt kiegyenlített, nincs nyitott tartozás. Biztosan lezárod?</p>`;
+    document.getElementById('closeModalConfirm').onclick = () => confirmClose(false, null, null, null);
+  } else {
+    bodyHTML = `
+      <div class="settle-card" style="margin-bottom:20px;">
+        <div class="settle-title">💸 Elszámolás</div>
+        <div class="settle-msg">A lezáráshoz az alábbi összeg átadása szükséges:</div>
+        <div class="settle-amt">${fmtAmt(delta)} Ft</div>
+        <div class="settle-direction">${payer} → ${receiver}</div>
+      </div>
+      <div class="field">
+        <label>Forrás</label>
+        <div class="src-chips" id="closeModalSrc">
+          <div class="src-chip active" data-src="bank" onclick="selectSettleSrc(this)">💳 Bank</div>
+          <div class="src-chip" data-src="cash" onclick="selectSettleSrc(this)">💵 Készpénz</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--ink3);margin-bottom:16px;">Az elszámoló tétel mindkét személynél megjelenik a személyes Kasszában.</p>`;
+    confirmLabel = 'Elszámolás + lezárás';
+    document.getElementById('closeModalConfirm').onclick = () => confirmClose(true, payer, receiver, delta);
+  }
+
+  document.getElementById('closeModalTitle').textContent = proj.collaborator ? 'Projekt lezárása & elszámolás' : 'Projekt lezárása';
+  document.getElementById('closeModalBody').innerHTML = bodyHTML;
+  document.getElementById('closeModalConfirm').textContent = confirmLabel;
+  document.getElementById('modalClose').classList.add('open');
+}
+
+function selectSettleSrc(el) {
+  document.querySelectorAll('#closeModalSrc .src-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+async function confirmClose(withSettle, payer, receiver, delta) {
+  closeModalById('modalClose');
+  try {
+    if (withSettle && delta > 0) {
+      const src = document.querySelector('#closeModalSrc .src-chip.active')?.dataset.src || 'bank';
+      await apiPost({
+        action:      'settleProject',
+        projectId:   currentProject.id,
+        projectName: currentProject.name,
+        payer, receiver,
+        amount:      delta,
+        currency:    'HUF',
+        source:      src,
+        date:        todayStr(),
+      });
+      showToast('✓ Elszámolva és lezárva!');
+    } else {
+      await apiPost({action:'closeProject', projectId: currentProject.id, endDate: todayStr()});
+      showToast('✓ Projekt lezárva.');
+    }
+    // Refresh
+    await loadProjects();
+    const updated = projects.find(p => p.id === currentProject.id);
+    if (updated) { currentProject = updated; renderDetail(); }
+    document.getElementById('detailBadge').textContent = '✓ Lezárt';
+    document.getElementById('detailBadge').className = 'proj-badge badge-closed';
+    document.getElementById('addExpenseFab').style.display = 'none';
+  } catch(e) {
+    showToast('Hiba a lezárásnál.');
+  }
+}
+
+// ── Modal helpers ─────────────────────────────────────────────
+function closeModal(evt, id) {
+  if (evt.target === document.getElementById(id)) closeModalById(id);
+}
+function closeModalById(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ── Toast ─────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Utilities ─────────────────────────────────────────────────
+function fmtAmt(n) {
+  if (!n && n !== 0) return '—';
+  return Math.round(n).toLocaleString('hu-HU');
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  if (isNaN(dt)) return String(d).slice(0,10);
+  return dt.toLocaleDateString('hu-HU', {year:'numeric', month:'short', day:'numeric'});
+}
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  // Show auth screen — Google One Tap / Sign-In button will trigger onGoogleSignIn
+  document.getElementById('authScreen').style.display = 'flex';
+});
+</script>
 </body>
 </html>
