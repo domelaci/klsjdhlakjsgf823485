@@ -1,4 +1,4 @@
-<!-- Kassza v6.11.0 — 2026-03-31 — Summary toggle havi/összes, report time selector, dashboard return -->
+<!-- Kassza v6.12.0 — 2026-03-31 — Szállás category, Hajni user, Projects feature -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -675,6 +675,7 @@ const KNOWN_USERS = {
   'domelaci@gmail.com':  'Döme',
   'dem.emma8@gmail.com': 'Emma',
   'vicusdome@gmail.com': 'Éva',
+  'gkhajni@gmail.com':   'Hajni',
 };
 
 // Correction limits (Ft per month, null = unlimited)
@@ -864,14 +865,15 @@ async function logLogin() {
 // ── Constants ────────────────────────────────────────────────
 const MONTHS_SHORT = ['Jan','Feb','Már','Ápr','Máj','Jún','Júl','Aug','Sze','Okt','Nov','Dec'];
 const CATS = [
-  {id:'kaja',   label:'Kaja',   icon:'🍔'},
-  {id:'ruha',   label:'Ruha',   icon:'👗'},
-  {id:'utazas', label:'Utazás', icon:'🚌'},
-  {id:'konyv',  label:'Könyv',  icon:'📚'},
-  {id:'fancy',  label:'Fancy',  icon:'✨'},
-  {id:'egyeb',  label:'Egyéb',  icon:'🛍️'},
+  {id:'kaja',    label:'Kaja',    icon:'🍔'},
+  {id:'ruha',    label:'Ruha',    icon:'👗'},
+  {id:'utazas',  label:'Utazás',  icon:'🚌'},
+  {id:'szallas', label:'Szállás', icon:'🏨'},
+  {id:'konyv',   label:'Könyv',   icon:'📚'},
+  {id:'fancy',   label:'Fancy',   icon:'✨'},
+  {id:'egyeb',   label:'Egyéb',   icon:'🛍️'},
 ];
-const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
+const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',szallas:'#2E7D9A',konyv:'#B07A10',fancy:'#6B4EAA',egyeb:'#6B6760'};
 
 // ── State ────────────────────────────────────────────────────
 let STORE = 'kz_x';
