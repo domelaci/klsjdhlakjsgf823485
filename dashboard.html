@@ -133,7 +133,7 @@
         <div class="month-label" id="monthLabel">—</div>
         <button class="month-btn" onclick="changeMonth(1)">›</button>
       </div>
-      <a class="back-btn" href="kasszako.html">← Vissza</a>
+      <a class="back-btn" href="index.html">← Vissza</a>
     </div>
   </div>
   <div class="sync-bar">
@@ -223,7 +223,7 @@ function openAsUser(user) {
   // Stay as Döme (authenticated), but signal kasszako.html to launch as this user
   sessionStorage.setItem('kz_launch_as', user);
   sessionStorage.setItem('kz_from_dashboard', '1');
-  window.location.href = 'kasszako.html';
+  window.location.href = 'index.html';
 }
 
 // ── Load all users ────────────────────────────────────────────
