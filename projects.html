@@ -1,4 +1,4 @@
-<!-- Kassza Projektek v6.12.2 — 2026-04-01 — Generic participant logic, no hardcoded names, dead var removed -->
+<!-- Kassza Projektek v6.12.3 — 2026-04-03 — Skip auth if already logged in via main app -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -819,8 +819,24 @@ function esc(s) {
 
 // ── Init ──────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  // Show auth screen — Google One Tap / Sign-In button will trigger onGoogleSignIn
-  document.getElementById('authScreen').style.display = 'flex';
+  // Check if already logged in via main Kassza app (sessionStorage shared across same origin)
+  const storedName  = sessionStorage.getItem('kz_auth_name');
+  const storedEmail = sessionStorage.getItem('kz_auth_email');
+
+  if (storedName && storedEmail && KNOWN_USERS[storedEmail]) {
+    // Already authenticated — skip sign-in screen
+    userName  = storedName;
+    userEmail = storedEmail;
+    if (PROJECT_ONLY_USERS.includes(userName)) {
+      document.getElementById('backToMain').style.display = 'none';
+    }
+    document.getElementById('authScreen').style.display = 'none';
+    showList();
+    loadProjects();
+  } else {
+    // Not logged in — show Google sign-in
+    document.getElementById('authScreen').style.display = 'flex';
+  }
 });
 </script>
 </body>
