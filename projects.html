@@ -1,4 +1,4 @@
-<!-- Kassza Projektek v6.12.0 — 2026-03-31 — Full projects feature -->
+<!-- Kassza Projektek v6.12.2 — 2026-04-01 — Generic participant logic, no hardcoded names, dead var removed -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -79,8 +79,8 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
 .sum-col+.sum-col{border-left:1px solid var(--border);}
 .sum-label{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
 .sum-val{font-size:18px;font-weight:800;margin-top:4px;}
-.sum-val.dome{color:var(--accent);}
-.sum-val.hajni{color:var(--blue);}
+.sum-val.primary{color:var(--accent);}
+.sum-val.secondary{color:var(--blue);}
 .sum-val.total{color:var(--ink);}
 
 /* ── Delta bar ── */
@@ -97,8 +97,8 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
 .exp-note{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .exp-meta{font-size:12px;color:var(--ink2);margin-top:2px;}
 .exp-paidby{display:inline-block;border-radius:99px;padding:1px 8px;font-size:11px;font-weight:700;}
-.paidby-dome{background:#FAEAE7;color:var(--accent);}
-.paidby-hajni{background:var(--blue-bg);color:var(--blue);}
+.paidby-primary{background:#FAEAE7;color:var(--accent);}
+.paidby-secondary{background:var(--blue-bg);color:var(--blue);}
 .exp-amt{font-size:15px;font-weight:800;text-align:right;flex-shrink:0;}
 
 /* ── Settlement ── */
@@ -127,8 +127,8 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
 /* ── Payer chips ── */
 .payer-chips{display:flex;gap:10px;margin-top:6px;}
 .payer-chip{flex:1;border:1.5px solid var(--border);border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;background:var(--bg);text-align:center;transition:all .15s;}
-.payer-chip.active-dome{border-color:var(--accent);background:#FAEAE7;color:var(--accent);}
-.payer-chip.active-hajni{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);}
+.payer-chip.active-primary{border-color:var(--accent);background:#FAEAE7;color:var(--accent);}
+.payer-chip.active-secondary{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);}
 
 /* ── Toast ── */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A1814;color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;}
@@ -151,7 +151,7 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
   <div class="auth-title">Kassza Projektek</div>
   <div class="auth-msg">Jelentkezz be Google-fiókkal a projektek eléréséhez.</div>
   <div id="g_id_onload"
-    data-client_id="53917763443-3hjc5rge271njo0ojtrj5j3cohic4v4r.apps.googleusercontent.com"
+    data-client_id="YOUR_GOOGLE_CLIENT_ID"
     data-callback="onGoogleSignIn"
     data-auto_select="true">
   </div>
@@ -303,7 +303,7 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
 
 <script>
 // ── Config ────────────────────────────────────────────────────
-const API_URL = 'YOUR_SCRIPT_URL'; // same as kasszako.html
+const API_URL = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
 const KNOWN_USERS = {
   'domelaci@gmail.com':  'Döme',
   'dem.emma8@gmail.com': 'Emma',
@@ -391,12 +391,13 @@ async function api(params) {
 }
 
 async function apiPost(body) {
-  const r = await fetch(API_URL, {
+  await fetch(API_URL, {
     method: 'POST',
+    mode: 'no-cors',
     headers: {'Content-Type':'application/json'},
     body: JSON.stringify(body),
   });
-  return r.json();
+  // no-cors returns opaque response — assume success if no exception thrown
 }
 
 // ── Load projects ─────────────────────────────────────────────
@@ -469,35 +470,39 @@ function renderDetail() {
   const proj = currentProject;
   const exps = currentExpenses;
 
-  // Totals
-  let domeTotal = 0, hajniTotal = 0;
+  // Derive participants generically from project metadata
+  const p1 = proj.createdBy || 'Ismeretlen';
+  const p2 = proj.collaborator || null;
+
+  // Totals per participant
+  let p1Total = 0, p2Total = 0;
   exps.forEach(e => {
     const amt = e.amtHUF || e.origAmt;
-    if (e.paidBy === 'Döme') domeTotal += amt;
-    else if (e.paidBy === 'Hajni') hajniTotal += amt;
+    if (e.paidBy === p1) p1Total += amt;
+    else if (p2 && e.paidBy === p2) p2Total += amt;
   });
-  const total = domeTotal + hajniTotal;
-  const half  = total / 2;
-  const delta = Math.abs(domeTotal - hajniTotal) / 2; // amount to settle
-  const domePays = hajniTotal > domeTotal; // if true, Döme owes Hajni
+  const total = p1Total + p2Total;
+  const delta = Math.abs(p1Total - p2Total) / 2;
+  const p1Pays = p2Total > p1Total; // p1 owes p2
 
   // Summary strip
-  const hasBoth = proj.collaborator;
   let summaryHTML = `<div class="summary-strip">
-    <div class="sum-col"><div class="sum-label">Döme</div><div class="sum-val dome">${fmtAmt(domeTotal)} Ft</div></div>`;
-  if (hasBoth) {
-    summaryHTML += `<div class="sum-col"><div class="sum-label">Hajni</div><div class="sum-val hajni">${fmtAmt(hajniTotal)} Ft</div></div>`;
+    <div class="sum-col"><div class="sum-label">${p1}</div><div class="sum-val primary">${fmtAmt(p1Total)} Ft</div></div>`;
+  if (p2) {
+    summaryHTML += `<div class="sum-col"><div class="sum-label">${p2}</div><div class="sum-val secondary">${fmtAmt(p2Total)} Ft</div></div>`;
   }
   summaryHTML += `<div class="sum-col"><div class="sum-label">Összesen</div><div class="sum-val total">${fmtAmt(total)} Ft</div></div></div>`;
 
   // Delta bar (only for shared projects)
   let deltaHTML = '';
-  if (hasBoth && total > 0) {
-    const domePct = Math.round((domeTotal / total) * 100);
-    const direction = domePays ? `Döme tartozik Hajninak ${fmtAmt(delta)} Ft-tal` : `Hajni tartozik Dömének ${fmtAmt(delta)} Ft-tal`;
+  if (p2 && total > 0) {
+    const p1Pct = Math.round((p1Total / total) * 100);
+    const payer    = p1Pays ? p1 : p2;
+    const receiver = p1Pays ? p2 : p1;
+    const direction = `${payer} tartozik ${receiver}nek ${fmtAmt(delta)} Ft-tal`;
     deltaHTML = `<div class="delta-card">
       <div class="delta-label">50/50 egyenleg</div>
-      <div class="delta-bar-bg"><div class="delta-bar-fill" style="width:${domePct}%;background:var(--accent);"></div></div>
+      <div class="delta-bar-bg"><div class="delta-bar-fill" style="width:${p1Pct}%;background:var(--accent);"></div></div>
       <div class="delta-text" style="color:${delta>0?'var(--accent)':'var(--green)'}">${delta > 0 ? direction : '✓ Kiegyenlített'}</div>
     </div>`;
   }
@@ -512,7 +517,7 @@ function renderDetail() {
     const sorted = [...exps].sort((a,b) => new Date(b.date) - new Date(a.date));
     expHTML += sorted.map(e => {
       const cat = CATS.find(c => c.id === e.cat) || CATS[CATS.length-1];
-      const payClass = e.paidBy === 'Dome' || e.paidBy === 'Döme' ? 'paidby-dome' : 'paidby-hajni';
+      const payClass = e.paidBy === p1 ? 'paidby-primary' : 'paidby-secondary';
       const amtFmt = e.currency !== 'HUF'
         ? `${fmtAmt(e.origAmt)} ${e.currency}` + (e.amtHUF ? ` <span style="font-size:12px;color:var(--ink2)">(≈${fmtAmt(e.amtHUF)} Ft)</span>` : '')
         : `${fmtAmt(e.origAmt)} Ft`;
@@ -532,10 +537,10 @@ function renderDetail() {
   let settleHTML = '';
   let actionsHTML = '';
 
-  if (proj.status === 'open' && proj.collaborator) {
+  if (proj.status === 'open' && p2) {
     if (delta > 0) {
-      const payer    = domePays ? 'Döme' : 'Hajni';
-      const receiver = domePays ? 'Hajni' : 'Döme';
+      const payer    = p1Pays ? p1 : p2;
+      const receiver = p1Pays ? p2 : p1;
       settleHTML = `<div class="settle-card">
         <div class="settle-title">💸 Elszámolás</div>
         <div class="settle-msg">Ha most zárjuk le a projektet:</div>
@@ -595,12 +600,15 @@ function openAddExpenseModal() {
   selCat   = 'egyeb';
   selPayer = userName; // default to current user
 
-  // Payer chips
-  const payers = ['Döme'];
+  // Payer chips: derived from project creator + collaborator
+  const p1 = proj.createdBy || userName;
+  const payers = [p1];
   if (proj.collaborator) payers.push(proj.collaborator);
-  document.getElementById('payerChips').innerHTML = payers.map(p =>
-    `<div class="payer-chip ${p===selPayer?('active-'+(p==='Döme'?'dome':'hajni')):''}\"
-      data-payer="${p}" onclick="selectPayer(this,'${p}')">${p}</div>`
+  // Ensure current user is in the list (edge case: viewing as admin)
+  if (!payers.includes(userName)) payers.unshift(userName);
+  document.getElementById('payerChips').innerHTML = payers.map((p, i) =>
+    `<div class="payer-chip ${p===selPayer?('active-'+(i===0?'primary':'secondary')):''}\"
+      data-payer="${p}" data-pos="${i}" onclick="selectPayer(this,'${p}')">${p}</div>`
   ).join('');
 
   // Category chips
@@ -626,7 +634,7 @@ function selectPayer(el, payer) {
   document.querySelectorAll('#payerChips .payer-chip').forEach(c => {
     c.className = 'payer-chip';
     if (c.dataset.payer === payer) {
-      c.classList.add(payer === 'Döme' ? 'active-dome' : 'active-hajni');
+      c.classList.add(c.dataset.pos === '0' ? 'active-primary' : 'active-secondary');
     }
   });
 }
@@ -686,22 +694,24 @@ async function saveExpense() {
 function openCloseModal() {
   const proj = currentProject;
   const exps = currentExpenses;
-  let domeTotal = 0, hajniTotal = 0;
+  const p1 = proj.createdBy || 'Ismeretlen';
+  const p2 = proj.collaborator || null;
+
+  let p1Total = 0, p2Total = 0;
   exps.forEach(e => {
     const amt = e.amtHUF || e.origAmt;
-    if (e.paidBy === 'Döme') domeTotal += amt;
-    else if (e.paidBy === 'Hajni') hajniTotal += amt;
+    if (e.paidBy === p1) p1Total += amt;
+    else if (p2 && e.paidBy === p2) p2Total += amt;
   });
-  const total = domeTotal + hajniTotal;
-  const delta = Math.abs(domeTotal - hajniTotal) / 2;
-  const domePays = hajniTotal > domeTotal;
-  const payer    = domePays ? 'Döme' : 'Hajni';
-  const receiver = domePays ? 'Hajni' : 'Döme';
+  const delta  = Math.abs(p1Total - p2Total) / 2;
+  const p1Pays = p2Total > p1Total;
+  const payer    = p1Pays ? p1 : p2;
+  const receiver = p1Pays ? p2 : p1;
 
   let bodyHTML = '';
   let confirmLabel = 'Lezárás';
 
-  if (!proj.collaborator) {
+  if (!p2) {
     // Solo project: just close
     bodyHTML = `<p style="font-size:14px;color:var(--ink2);margin-bottom:20px;">Biztosan lezárod a projektet? A kiadások megmaradnak, de újabbat nem lehet felvenni.</p>`;
     document.getElementById('closeModalConfirm').onclick = () => confirmClose(false, null, null, null);
@@ -728,7 +738,7 @@ function openCloseModal() {
     document.getElementById('closeModalConfirm').onclick = () => confirmClose(true, payer, receiver, delta);
   }
 
-  document.getElementById('closeModalTitle').textContent = proj.collaborator ? 'Projekt lezárása & elszámolás' : 'Projekt lezárása';
+  document.getElementById('closeModalTitle').textContent = p2 ? 'Projekt lezárása & elszámolás' : 'Projekt lezárása';
   document.getElementById('closeModalBody').innerHTML = bodyHTML;
   document.getElementById('closeModalConfirm').textContent = confirmLabel;
   document.getElementById('modalClose').classList.add('open');
