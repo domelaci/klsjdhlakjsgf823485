@@ -1,4 +1,4 @@
-<!-- Kassza Dashboard v6.12.0 — 2026-03-31 — Szállás category added -->
+<!-- Kassza Dashboard v6.12.1 — 2026-04-01 — Bug fixes: loans cap, Hajni in DASH_USERS, 4-col grid -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -37,8 +37,9 @@
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
 
   /* User columns */
-  .dash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:20px 32px 40px;}
-  @media(max-width:900px){.dash-grid{grid-template-columns:1fr;}}
+  .dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:20px 32px 40px;}
+  @media(max-width:1100px){.dash-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.dash-grid{grid-template-columns:1fr;}}
   .user-col{display:flex;flex-direction:column;gap:14px;}
 
   /* Column header */
@@ -147,7 +148,7 @@
 
 <script>
 const SCRIPT_URL   = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const DASH_USERS   = ['Döme', 'Emma', 'Éva'];
+const DASH_USERS   = ['Döme', 'Emma', 'Éva', 'Hajni'];
 const MONTHS_SHORT = ['Jan','Feb','Már','Ápr','Máj','Jún','Júl','Aug','Sze','Okt','Nov','Dec'];
 const CATS = [
   {id:'kaja',label:'Kaja',icon:'🍔'},{id:'ruha',label:'Ruha',icon:'👗'},
@@ -162,7 +163,7 @@ let curM = new Date().getMonth();
 let allData = {}; // {userName: [entries]}
 
 // Per-column toggle state: 'havi' | 'osszes'
-const colMode = {Döme:'havi', Emma:'havi', Éva:'havi'};
+const colMode = {Döme:'havi', Emma:'havi', Éva:'havi', Hajni:'havi'};
 
 // ── Auth ─────────────────────────────────────────────────────
 function signIn() {
@@ -220,7 +221,7 @@ function setColMode(user, mode) {
 
 // ── Open as user ──────────────────────────────────────────────
 function openAsUser(user) {
-  // Stay as Döme (authenticated), but signal index.html to launch as this user
+  // Stay as Döme (authenticated), but signal kasszako.html to launch as this user
   sessionStorage.setItem('kz_launch_as', user);
   sessionStorage.setItem('kz_from_dashboard', '1');
   window.location.href = 'index.html';
@@ -267,7 +268,7 @@ function calcBalances(entries) {
     else if(e.type==='reimburse'){src==='bank'?bank+=amt:cash+=amt;loans-=amt;}
     else if(e.type==='correction'){const d=e.delta||0;if(e.pot==='bank')bank+=d;else if(e.pot==='cash')cash+=d;else if(e.pot==='savings')savings+=d;}
   });
-  return {bank, cash, savings: Math.max(0,savings), loans};
+  return {bank, cash, savings: Math.max(0,savings), loans: Math.max(0,loans)};
 }
 
 function calcOutstandingLoans(entries) {
