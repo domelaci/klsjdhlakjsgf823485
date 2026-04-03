@@ -1,4 +1,4 @@
-<!-- Kassza v6.12.0 — 2026-03-31 — Szállás category, Hajni user, Projects feature -->
+<!-- Kassza v6.12.1 — 2026-04-01 — Bug fixes: APP_VERSION, reimburse in local summary, correction validation order, retry double-increment, orphan div -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -425,7 +425,6 @@
   <div class="login-error" id="loginError">Ez az email cím nincs regisztrálva a Kasszában.</div>
   <div class="login-version" id="loginVersion"></div>
 </div>
-</div>
 
 <!-- Launcher (Döme only) -->
 <div class="launcher-screen" id="launcherScreen">
@@ -467,7 +466,7 @@
   <div class="header">
     <div>
       <div class="app-name">kass<span>za</span> 💸</div>
-      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'Plus Jakarta Sans',sans-serif;" id="versionDisplay">v6.11.0</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:2px;font-family:'Plus Jakarta Sans',sans-serif;" id="versionDisplay">v6.12.0</div>
     </div>
     <div class="user-pill">
       <div class="user-avatar" id="uAvatar">?</div>
@@ -668,7 +667,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.11.0';
+const APP_VERSION = '6.12.0';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -878,7 +877,7 @@ const CAT_COLOURS = {kaja:'#C8553D',ruha:'#3A7D5C',utazas:'#185FA5',szallas:'#2E
 // ── State ────────────────────────────────────────────────────
 var STORE = 'kz_x';
 function updateStore() { STORE = 'kz_' + (userName || 'x'); }
-const st = {
+var st = {
   entries:    JSON.parse(localStorage.getItem(STORE+'_entries')||'[]'),
   names:      JSON.parse(localStorage.getItem(STORE+'_names')  ||'[]'),
   curY:       new Date().getFullYear(),
@@ -1040,12 +1039,13 @@ async function fullSync() {
       const retryDelays = [3000, 6000, 10000, 18000, 30000];
       function scheduleRetry() {
         if (retryCount >= retryDelays.length) return;
+        const delay = retryDelays[retryCount];
+        retryCount++;
         window._syncRetryTimer = setTimeout(async () => {
           const stillPending = st.entries.some(e => e.currency && e.currency !== 'HUF' &&
             (e.amtHUF == null || e.amtHUF === 0 || e.amtHUF === e.origAmt));
-          if (stillPending) { await fullSync(); retryCount++; scheduleRetry(); }
-        }, retryDelays[retryCount]);
-        retryCount++;
+          if (stillPending) { await fullSync(); scheduleRetry(); }
+        }, delay);
       }
       scheduleRetry();
     }
@@ -1158,7 +1158,7 @@ function renderSummaryAllTime() {
 function renderSummaryFromLocal() {
   if (st.sumMode === 'osszes') { renderSummaryAllTime(); return; }
   const m=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const bejott=m.filter(e=>e.type==='in').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const bejott=m.filter(e=>e.type==='in'||e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const kiment=m.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   renderSummary({bejott,kiment,maradt:bejott-kiment,pct:bejott>0?Math.round(kiment/bejott*100):0});
 }
@@ -1630,6 +1630,15 @@ function selCorrectionPot(pot) {
 }
 
 async function submitCorrection() {
+  const realAmt=parseFloat(document.getElementById('corrAmtInput').value);
+  if (isNaN(realAmt)){showToast('Add meg a valós egyenleget!');return;}
+  const note=document.getElementById('corrNoteInput').value.trim();
+  const dateVal=document.getElementById('dateInput').value||todayStr();
+  const pot=st.correctionPot||'bank';
+  const bal=getBalances();
+  const current={bank:bal.bank,cash:bal.cash,savings:bal.savings}[pot];
+  const delta=realAmt-current;
+
   // Check monthly correction limit
   const limit = CORRECTION_LIMITS[userName];
   if (limit !== null && limit !== undefined) {
@@ -1638,24 +1647,11 @@ async function submitCorrection() {
       e.type === 'correction' && e.month === now.getMonth() && e.year === now.getFullYear()
     );
     const totalCorr = monthCorrs.reduce((s,e) => s + Math.abs(e.origAmt||0), 0);
-    const realAmt2 = parseFloat(document.getElementById('corrAmtInput').value);
-    const pot = st.correctionPot||'bank';
-    const bal = getBalances();
-    const current = {bank:bal.bank,cash:bal.cash,savings:bal.savings}[pot];
-    const delta = Math.abs(realAmt2 - current);
-    if (totalCorr + delta > limit) {
+    if (totalCorr + Math.abs(delta) > limit) {
       showToast(`Havi korrekció limit: ${fmtFt(limit)} — már felhasználva: ${fmtFt(totalCorr)}`);
       return;
     }
   }
-  const realAmt=parseFloat(document.getElementById('corrAmtInput').value);
-  const note=document.getElementById('corrNoteInput').value.trim();
-  const dateVal=document.getElementById('dateInput').value||todayStr();
-  const pot=st.correctionPot||'bank';
-  if (isNaN(realAmt)){showToast('Add meg a valós egyenleget!');return;}
-  const bal=getBalances();
-  const current={bank:bal.bank,cash:bal.cash,savings:bal.savings}[pot];
-  const delta=realAmt-current;
   const dp=dateVal.split('-');
   const eDate=new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
   const potLabel={bank:'Bank',cash:'Készpénz',savings:'Megtakarítás'}[pot];
