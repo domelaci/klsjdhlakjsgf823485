@@ -1,4 +1,4 @@
-<!-- Kassza v6.12.5 — 2026-04-08 — Running balance, default Riport tab, Ma button, clean launch-as removal -->
+<!-- Kassza v6.12.6 — 2026-04-08 — Page-level havi/összes toggle, tiles respond to mode -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -60,9 +60,10 @@
   .sync-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 16px;font-size:14px;color:var(--ink2);cursor:pointer;}
 
   /* Summary toggle (havi / összes) */
-  .summary-toggle{display:flex;background:rgba(255,255,255,.12);border-radius:8px;padding:2px;gap:2px;position:relative;z-index:1;}
-  .sum-toggle-btn{padding:5px 12px;border:none;border-radius:6px;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;transition:all .15s;white-space:nowrap;}
-  .sum-toggle-btn.active{background:rgba(255,255,255,.2);color:#fff;}
+  .summary-toggle{display:flex;background:var(--border);border-radius:10px;padding:3px;gap:2px;}
+  .sum-toggle-btn{padding:7px 20px;border:none;border-radius:8px;background:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:var(--ink2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .sum-toggle-btn.active{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+  .mode-row{margin:14px 20px 0;display:flex;justify-content:center;}
 
   /* Report time selector */
   .report-time-bar{display:flex;gap:8px;margin:14px 20px 0;align-items:center;flex-wrap:wrap;}
@@ -305,6 +306,7 @@
     .desktop-left{display:flex;flex-direction:column;gap:16px;position:sticky;top:20px;}
     .desktop-right{display:flex;flex-direction:column;gap:16px;min-width:0;}
     .summary{margin:0;}
+    .mode-row{margin:0 0 0 0;justify-content:flex-start;}
     .balance-tiles{margin:0;}
     .entries-wrap{margin:0;}
     .report-panel{padding:0;}
@@ -507,14 +509,16 @@
 
     <div class="desktop-right">
 
+      <!-- Mode toggle (page-level) -->
+      <div class="mode-row">
+        <div class="summary-toggle">
+          <button class="sum-toggle-btn active" id="sumToggleHavi" onclick="setSumMode('havi')">Havi</button>
+          <button class="sum-toggle-btn" id="sumToggleOsszes" onclick="setSumMode('osszes')">Összes</button>
+        </div>
+      </div>
+
       <!-- Summary card -->
       <div class="summary">
-        <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;margin-bottom:12px;">
-          <div class="summary-toggle">
-            <button class="sum-toggle-btn active" id="sumToggleHavi" onclick="setSumMode('havi')">Havi</button>
-            <button class="sum-toggle-btn" id="sumToggleOsszes" onclick="setSumMode('osszes')">Összes</button>
-          </div>
-        </div>
         <div class="sum-inner" id="sumContent">
           <div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Betöltés…</div>
         </div>
@@ -673,7 +677,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.12.5';
+const APP_VERSION = '6.12.6';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -1094,6 +1098,12 @@ function setSumMode(mode) {
   document.getElementById('sumToggleHavi').classList.toggle('active', mode === 'havi');
   document.getElementById('sumToggleOsszes').classList.toggle('active', mode === 'osszes');
   updateMonthNavDimmed();
+  // Update tile labels to reflect mode
+  const isHavi = mode === 'havi';
+  document.getElementById('tileBankCard').querySelector('.bal-tile-label').textContent    = isHavi ? 'Bank (havi)' : 'Bank';
+  document.getElementById('tileCashCard').querySelector('.bal-tile-label').textContent    = isHavi ? 'Készpénz (havi)' : 'Készpénz';
+  document.getElementById('tileSavingsCard').querySelector('.bal-tile-label').textContent = isHavi ? 'Megtakarítás (havi)' : 'Megtakarítás';
+  document.getElementById('tileLoansCard').querySelector('.bal-tile-label').textContent   = isHavi ? 'Kintlévőség (havi)' : 'Kintlévőség';
   if (mode === 'havi') {
     renderSummaryFromLocal();
     loadSummary();
@@ -1114,6 +1124,10 @@ function renderSummaryAllTime() {
   document.getElementById('tileSavingsAmt').textContent = fmtFt(bal.savings);
   const outstandingTotal = getOutstandingLoans().reduce((s,d)=>s+d.amt, 0);
   document.getElementById('tileLoansAmt').textContent   = fmtFt(outstandingTotal);
+  document.getElementById('tileBankCard').querySelector('.bal-tile-label').textContent    = 'Bank';
+  document.getElementById('tileCashCard').querySelector('.bal-tile-label').textContent    = 'Készpénz';
+  document.getElementById('tileSavingsCard').querySelector('.bal-tile-label').textContent = 'Megtakarítás';
+  document.getElementById('tileLoansCard').querySelector('.bal-tile-label').textContent   = 'Kintlévőség';
 
   const bejott = st.entries.filter(e=>e.type==='in'||e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const kiment = st.entries.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
@@ -1155,13 +1169,42 @@ function renderSummaryFromLocal() {
 }
 
 function renderSummary(d) {
-  // Update tiles
-  const bal=getBalances();
-  document.getElementById('tileBankAmt').textContent    = fmtFt(bal.bank);
-  document.getElementById('tileCashAmt').textContent    = fmtFt(bal.cash);
-  document.getElementById('tileSavingsAmt').textContent = fmtFt(bal.savings);
-  const outstandingTotal = getOutstandingLoans().reduce((s,d)=>s+d.amt, 0);
-  document.getElementById('tileLoansAmt').textContent   = fmtFt(outstandingTotal);
+  // Update tiles — monthly flow in HAVI mode, all-time in ÖSSZES mode
+  if (st.sumMode === 'havi') {
+    const curN = st.curY * 12 + st.curM;
+    const m    = st.entries.filter(e => e.year * 12 + e.month === curN);
+    const bankFlow  = m.filter(e=>e.type==='in'&&(e.source||'bank')==='bank'||e.type==='reimburse'&&(e.source||'bank')==='bank').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                    - m.filter(e=>e.type==='out'&&(e.source||'bank')==='bank'||e.type==='loan'&&(e.source||'bank')==='bank').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                    - m.filter(e=>e.type==='save'&&(e.source||'bank')==='bank').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                    + m.filter(e=>e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                    - m.filter(e=>e.type==='transfer').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+    const cashFlow  = m.filter(e=>e.type==='in'&&(e.source||'bank')==='cash'||e.type==='reimburse'&&(e.source||'bank')==='cash').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                    - m.filter(e=>e.type==='out'&&(e.source||'bank')==='cash'||e.type==='loan'&&(e.source||'bank')==='cash').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                    + m.filter(e=>e.type==='transfer').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+    const savFlow   = m.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                    - m.filter(e=>e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+    const loansFlow = m.filter(e=>e.type==='loan'||e.type==='advance').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                    - m.filter(e=>e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+    document.getElementById('tileBankAmt').textContent    = fmtSignedFt(bankFlow);
+    document.getElementById('tileCashAmt').textContent    = fmtSignedFt(cashFlow);
+    document.getElementById('tileSavingsAmt').textContent = fmtSignedFt(savFlow);
+    document.getElementById('tileLoansAmt').textContent   = fmtSignedFt(loansFlow);
+    document.getElementById('tileBankCard').dataset.mode    = 'havi';
+    document.getElementById('tileCashCard').dataset.mode    = 'havi';
+    document.getElementById('tileSavingsCard').dataset.mode = 'havi';
+    document.getElementById('tileLoansCard').dataset.mode   = 'havi';
+  } else {
+    const bal = getBalances();
+    document.getElementById('tileBankAmt').textContent    = fmtFt(bal.bank);
+    document.getElementById('tileCashAmt').textContent    = fmtFt(bal.cash);
+    document.getElementById('tileSavingsAmt').textContent = fmtFt(bal.savings);
+    const outstandingTotal = getOutstandingLoans().reduce((s,d)=>s+d.amt, 0);
+    document.getElementById('tileLoansAmt').textContent   = fmtFt(outstandingTotal);
+    document.getElementById('tileBankCard').dataset.mode    = 'osszes';
+    document.getElementById('tileCashCard').dataset.mode    = 'osszes';
+    document.getElementById('tileSavingsCard').dataset.mode = 'osszes';
+    document.getElementById('tileLoansCard').dataset.mode   = 'osszes';
+  }
 
   if (!d){
     document.getElementById('sumContent').innerHTML=`<div style="font-size:14px;color:rgba(255,255,255,.35);padding:8px 0;">Koppints a ↻ Szinkron gombra</div>`;
@@ -2083,7 +2126,8 @@ function render() {
 
 // delete and clearMonth removed — edit replaces delete
 
-function fmtFt(n)   {return 'Ft '+Math.round(n||0).toLocaleString('hu-HU');}
+function fmtFt(n)       {return 'Ft '+Math.round(n||0).toLocaleString('hu-HU');}
+function fmtSignedFt(n) {const v=Math.round(n||0); return (v>0?'+':'')+' Ft '+v.toLocaleString('hu-HU');}
 function fmtDate(iso){
   const d=new Date(iso);
   const now=new Date();
