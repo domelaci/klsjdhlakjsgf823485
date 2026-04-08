@@ -677,7 +677,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.12.6';
+const APP_VERSION = '6.12.7';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -1072,10 +1072,13 @@ function getTypusLabel(type) {
 
 async function loadSummary() {
   if (st.sumMode === 'osszes') { renderSummaryAllTime(); return; }
+  const modeAtStart = st.sumMode;
   try {
     const q=new URLSearchParams({action:'getSummary',user:userName,year:st.curY,month:st.curM+1});
     const res=await fetch(SCRIPT_URL+'?'+q);
     const d=await res.json();
+    // If mode changed while we were fetching, discard result
+    if (st.sumMode !== modeAtStart) return;
     st.summary=d;
     // Enrich with local running balance (server only returns this-month figures)
     const curN   = st.curY * 12 + st.curM;
@@ -1169,7 +1172,9 @@ function renderSummaryFromLocal() {
 }
 
 function renderSummary(d) {
-  // Update tiles — monthly flow in HAVI mode, all-time in ÖSSZES mode
+  // If mode switched to összes while a fetch was in flight, defer to the right renderer
+  if (st.sumMode === 'osszes') { renderSummaryAllTime(); return; }
+  // Update tiles — monthly flow in HAVI mode
   if (st.sumMode === 'havi') {
     const curN = st.curY * 12 + st.curM;
     const m    = st.entries.filter(e => e.year * 12 + e.month === curN);
