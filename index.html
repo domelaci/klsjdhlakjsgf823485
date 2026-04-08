@@ -677,7 +677,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.12.7';
+const APP_VERSION = '6.12.9';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -2120,7 +2120,7 @@ function render() {
           ${loanBadge}
           ${syncMark}
         </div>
-        <button class="entry-edit" onclick="openEditSheet(${e.id})" title="Szerkesztés">
+        <button class="entry-edit" onclick="openEditSheet('${e.id}')" title="Szerkesztés">
           <span></span><span></span><span></span>
         </button>
       </div>`;
@@ -2150,11 +2150,14 @@ window.addEventListener('resize',()=>{if(isDesktop())renderDesktopForm();});
 
 // ── Edit entry ───────────────────────────────────────────────
 function openEditSheet(id) {
-  const entry = st.entries.find(e => String(e.id) === String(id));
-  if (!entry) return;
-  st.editTarget = JSON.parse(JSON.stringify(entry)); // work on a copy
-  renderEditSheet();
-  if (!isDesktop()) document.getElementById('sheetOverlay').classList.add('open');
+  try {
+    const entry = st.entries.find(e => String(e.id) === String(id));
+    if (!entry) { showToast('Tétel nem található'); return; }
+    st.editTarget = JSON.parse(JSON.stringify(entry));
+    if (!isDesktop() && st.activeTab !== 'tetelek') switchTab('tetelek');
+    renderEditSheet();
+    if (!isDesktop()) document.getElementById('sheetOverlay').classList.add('open');
+  } catch(err) { showToast('Szerkesztési hiba: ' + err.message); }
 }
 
 function renderEditSheet() {
