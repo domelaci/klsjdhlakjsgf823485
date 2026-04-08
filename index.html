@@ -81,6 +81,9 @@
   .s-big{font-family:'Plus Jakarta Sans',sans-serif;font-size:32px;font-weight:700;letter-spacing:-.5px;line-height:1.1;}
   .s-med{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:700;color:#fff;line-height:1;}
   .s-sav{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:rgba(187,155,255,.95);line-height:1;}
+  .s-sub{font-size:12px;font-weight:600;color:rgba(255,255,255,.55);margin-top:4px;line-height:1.3;}
+  .s-delta-pos{color:#6EE7A8;}
+  .s-delta-neg{color:#FF8A80;}
   .bar-wrap{margin-top:18px;position:relative;z-index:1;}
   .bar-track{height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;}
   .bar-fill{height:100%;background:var(--accent2);border-radius:2px;transition:width .5s ease;}
@@ -667,7 +670,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.12.0';
+const APP_VERSION = '6.12.2';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -841,21 +844,25 @@ async function logLogin() {
 
 // Check for existing session on load
 (function checkSession() {
+  // Handle dashboard launch-as FIRST — before the KNOWN_USERS guard.
+  // dash_auth=1 is Döme-only so kz_launch_as can be trusted unconditionally.
+  const launchAs_ = sessionStorage.getItem('kz_launch_as');
+  const fromDash  = sessionStorage.getItem('kz_from_dashboard');
+  if (launchAs_ && fromDash && sessionStorage.getItem('dash_auth') === '1') {
+    sessionStorage.removeItem('kz_launch_as');
+    sessionStorage.removeItem('kz_from_dashboard');
+    userName  = sessionStorage.getItem('kz_auth_name') || 'Döme';
+    userEmail = sessionStorage.getItem('kz_auth_email') || '';
+    document.getElementById('loginScreen').style.display = 'none';
+    launchAsFromDashboard(launchAs_);
+    return;
+  }
+
   const name  = sessionStorage.getItem('kz_auth_name');
   const email = sessionStorage.getItem('kz_auth_email');
   if (name && email && KNOWN_USERS[email] === name) {
     userName  = name;
     userEmail = email;
-    // Check if coming from dashboard with a launch-as target
-    const launchAs_ = sessionStorage.getItem('kz_launch_as');
-    const fromDash  = sessionStorage.getItem('kz_from_dashboard');
-    if (launchAs_ && fromDash) {
-      sessionStorage.removeItem('kz_launch_as');
-      sessionStorage.removeItem('kz_from_dashboard');
-      document.getElementById('loginScreen').style.display = 'none';
-      launchAsFromDashboard(launchAs_);
-      return;
-    }
     onAuthSuccess();
   }
   // else login screen stays visible
@@ -1103,7 +1110,18 @@ async function loadSummary() {
     const res=await fetch(SCRIPT_URL+'?'+q);
     const d=await res.json();
     st.summary=d;
-    renderSummary(d);
+    // Enrich with local running balance (server only returns this-month figures)
+    const curN   = st.curY * 12 + st.curM;
+    const before = st.entries.filter(e => e.year * 12 + e.month < curN);
+    const m      = st.entries.filter(e => e.year * 12 + e.month === curN);
+    const athozat = before.filter(e=>e.type==='in'||e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                  - before.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+    const ezAHonap = (d.bejott||0) - (d.kiment||0);
+    const savAll   = st.entries.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                   - st.entries.filter(e=>e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+    const savMonth = m.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                   - m.filter(e=>e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+    renderSummary({...d, athozat, ezAHonap, egyenleg: athozat + ezAHonap, savAll, savMonth});
   } catch(e){renderSummaryFromLocal();}
 }
 
@@ -1157,10 +1175,20 @@ function renderSummaryAllTime() {
 // ── Summary ──────────────────────────────────────────────────
 function renderSummaryFromLocal() {
   if (st.sumMode === 'osszes') { renderSummaryAllTime(); return; }
-  const m=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
-  const bejott=m.filter(e=>e.type==='in'||e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  const kiment=m.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
-  renderSummary({bejott,kiment,maradt:bejott-kiment,pct:bejott>0?Math.round(kiment/bejott*100):0});
+  const curN   = st.curY * 12 + st.curM;
+  const before = st.entries.filter(e => e.year * 12 + e.month < curN);
+  const m      = st.entries.filter(e => e.year * 12 + e.month === curN);
+
+  const athozat  = before.filter(e=>e.type==='in'||e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                 - before.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const bejott   = m.filter(e=>e.type==='in'||e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const kiment   = m.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const ezAHonap = bejott - kiment;
+  const savAll   = st.entries.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                 - st.entries.filter(e=>e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  const savMonth = m.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+                 - m.filter(e=>e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
+  renderSummary({bejott, kiment, athozat, ezAHonap, egyenleg: athozat + ezAHonap, savAll, savMonth});
 }
 
 function renderSummary(d) {
@@ -1169,7 +1197,6 @@ function renderSummary(d) {
   document.getElementById('tileBankAmt').textContent    = fmtFt(bal.bank);
   document.getElementById('tileCashAmt').textContent    = fmtFt(bal.cash);
   document.getElementById('tileSavingsAmt').textContent = fmtFt(bal.savings);
-  // Use per-person outstanding total — not raw loans-reimburse which can be skewed by overpayments
   const outstandingTotal = getOutstandingLoans().reduce((s,d)=>s+d.amt, 0);
   document.getElementById('tileLoansAmt').textContent   = fmtFt(outstandingTotal);
 
@@ -1178,20 +1205,39 @@ function renderSummary(d) {
     document.getElementById('barWrap').style.display='none';
     return;
   }
-  const pct=Math.min(100,d.pct||0);
+
+  const ezAHonap    = d.ezAHonap !== undefined ? d.ezAHonap : (d.bejott - d.kiment);
+  const athozat     = d.athozat  !== undefined ? d.athozat  : 0;
+  const egyenleg    = d.egyenleg !== undefined ? d.egyenleg : ezAHonap;
+  const savAll      = d.savAll   !== undefined ? d.savAll   : 0;
+  const savMonth    = d.savMonth !== undefined ? d.savMonth : 0;
+
+  const deltaSign   = ezAHonap >= 0 ? '+' : '';
+  const deltaClass  = ezAHonap >= 0 ? 's-delta-pos' : 's-delta-neg';
+  const savDSign    = savMonth >= 0 ? '+' : '';
+  const savDClass   = savMonth >= 0 ? 's-delta-pos' : 's-delta-neg';
+
   document.getElementById('sumContent').innerHTML=`
     <div class="sum-left">
-      <div class="s-label">Maradt</div>
-      <div class="s-big">${fmtFt(d.maradt)}</div>
+      <div class="s-label">Egyenleg</div>
+      <div class="s-big">${fmtFt(egyenleg)}</div>
+      <div class="s-sub">Áthozat: ${fmtFt(athozat)}</div>
+      <div class="s-sub">Ez a hónap: <span class="${deltaClass}">${deltaSign}${fmtFt(ezAHonap)}</span></div>
+      <div class="s-sub" style="margin-top:6px;">🐷 <span class="s-sav">${fmtFt(savAll)}</span> <span class="${savDClass}" style="font-size:11px;">(${savDSign}${fmtFt(savMonth)})</span></div>
     </div>
     <div class="sum-right">
       <div><div class="s-label">Bejött</div><div class="s-med">${fmtFt(d.bejott)}</div></div>
       <div><div class="s-label">Kiment</div><div class="s-med">${fmtFt(d.kiment)}</div></div>
     </div>`;
+
+  const barBase = Math.abs(athozat) > 0 ? athozat : (d.bejott || 1);
+  const barPct  = Math.min(100, Math.abs(Math.round(ezAHonap / barBase * 100)));
+  const barColor = ezAHonap >= 0 ? 'var(--accent2)' : '#FF8A80';
   document.getElementById('barWrap').style.display='block';
-  document.getElementById('barFill').style.width=pct+'%';
-  document.getElementById('barLeft').textContent=pct+'% elköltve';
-  document.getElementById('barRight').textContent=fmtFt(Math.max(0,d.maradt))+' maradt';
+  document.getElementById('barFill').style.width=barPct+'%';
+  document.getElementById('barFill').style.background=barColor;
+  document.getElementById('barLeft').textContent=deltaSign+barPct+'% az áthozathoz képest';
+  document.getElementById('barRight').textContent=fmtFt(egyenleg)+' egyenleg';
 }
 
 // ── Sheet ────────────────────────────────────────────────────
