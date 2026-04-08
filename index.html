@@ -54,6 +54,8 @@
   .month-switch{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;padding:9px 16px;border:1px solid var(--border);transition:opacity .2s;}
   .month-switch.dimmed{opacity:.4;pointer-events:none;}
   .month-btn{background:none;border:none;cursor:pointer;color:var(--ink2);font-size:20px;padding:0 2px;line-height:1;}
+  .month-btn-today{background:var(--accent);border:none;border-radius:8px;cursor:pointer;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;line-height:1.4;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.02em;}
+  .month-btn-today.hidden{display:none;}
   .month-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;min-width:84px;text-align:center;}
   .sync-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 16px;font-size:14px;color:var(--ink2);cursor:pointer;}
 
@@ -488,6 +490,7 @@
       <button class="month-btn" onclick="changeMonth(-1)">‹</button>
       <div class="month-label" id="monthLabel">—</div>
       <button class="month-btn" onclick="changeMonth(1)">›</button>
+      <button class="month-btn-today hidden" id="todayBtn" onclick="goToCurrentMonth()">Ma</button>
     </div>
     <button class="sync-btn" onclick="fullSync()">↻ Szinkron</button>
   </div>
@@ -547,8 +550,8 @@
 
       <!-- Desktop tab bar -->
       <div class="desktop-tab-bar">
-        <button class="desktop-tab-btn active" id="deskNavTetelek" onclick="switchTab('tetelek')">📋 Tételek</button>
-        <button class="desktop-tab-btn" id="deskNavRiport"  onclick="switchTab('riport')">📊 Riport</button>
+        <button class="desktop-tab-btn" id="deskNavTetelek" onclick="switchTab('tetelek')">📋 Tételek</button>
+        <button class="desktop-tab-btn active" id="deskNavRiport"  onclick="switchTab('riport')">📊 Riport</button>
         <button class="desktop-tab-btn" id="deskNavLoans"   onclick="switchTab('loans')">🤝 Kintlévőségek</button>
       </div>
 
@@ -584,13 +587,13 @@
       <!-- Report panel -->
       <div class="report-panel" id="reportPanel">
         <div class="chart-card">
-          <div class="chart-title">Kategóriák <span class="chart-sub" id="chartMonthLabel"></span></div>
-          <div class="cat-bars" id="catBars"></div>
-          <div style="text-align:center;padding:24px 0;color:var(--ink3);font-size:14px;display:none" id="catEmpty">Még nincs kiadás ebben a hónapban</div>
+          <div class="chart-title">Összefoglaló <span class="chart-sub" id="chartMonthLabel"></span></div>
+          <div id="reportSummaryRows"></div>
         </div>
         <div class="chart-card" style="margin-top:12px;">
-          <div class="chart-title">Összefoglaló</div>
-          <div id="reportSummaryRows"></div>
+          <div class="chart-title">Kategóriák</div>
+          <div class="cat-bars" id="catBars"></div>
+          <div style="text-align:center;padding:24px 0;color:var(--ink3);font-size:14px;display:none" id="catEmpty">Még nincs kiadás ebben a hónapban</div>
         </div>
       </div>
 
@@ -613,11 +616,11 @@
 
 <!-- Bottom nav -->
 <div class="bottom-nav hidden" id="bottomNav">
-  <button class="nav-btn active" id="navTetelek" onclick="switchTab('tetelek')">
+  <button class="nav-btn" id="navTetelek" onclick="switchTab('tetelek')">
     <span style="font-size:20px">📋</span><span>Tételek</span>
     <div class="nav-indicator"></div>
   </button>
-  <button class="nav-btn" id="navRiport" onclick="switchTab('riport')">
+  <button class="nav-btn active" id="navRiport" onclick="switchTab('riport')">
     <span style="font-size:20px">📊</span><span>Riport</span>
     <div class="nav-indicator"></div>
   </button>
@@ -670,7 +673,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.12.2';
+const APP_VERSION = '6.12.3';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -894,7 +897,7 @@ var st = {
   selSource:  'bank', // 'bank' | 'cash'
   sheetMode:  null,
   payTarget:  null,
-  activeTab:  'tetelek',
+  activeTab:  'riport',
   summary:    null,
   activeFilter: null, // 'bank'|'cash'|'savings'|'loans'
   editTarget:   null,
@@ -1856,8 +1859,26 @@ function changeMonth(d) {
   if (st.curM>11){st.curM=0;st.curY++;}
   if (st.curM<0) {st.curM=11;st.curY--;}
   updateMonthNavDimmed();
+  updateTodayBtn();
   render(); loadSummary();
   if (st.activeTab==='riport') renderReport();
+}
+
+function goToCurrentMonth() {
+  st.curM = new Date().getMonth();
+  st.curY = new Date().getFullYear();
+  updateMonthNavDimmed();
+  updateTodayBtn();
+  render(); loadSummary();
+  if (st.activeTab==='riport') renderReport();
+}
+
+function updateTodayBtn() {
+  const btn = document.getElementById('todayBtn');
+  if (!btn) return;
+  const now = new Date();
+  const isCurrentMonth = st.curM === now.getMonth() && st.curY === now.getFullYear();
+  btn.classList.toggle('hidden', isCurrentMonth);
 }
 
 function switchTab(tab) {
@@ -2043,6 +2064,7 @@ function render() {
   document.getElementById('uName').textContent=userName;
   document.getElementById('monthLabel').textContent=MONTHS_SHORT[st.curM]+' '+st.curY;
   updateMonthNavDimmed();
+  updateTodayBtn();
 
   const allEntries=st.entries.filter(e=>e.month===st.curM&&e.year===st.curY);
   const entries=allEntries.filter(e=>entryMatchesFilter(e,st.activeFilter));
