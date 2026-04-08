@@ -1,4 +1,4 @@
-<!-- Kassza v6.12.1 — 2026-04-01 — Bug fixes: APP_VERSION, reimburse in local summary, correction validation order, retry double-increment, orphan div -->
+<!-- Kassza v6.12.5 — 2026-04-08 — Running balance, default Riport tab, Ma button, clean launch-as removal -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -673,7 +673,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.12.4';
+const APP_VERSION = '6.12.5';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -729,15 +729,6 @@ function showLoginError() {
 function onAuthSuccess() {
   document.getElementById('loginScreen').style.display = 'none';
   logLogin();
-  // Coming from dashboard with a specific user to view as
-  const launchAs_ = sessionStorage.getItem('kz_launch_as');
-  const fromDash  = sessionStorage.getItem('kz_from_dashboard');
-  if (launchAs_ && fromDash) {
-    sessionStorage.removeItem('kz_launch_as');
-    sessionStorage.removeItem('kz_from_dashboard');
-    launchAsFromDashboard(launchAs_);
-    return;
-  }
   if (userName === 'Döme') {
     // Show launcher for Döme
     document.getElementById('launcherScreen').classList.add('visible');
@@ -746,26 +737,6 @@ function onAuthSuccess() {
     // Go straight to app for Emma/Éva
     launchApp(userName);
   }
-}
-
-function launchAsFromDashboard(name) {
-  userName = name;
-  updateStore();
-  st.entries    = JSON.parse(localStorage.getItem(STORE+'_entries')    || '[]');
-  st.names      = JSON.parse(localStorage.getItem(STORE+'_names')      || '[]');
-  st.customCats = JSON.parse(localStorage.getItem(STORE+'_customcats') || '[]');
-  document.getElementById('mainApp').classList.remove('hidden');
-  document.getElementById('bottomNav').classList.remove('hidden');
-  document.getElementById('fab').classList.remove('hidden');
-  // Show "← Dashboard" back button
-  const btn = document.getElementById('launcherBackBtn');
-  btn.textContent = '← Dashboard';
-  btn.onclick = () => { window.location.href = 'dashboard.html'; };
-  btn.classList.remove('hidden');
-  render();
-  switchTab(st.activeTab);
-  fullSync();
-  if (isDesktop()) renderDesktopForm();
 }
 
 function launchApp(name) {
@@ -850,20 +821,6 @@ async function logLogin() {
 
 // Check for existing session on load
 (function checkSession() {
-  // Handle dashboard launch-as FIRST — before the KNOWN_USERS guard.
-  // dash_auth=1 is Döme-only so kz_launch_as can be trusted unconditionally.
-  const launchAs_ = sessionStorage.getItem('kz_launch_as');
-  const fromDash  = sessionStorage.getItem('kz_from_dashboard');
-  if (launchAs_ && fromDash && sessionStorage.getItem('dash_auth') === '1') {
-    sessionStorage.removeItem('kz_launch_as');
-    sessionStorage.removeItem('kz_from_dashboard');
-    userName  = sessionStorage.getItem('kz_auth_name') || 'Döme';
-    userEmail = sessionStorage.getItem('kz_auth_email') || '';
-    document.getElementById('loginScreen').style.display = 'none';
-    launchAsFromDashboard(launchAs_);
-    return;
-  }
-
   const name  = sessionStorage.getItem('kz_auth_name');
   const email = sessionStorage.getItem('kz_auth_email');
   if (name && email && KNOWN_USERS[email] === name) {
