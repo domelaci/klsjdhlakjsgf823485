@@ -1,4 +1,4 @@
-<!-- Kassza v6.12.6 — 2026-04-08 — Page-level havi/összes toggle, tiles respond to mode -->
+<!-- Kassza v6.13.0 — 2026-04-20 — Project expense redirect dialog, 🔗 marker, same-tab projects nav -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -295,6 +295,21 @@
   /* Toast */
   .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2);}
   .toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* Project-linked entry marker */
+  .project-link-icon{font-size:11px;opacity:.55;margin-right:2px;vertical-align:middle;}
+
+  /* Project edit redirect modal */
+  .pe-redirect-overlay{position:fixed;inset:0;background:rgba(26,24,20,0);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;transition:background .2s;}
+  .pe-redirect-overlay.open{display:flex;background:rgba(26,24,20,.5);}
+  .pe-redirect-card{background:var(--card);border-radius:20px;padding:24px;max-width:380px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.2);}
+  .pe-redirect-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+  .pe-redirect-msg{font-size:14px;color:var(--ink2);line-height:1.5;margin-bottom:20px;}
+  .pe-redirect-actions{display:flex;flex-direction:column;gap:8px;}
+  .pe-redirect-actions button{width:100%;padding:13px 16px;border:none;border-radius:12px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .pe-redirect-primary{background:var(--accent);color:#fff;}
+  .pe-redirect-primary:active{background:#A04834;}
+  .pe-redirect-secondary{background:var(--bg);color:var(--ink2);}
 
   /* ── Desktop (768px+) ───────────────────────────────────── */
   @media (min-width:768px) {
@@ -646,6 +661,18 @@
   </div>
 </div>
 
+<!-- Project edit redirect modal -->
+<div class="pe-redirect-overlay" id="projectEditRedirectOverlay" onclick="if(event.target===this)closeProjectEditRedirect()">
+  <div class="pe-redirect-card">
+    <div class="pe-redirect-title">Projekt tétel</div>
+    <div class="pe-redirect-msg">Ez egy projekthez tartozó kiadás, itt nem szerkeszthető. A szerkesztéshez vagy törléshez nyisd meg a projekt oldalt.</div>
+    <div class="pe-redirect-actions">
+      <button class="pe-redirect-primary" id="projectEditRedirectOpen">Megnyitás a projektben →</button>
+      <button class="pe-redirect-secondary" onclick="closeProjectEditRedirect()">Mégsem</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -677,7 +704,7 @@ async function toHUF(amount, currency) {
 
 // ── Config ───────────────────────────────────────────────────
 const SCRIPT_URL  = 'https://script.google.com/macros/s/AKfycby70E-kDy0QQT_3KfQRxNA5wM8b2k8n0lkR3Ux-37k6BI1Rmk4P6HYqLBby6iCS8D-sTQ/exec';
-const APP_VERSION = '6.12.9';
+const APP_VERSION = '6.13.0';
 document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
 // ── Known users (email → display name) ──────────────────────
 const KNOWN_USERS = {
@@ -733,6 +760,11 @@ function showLoginError() {
 function onAuthSuccess() {
   document.getElementById('loginScreen').style.display = 'none';
   logLogin();
+  if (userName === 'Hajni') {
+    // Hajni only has access to projects — redirect her there
+    window.location.href = 'projects.html';
+    return;
+  }
   if (userName === 'Döme') {
     // Show launcher for Döme
     document.getElementById('launcherScreen').classList.add('visible');
@@ -791,7 +823,7 @@ function openDashboard() {
 }
 
 function openProjects() {
-  window.open('projects.html', '_blank');
+  window.location.href = 'projects.html';
 }
 
 function signOut() {
@@ -1135,12 +1167,15 @@ function renderSummaryAllTime() {
   const bejott = st.entries.filter(e=>e.type==='in'||e.type==='reimburse').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const kiment = st.entries.filter(e=>e.type==='out'||e.type==='loan').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const maradt = bejott - kiment;
+  const savAll = st.entries.filter(e=>e.type==='save').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0)
+               - st.entries.filter(e=>e.type==='withdraw').reduce((s,e)=>s+(e.amtHUF||e.origAmt),0);
   const pct = bejott > 0 ? Math.min(100, Math.round(kiment/bejott*100)) : 0;
 
   document.getElementById('sumContent').innerHTML=`
     <div class="sum-left">
       <div class="s-label">Nettó egyenleg</div>
       <div class="s-big">${fmtFt(maradt)}</div>
+      <div class="s-sub" style="margin-top:6px;">🐷 <span class="s-sav">${fmtFt(savAll)}</span></div>
     </div>
     <div class="sum-right">
       <div><div class="s-label">Összes bevétel</div><div class="s-med">${fmtFt(bejott)}</div></div>
@@ -2109,10 +2144,11 @@ function render() {
         if (remaining<=0) loanBadge='<span class="loan-status paid">VISSZAFIZETVE</span>';
         else if (remaining < (e.amtHUF||e.origAmt)) loanBadge=`<span class="loan-status partial">RÉSZBEN · ${fmtFt(remaining)}</span>`;
       }
+      const projectMark = String(e.id).startsWith('pkassza_') ? '<span class="project-link-icon" title="Projekt tétel">🔗</span> ' : '';
       return `<div class="entry-card">
         <div class="entry-icon ${e.type}">${e.icon}</div>
         <div class="entry-body">
-          <div class="entry-name">${e.note || catName || ''}</div>
+          <div class="entry-name">${projectMark}${e.note || catName || ''}</div>
           <div class="entry-meta">${fmtDate(e.date)} · ${catName||''}${currNote}${nameNote}${srcNote}</div>
         </div>
         <div class="entry-right">
@@ -2153,11 +2189,33 @@ function openEditSheet(id) {
   try {
     const entry = st.entries.find(e => String(e.id) === String(id));
     if (!entry) { showToast('Tétel nem található'); return; }
+    // Project-mirror entry: don't allow direct edit, redirect to projects page
+    if (String(id).startsWith('pkassza_')) {
+      showProjectEditRedirect(entry);
+      return;
+    }
     st.editTarget = JSON.parse(JSON.stringify(entry));
     if (!isDesktop() && st.activeTab !== 'tetelek') switchTab('tetelek');
     renderEditSheet();
     if (!isDesktop()) document.getElementById('sheetOverlay').classList.add('open');
   } catch(err) { showToast('Szerkesztési hiba: ' + err.message); }
+}
+
+function showProjectEditRedirect(entry) {
+  const expenseId = String(entry.id).replace(/^pkassza_/, '');
+  const projectId = entry.projectId || '';
+  const qs = projectId
+    ? `?project=${encodeURIComponent(projectId)}&expense=${encodeURIComponent(expenseId)}`
+    : `?expense=${encodeURIComponent(expenseId)}`;
+  const url = 'projects.html' + qs;
+  const overlay = document.getElementById('projectEditRedirectOverlay');
+  const openBtn = document.getElementById('projectEditRedirectOpen');
+  openBtn.onclick = () => { window.location.href = url; };
+  overlay.classList.add('open');
+}
+
+function closeProjectEditRedirect() {
+  document.getElementById('projectEditRedirectOverlay').classList.remove('open');
 }
 
 function renderEditSheet() {
