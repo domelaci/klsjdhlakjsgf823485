@@ -1,4 +1,4 @@
-<!-- Kassza Projektek v6.12.3 — 2026-04-03 — Skip auth if already logged in via main app -->
+<!-- Kassza Projektek v6.13.0 — 2026-04-20 — Edit/delete expenses, URL params, finality warning, split display -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -92,6 +92,14 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
 
 /* ── Expense list ── */
 .exp-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.exp-card.clickable{cursor:pointer;transition:background .15s,transform .1s;}
+.exp-card.clickable:active{transform:scale(.98);background:#f9f5ee;}
+.exp-card.highlight-pulse{animation:pulseBorder 2s ease;}
+@keyframes pulseBorder {
+  0%   { box-shadow: 0 0 0 0 rgba(200,85,61,.0); border-color: var(--border); }
+  15%  { box-shadow: 0 0 0 6px rgba(200,85,61,.35); border-color: var(--accent); }
+  100% { box-shadow: 0 0 0 0 rgba(200,85,61,.0); border-color: var(--border); }
+}
 .exp-icon{font-size:22px;width:36px;text-align:center;flex-shrink:0;}
 .exp-info{flex:1;min-width:0;}
 .exp-note{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -100,6 +108,18 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
 .paidby-primary{background:#FAEAE7;color:var(--accent);}
 .paidby-secondary{background:var(--blue-bg);color:var(--blue);}
 .exp-amt{font-size:15px;font-weight:800;text-align:right;flex-shrink:0;}
+
+/* ── Danger button (delete in edit modal) ── */
+.btn-danger-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:14px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:8px;font-family:inherit;}
+.btn-danger-outline:active{background:#FAEAE7;}
+
+/* ── Split line on close modal ── */
+.split-line{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg);border-radius:10px;margin-bottom:12px;font-size:13px;}
+.split-line .split-name{font-weight:600;color:var(--ink2);}
+.split-line .split-pct{font-weight:700;color:var(--ink);}
+
+/* ── Warning box ── */
+.warn-box{background:#FDF3DC;border:1.5px solid #e8d08a;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.5;color:var(--ink);}
 
 /* ── Settlement ── */
 .settle-card{background:var(--amber-bg);border:1.5px solid #e8d08a;border-radius:var(--r);padding:18px;margin-bottom:16px;}
@@ -237,7 +257,7 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
 <div class="modal-overlay" id="modalAddExpense" onclick="closeModal(event,'modalAddExpense')">
   <div class="modal" style="position:relative;">
     <button class="modal-close" onclick="closeModalById('modalAddExpense')">✕</button>
-    <div class="modal-title">Kiadás rögzítése</div>
+    <div class="modal-title" id="aeModalTitle">Kiadás rögzítése</div>
 
     <div class="field">
       <label>Ki fizette?</label>
@@ -285,8 +305,9 @@ body{background:var(--bg);font-family:'Plus Jakarta Sans',sans-serif;color:var(-
       </div>
     </div>
 
-    <button class="btn btn-primary" onclick="saveExpense()">Mentés</button>
+    <button class="btn btn-primary" id="aeSaveBtn" onclick="saveExpense()">Mentés</button>
     <button class="btn btn-secondary" onclick="closeModalById('modalAddExpense')">Mégsem</button>
+    <button class="btn-danger-outline" id="aeDeleteBtn" style="display:none;" onclick="deleteExpense()">Törlés</button>
   </div>
 </div>
 
@@ -335,6 +356,7 @@ let currentExpenses = [];
 let selCat    = 'egyeb';
 let selPayer  = '';
 let customCats = [];
+let editingExpenseId = null; // null = add mode, non-null = edit mode
 
 // ── Auth ──────────────────────────────────────────────────────
 function onGoogleSignIn(resp) {
@@ -350,7 +372,7 @@ function onGoogleSignIn(resp) {
   }
   document.getElementById('authScreen').style.display = 'none';
   showList();
-  loadProjects();
+  loadProjects().then(() => tryHandleUrlParams());
 }
 
 function parseJwt(token) {
@@ -511,6 +533,7 @@ function renderDetail() {
 
   // Expense list
   let expHTML = `<div class="section-label">Kiadások</div>`;
+  const isOpen = proj.status === 'open';
   if (exps.length === 0) {
     expHTML += `<div class="empty"><div class="empty-icon">🧾</div><div class="empty-msg">Még nincs kiadás rögzítve.</div></div>`;
   } else {
@@ -521,7 +544,8 @@ function renderDetail() {
       const amtFmt = e.currency !== 'HUF'
         ? `${fmtAmt(e.origAmt)} ${e.currency}` + (e.amtHUF ? ` <span style="font-size:12px;color:var(--ink2)">(≈${fmtAmt(e.amtHUF)} Ft)</span>` : '')
         : `${fmtAmt(e.origAmt)} Ft`;
-      return `<div class="exp-card">
+      const clickAttrs = isOpen ? ` class="exp-card clickable" onclick="openEditExpenseModal('${e.id}')"` : ` class="exp-card"`;
+      return `<div${clickAttrs} data-expense-id="${e.id}">
         <div class="exp-icon">${cat.icon}</div>
         <div class="exp-info">
           <div class="exp-note">${esc(e.note)||cat.label}</div>
@@ -594,39 +618,64 @@ async function saveNewProject() {
   }
 }
 
-// ── Add expense modal ─────────────────────────────────────────
+// ── Add/Edit expense modal ────────────────────────────────────
 function openAddExpenseModal() {
-  const proj = currentProject;
+  editingExpenseId = null;
   selCat   = 'egyeb';
-  selPayer = userName; // default to current user
+  selPayer = userName;
+  _renderExpenseModalChips();
+  document.getElementById('aeModalTitle').textContent = 'Kiadás rögzítése';
+  document.getElementById('aeSaveBtn').textContent = 'Mentés';
+  document.getElementById('aeDeleteBtn').style.display = 'none';
+  document.getElementById('aeNote').value  = '';
+  document.getElementById('aeAmt').value   = '';
+  document.getElementById('aeCurr').value  = 'HUF';
+  document.getElementById('aeDate').value  = todayStr();
+  document.querySelectorAll('#modalAddExpense .src-chip').forEach(el => {
+    el.classList.toggle('active', el.dataset.src === 'bank');
+  });
+  document.getElementById('modalAddExpense').classList.add('open');
+}
 
-  // Payer chips: derived from project creator + collaborator
+function openEditExpenseModal(id) {
+  const exp = currentExpenses.find(e => String(e.id) === String(id));
+  if (!exp) { showToast('Kiadás nem található'); return; }
+  if (currentProject.status !== 'open') { showToast('Lezárt projekt — nem szerkeszthető'); return; }
+  editingExpenseId = String(id);
+  selCat   = exp.cat || 'egyeb';
+  selPayer = exp.paidBy || userName;
+  _renderExpenseModalChips();
+  document.getElementById('aeModalTitle').textContent = 'Kiadás szerkesztése';
+  document.getElementById('aeSaveBtn').textContent = 'Mentés';
+  document.getElementById('aeDeleteBtn').style.display = 'block';
+  document.getElementById('aeNote').value  = exp.note || '';
+  document.getElementById('aeAmt').value   = exp.origAmt || '';
+  document.getElementById('aeCurr').value  = exp.currency || 'HUF';
+  // Normalise date to YYYY-MM-DD for date input
+  let d = exp.date;
+  if (d && d.length > 10) d = String(d).slice(0,10);
+  document.getElementById('aeDate').value  = d || todayStr();
+  const src = exp.source || 'bank';
+  document.querySelectorAll('#modalAddExpense .src-chip').forEach(el => {
+    el.classList.toggle('active', el.dataset.src === src);
+  });
+  document.getElementById('modalAddExpense').classList.add('open');
+}
+
+function _renderExpenseModalChips() {
+  const proj = currentProject;
   const p1 = proj.createdBy || userName;
   const payers = [p1];
   if (proj.collaborator) payers.push(proj.collaborator);
-  // Ensure current user is in the list (edge case: viewing as admin)
   if (!payers.includes(userName)) payers.unshift(userName);
   document.getElementById('payerChips').innerHTML = payers.map((p, i) =>
     `<div class="payer-chip ${p===selPayer?('active-'+(i===0?'primary':'secondary')):''}\"
       data-payer="${p}" data-pos="${i}" onclick="selectPayer(this,'${p}')">${p}</div>`
   ).join('');
-
-  // Category chips
   const allCats = [...CATS, ...customCats];
   document.getElementById('aeCatChips').innerHTML = allCats.map(c =>
     `<div class="cat-chip${c.id===selCat?' active':''}" data-cat="${c.id}" onclick="selectCat(this,'${c.id}')">${c.icon} ${c.label}</div>`
   ).join('') + `<div class="cat-chip" onclick="promptCustomCat()">＋ Egyéni</div>`;
-
-  document.getElementById('aeNote').value  = '';
-  document.getElementById('aeAmt').value   = '';
-  document.getElementById('aeCurr').value  = 'HUF';
-  document.getElementById('aeDate').value  = todayStr();
-  // Reset source
-  document.querySelectorAll('#modalAddExpense .src-chip').forEach(el => {
-    el.classList.toggle('active', el.dataset.src === 'bank');
-  });
-
-  document.getElementById('modalAddExpense').classList.add('open');
 }
 
 function selectPayer(el, payer) {
@@ -657,7 +706,6 @@ function promptCustomCat() {
   const cat = {id, label:label.trim(), icon:'🏷️'};
   customCats.push(cat);
   selCat = id;
-  // Re-render chips
   const allCats = [...CATS, ...customCats];
   document.getElementById('aeCatChips').innerHTML = allCats.map(c =>
     `<div class="cat-chip${c.id===selCat?' active':''}" data-cat="${c.id}" onclick="selectCat(this,'${c.id}')">${c.icon} ${c.label}</div>`
@@ -669,24 +717,53 @@ async function saveExpense() {
   const note = document.getElementById('aeNote').value.trim();
   if (!amt || amt <= 0) { showToast('Add meg az összeget!'); return; }
   const src  = document.querySelector('#modalAddExpense .src-chip.active')?.dataset.src || 'bank';
+  const payload = {
+    projectId:   currentProject.id,
+    projectName: currentProject.name,
+    date:        document.getElementById('aeDate').value,
+    note,
+    cat:         selCat,
+    amount:      amt,
+    currency:    document.getElementById('aeCurr').value,
+    source:      src,
+    paidBy:      selPayer,
+  };
   try {
-    await apiPost({
-      action:      'addProjectExpense',
-      projectId:   currentProject.id,
-      projectName: currentProject.name,
-      date:        document.getElementById('aeDate').value,
-      note,
-      cat:         selCat,
-      amount:      amt,
-      currency:    document.getElementById('aeCurr').value,
-      source:      src,
-      paidBy:      selPayer,
-    });
-    closeModalById('modalAddExpense');
-    showToast('✓ Kiadás rögzítve!');
+    if (editingExpenseId) {
+      payload.action = 'updateProjectExpense';
+      payload.id = editingExpenseId;
+      await apiPost(payload);
+      closeModalById('modalAddExpense');
+      showToast('✓ Módosítva!');
+    } else {
+      payload.action = 'addProjectExpense';
+      await apiPost(payload);
+      closeModalById('modalAddExpense');
+      showToast('✓ Kiadás rögzítve!');
+    }
     loadExpenses(currentProject.id);
   } catch(e) {
     showToast('Hiba a mentésnél.');
+  }
+}
+
+async function deleteExpense() {
+  if (!editingExpenseId) return;
+  const exp = currentExpenses.find(e => String(e.id) === editingExpenseId);
+  if (!exp) { showToast('Kiadás nem található'); return; }
+  const ok = confirm('Biztos törölni akarod?\n\nA kiadás a személyes Kasszából is eltűnik.');
+  if (!ok) return;
+  try {
+    await apiPost({
+      action: 'deleteProjectExpense',
+      id:     editingExpenseId,
+      paidBy: exp.paidBy,
+    });
+    closeModalById('modalAddExpense');
+    showToast('✓ Törölve');
+    loadExpenses(currentProject.id);
+  } catch(e) {
+    showToast('Hiba a törlésnél.');
   }
 }
 
@@ -703,24 +780,38 @@ function openCloseModal() {
     if (e.paidBy === p1) p1Total += amt;
     else if (p2 && e.paidBy === p2) p2Total += amt;
   });
+  const total = p1Total + p2Total;
   const delta  = Math.abs(p1Total - p2Total) / 2;
   const p1Pays = p2Total > p1Total;
   const payer    = p1Pays ? p1 : p2;
   const receiver = p1Pays ? p2 : p1;
+
+  // Split display — shared projects only
+  let splitHTML = '';
+  if (p2 && total > 0) {
+    const p1Pct = Math.round((p1Total / total) * 100);
+    const p2Pct = 100 - p1Pct;
+    splitHTML = `
+      <div class="split-line"><span class="split-name">${p1}</span><span class="split-pct">${fmtAmt(p1Total)} Ft · ${p1Pct}%</span></div>
+      <div class="split-line"><span class="split-name">${p2}</span><span class="split-pct">${fmtAmt(p2Total)} Ft · ${p2Pct}%</span></div>`;
+  }
+
+  // Finality warning — always shown
+  const warnHTML = `<div class="warn-box">⚠️ A lezárás végleges — a kiadások már nem szerkeszthetők.</div>`;
 
   let bodyHTML = '';
   let confirmLabel = 'Lezárás';
 
   if (!p2) {
     // Solo project: just close
-    bodyHTML = `<p style="font-size:14px;color:var(--ink2);margin-bottom:20px;">Biztosan lezárod a projektet? A kiadások megmaradnak, de újabbat nem lehet felvenni.</p>`;
+    bodyHTML = warnHTML + `<p style="font-size:14px;color:var(--ink2);margin-bottom:20px;">Biztosan lezárod a projektet? A kiadások megmaradnak, de újabbat nem lehet felvenni.</p>`;
     document.getElementById('closeModalConfirm').onclick = () => confirmClose(false, null, null, null);
   } else if (delta === 0) {
-    bodyHTML = `<p style="font-size:14px;color:var(--ink2);margin-bottom:20px;">A projekt kiegyenlített, nincs nyitott tartozás. Biztosan lezárod?</p>`;
+    bodyHTML = warnHTML + splitHTML + `<p style="font-size:14px;color:var(--ink2);margin:16px 0 20px;">A projekt kiegyenlített, nincs nyitott tartozás. Biztosan lezárod?</p>`;
     document.getElementById('closeModalConfirm').onclick = () => confirmClose(false, null, null, null);
   } else {
-    bodyHTML = `
-      <div class="settle-card" style="margin-bottom:20px;">
+    bodyHTML = warnHTML + splitHTML + `
+      <div class="settle-card" style="margin:16px 0 20px;">
         <div class="settle-title">💸 Elszámolás</div>
         <div class="settle-msg">A lezáráshoz az alábbi összeg átadása szükséges:</div>
         <div class="settle-amt">${fmtAmt(delta)} Ft</div>
@@ -817,6 +908,59 @@ function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── URL param handler ────────────────────────────────────────
+// After login + loadProjects, if URL has ?project=... &expense=... (or just ?expense=...),
+// open the project and scroll/highlight the target expense card.
+async function tryHandleUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const projectId = params.get('project') || '';
+  const expenseId = params.get('expense') || '';
+  if (!expenseId) return;
+
+  let resolvedProjectId = projectId;
+  // Fallback: no project id → scan all projects' expenses
+  if (!resolvedProjectId) {
+    for (const p of projects) {
+      try {
+        const r = await api({action:'getProjectExpenses', projectId: p.id});
+        const list = r.expenses || [];
+        if (list.some(e => String(e.id) === expenseId)) {
+          resolvedProjectId = p.id;
+          break;
+        }
+      } catch(e) { /* skip */ }
+    }
+  }
+  if (!resolvedProjectId) return;
+
+  const proj = projects.find(p => p.id === resolvedProjectId);
+  if (!proj) return;
+  showDetail(proj);
+  // Wait for loadExpenses (triggered by showDetail) to render, then highlight
+  await waitForExpenseCard(expenseId, 3000);
+  const card = document.querySelector(`.exp-card[data-expense-id="${expenseId}"]`);
+  if (card) {
+    card.scrollIntoView({behavior:'smooth', block:'center'});
+    card.classList.add('highlight-pulse');
+    setTimeout(() => card.classList.remove('highlight-pulse'), 2100);
+  }
+  // Clean URL so re-loads don't re-trigger
+  history.replaceState(null, '', window.location.pathname);
+}
+
+function waitForExpenseCard(expenseId, timeoutMs) {
+  return new Promise(resolve => {
+    const start = Date.now();
+    const check = () => {
+      const card = document.querySelector(`.exp-card[data-expense-id="${expenseId}"]`);
+      if (card) return resolve();
+      if (Date.now() - start > timeoutMs) return resolve();
+      setTimeout(check, 80);
+    };
+    check();
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────────
 window.addEventListener('load', () => {
   // Check if already logged in via main Kassza app (sessionStorage shared across same origin)
@@ -832,7 +976,7 @@ window.addEventListener('load', () => {
     }
     document.getElementById('authScreen').style.display = 'none';
     showList();
-    loadProjects();
+    loadProjects().then(() => tryHandleUrlParams());
   } else {
     // Not logged in — show Google sign-in
     document.getElementById('authScreen').style.display = 'flex';
